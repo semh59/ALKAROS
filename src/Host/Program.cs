@@ -813,6 +813,28 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
             "SELECT count(*) FROM customer_data.anonymization_requests WHERE customer_id = @subject AND status <> 'Anonymized';"),
     ];
 
+    private const string NoteLineMatch = @"'(^|\n) *(NOT|NEDEN): (?!\[anonymized\](\r|\n|$))'";
+
+    private const string NoteLineScrub = @"'(^|\n)( *(NOT|NEDEN): )[^\r\n]*'";
+
+    private const string PrintJobSettled = "j.status NOT IN ('Pending', 'Leased', 'Printing')";
+
+    private const string DeliverySettled = "d.status NOT IN ('InFlight', 'ReprintInFlight', 'Unknown', 'ReprintApproved')";
+
+    // The slip prints an item note after "NOT:" and a reprint's reason after "NEDEN:", both verbatim, so a text of several lines runs
+    // past the first one. The ticket's item notes and reprint reasons (longest first, so a short one cannot cut a longer one that begins
+    // with it) are replaced as a whole, then any "NOT:" or "NEDEN:" line left is.
+    private static string ScrubSlip(string slip, string ticketId) =>
+        $@"regexp_replace(privacy.scrub_slip_notes({slip}, (SELECT array_agg(x.txt ORDER BY length(x.txt) DESC) FROM (SELECT ki.notes AS txt FROM kitchen.kitchen_ticket_items ki WHERE ki.ticket_id = {ticketId} UNION SELECT pd.operator_reason FROM kitchen.physical_print_deliveries pd WHERE pd.ticket_id = {ticketId}) x WHERE x.txt IS NOT NULL), @m), {NoteLineScrub}, '\1\2' || @m, 'g')";
+
+    private const string SettledPayment = "p.status NOT IN ('Initiated', 'Pending', 'Unknown', 'ReconciliationRequired')";
+
+    private const string UnscrubbedItemText =
+        "((ki.notes IS NOT NULL AND ki.notes <> @m) OR (ki.cancellation_reason IS NOT NULL AND ki.cancellation_reason <> @m))";
+
+    private const string UnscrubbedDelivery =
+        $"{DeliverySettled} AND (d.payload_snapshot ~ {NoteLineMatch} OR d.reprint_payload ~ {NoteLineMatch} OR (d.operator_reason IS NOT NULL AND d.operator_reason <> @m))";
+
     private static readonly Dictionary<RetentionClass, AnonymizationPlan> Plans = new()
     {
         [RetentionClass.StaffAccount] = new(null,
@@ -843,6 +865,37 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
             new("orders.order_status_history",
                 "UPDATE orders.order_status_history SET reason = @m WHERE order_id = @subject AND reason IS NOT NULL AND reason <> @m;",
                 "SELECT count(*) FROM orders.order_status_history WHERE order_id = @subject AND reason IS NOT NULL AND reason <> @m;"),
+            // The printed slip carries the item note as a "NOT:" line; only that text is replaced. A job or delivery still running is left alone.
+            // The ticket items come after the printed copies: the copies are cleaned with the item notes as they were.
+            new("kitchen.print_jobs",
+                $"""
+                UPDATE kitchen.print_jobs j SET payload = {ScrubSlip("j.payload", "j.ticket_id")}, row_version = j.row_version + 1
+                FROM kitchen.kitchen_tickets t
+                WHERE t.id = j.ticket_id AND t.order_id = @subject AND {PrintJobSettled} AND j.payload ~ {NoteLineMatch};
+                """,
+                $"SELECT count(*) FROM kitchen.print_jobs j JOIN kitchen.kitchen_tickets t ON t.id = j.ticket_id WHERE t.order_id = @subject AND {PrintJobSettled} AND j.payload ~ {NoteLineMatch};"),
+            new("kitchen.physical_print_deliveries",
+                $"""
+                UPDATE kitchen.physical_print_deliveries d
+                SET payload_snapshot = {ScrubSlip("d.payload_snapshot", "d.ticket_id")},
+                    reprint_payload = CASE WHEN d.reprint_payload IS NOT NULL THEN {ScrubSlip("d.reprint_payload", "d.ticket_id")} END,
+                    operator_reason = CASE WHEN d.operator_reason IS NOT NULL THEN @m END,
+                    row_version = d.row_version + 1
+                FROM kitchen.kitchen_tickets t
+                WHERE t.id = d.ticket_id AND t.order_id = @subject AND {UnscrubbedDelivery};
+                """,
+                $"SELECT count(*) FROM kitchen.physical_print_deliveries d JOIN kitchen.kitchen_tickets t ON t.id = d.ticket_id WHERE t.order_id = @subject AND {UnscrubbedDelivery};"),
+            new("kitchen.kitchen_ticket_items",
+                $"""
+                UPDATE kitchen.kitchen_ticket_items ki
+                SET notes = CASE WHEN ki.notes IS NOT NULL THEN @m END, cancellation_reason = CASE WHEN ki.cancellation_reason IS NOT NULL THEN @m END
+                FROM kitchen.kitchen_tickets t
+                WHERE t.id = ki.ticket_id AND t.order_id = @subject AND {UnscrubbedItemText};
+                """,
+                $"SELECT count(*) FROM kitchen.kitchen_ticket_items ki JOIN kitchen.kitchen_tickets t ON t.id = ki.ticket_id WHERE t.order_id = @subject AND {UnscrubbedItemText};"),
+            new("kitchen.kitchen_tickets",
+                "UPDATE kitchen.kitchen_tickets SET cancellation_reason = @m WHERE order_id = @subject AND cancellation_reason IS NOT NULL AND cancellation_reason <> @m;",
+                "SELECT count(*) FROM kitchen.kitchen_tickets WHERE order_id = @subject AND cancellation_reason IS NOT NULL AND cancellation_reason <> @m;"),
         ], Parameters),
         // Only texts change: amounts, states and dates of the bill and its refund requests stay. A bill is selected only once none
         // of its refund requests is open; the status filter below also guards a request opened between selection and write.
@@ -864,6 +917,21 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
                 WHERE bill_id = @subject AND status IN ('Completed', 'Rejected') AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));
                 """,
                 "SELECT count(*) FROM payments.refund_requests WHERE bill_id = @subject AND status IN ('Completed', 'Rejected') AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));"),
+            // A payment is reached through its bill. One not yet settled, and a card confirmation still pending, keep their texts: they are needed to settle it.
+            new("payments.payment_status_history",
+                $"UPDATE payments.payment_status_history h SET reason = @m FROM payments.payments p WHERE p.payment_id = h.payment_id AND p.bill_id = @subject AND {SettledPayment} AND h.reason IS NOT NULL AND h.reason <> @m;",
+                $"SELECT count(*) FROM payments.payment_status_history h JOIN payments.payments p ON p.payment_id = h.payment_id WHERE p.bill_id = @subject AND {SettledPayment} AND h.reason IS NOT NULL AND h.reason <> @m;"),
+            new("payments.payment_reversals",
+                "UPDATE payments.payment_reversals v SET reason = @m FROM payments.payments p WHERE p.payment_id = v.payment_id AND p.bill_id = @subject AND v.reason <> @m;",
+                "SELECT count(*) FROM payments.payment_reversals v JOIN payments.payments p ON p.payment_id = v.payment_id WHERE p.bill_id = @subject AND v.reason <> @m;"),
+            new("payments.manual_card_confirmations",
+                """
+                UPDATE payments.manual_card_confirmations
+                SET request_note = CASE WHEN request_note IS NOT NULL THEN @m END, decision_note = CASE WHEN decision_note IS NOT NULL THEN @m END
+                WHERE bill_id = @subject AND status IN ('Approved', 'Rejected')
+                  AND ((request_note IS NOT NULL AND request_note <> @m) OR (decision_note IS NOT NULL AND decision_note <> @m));
+                """,
+                "SELECT count(*) FROM payments.manual_card_confirmations WHERE bill_id = @subject AND status IN ('Approved', 'Rejected') AND ((request_note IS NOT NULL AND request_note <> @m) OR (decision_note IS NOT NULL AND decision_note <> @m));"),
         ], Parameters),
         [RetentionClass.ReservationReason] = new(null,
         [

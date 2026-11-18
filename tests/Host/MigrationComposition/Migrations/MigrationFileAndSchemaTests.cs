@@ -519,6 +519,35 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ThePaymentReversalGuardAndSlipHelperComeWithMigration233AndRollingBackRestoresTheAppendOnlyBody()
+    {
+        const string knowsMarker = "SELECT pg_get_functiondef('payments.payment_reversals_guard()'::regprocedure) LIKE '%[anonymized]%';";
+        const string stillGuards = "SELECT pg_get_functiondef('payments.payment_reversals_guard()'::regprocedure) LIKE '%payment_reversals is append-only%';";
+        const string slipHelper = "SELECT to_regprocedure('privacy.scrub_slip_notes(text, text[], text)') IS NOT NULL;";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.True(await ScalarAsync<bool>(source, knowsMarker));
+        Assert.True(await ScalarAsync<bool>(source, stillGuards));
+        Assert.True(await ScalarAsync<bool>(source, slipHelper));
+        Assert.Equal("NOT: x", await ScalarAsync<string>(source, "SELECT privacy.scrub_slip_notes('NOT: x', NULL, '[anonymized]');"));
+        Assert.Equal("NEDEN: [anonymized]\nx", await ScalarAsync<string>(source, "SELECT privacy.scrub_slip_notes('NEDEN: a' || chr(10) || 'b' || chr(10) || 'x', ARRAY['a' || chr(10) || 'b'], '[anonymized]');"));
+        Assert.Equal(
+            "NOT: [anonymized]\nNOT: [anonymized]\nNOT: y",
+            await ScalarAsync<string>(
+                source,
+                "SELECT privacy.scrub_slip_notes('NOT: az pisirin' || chr(10) || 'masa' || chr(10) || 'NOT: az' || chr(10) || 'NOT: y', ARRAY['az pisirin' || chr(10) || 'masa', 'az', '', '[anonymized]'], '[anonymized]');"));
+
+        RollBackDownTo("233");
+        Assert.False(await ScalarAsync<bool>(source, knowsMarker));
+        Assert.True(await ScalarAsync<bool>(source, stillGuards));
+        Assert.False(await ScalarAsync<bool>(source, slipHelper));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.True(await ScalarAsync<bool>(source, knowsMarker));
+        Assert.True(await ScalarAsync<bool>(source, slipHelper));
+    }
+
+    [Fact]
     public async Task TheInvoicedCustomerRetentionClassComesWithANewPolicyAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string rules = "SELECT string_agg(policy_version || ':' || data_class || ':' || retention_years, ',' ORDER BY policy_version, data_class) FROM privacy.retention_rules WHERE data_class IN ('CustomerProfile', 'InvoicedCustomerProfile');";

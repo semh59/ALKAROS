@@ -18,8 +18,9 @@ apply always pick the same records. The multi-store checkpoint/resume workflow i
 | Order note | `orders.orders.notes` | order `status IN (Completed, Cancelled, Rejected)` **and** `created_at` older than **5 years** | `notes -> '[anonymized]'` |
 | Order line note | `orders.order_items.notes` | parent order past the same window | `notes -> '[anonymized]'` |
 | Order status reason | `orders.order_status_history.reason` (void and complimentary reason and note) | parent order past the same window | `reason -> '[anonymized]'` |
+| Kitchen texts | `kitchen.kitchen_ticket_items.notes` and `cancellation_reason`, `kitchen.kitchen_tickets.cancellation_reason`, the `NOT:` lines of the printed slip in `kitchen.print_jobs.payload` and `kitchen.physical_print_deliveries.payload_snapshot` / `reprint_payload`, `kitchen.physical_print_deliveries.operator_reason` (also copied into the reprint banner) | parent order past the same window (class `OrderNotes`) | each text `-> '[anonymized]'`; in a slip only the texts are replaced: the item notes after `NOT:` and the reprint reason after `NEDEN:` (a text of several lines as a whole, found through the ticket's item notes and reprint reasons, then any `NOT:` / `NEDEN:` line left), the rest of the slip stays; a scrubbed job or delivery gets `row_version + 1`. A print job still `Pending`/`Leased`/`Printing` and a delivery still `InFlight`/`ReprintInFlight`/`Unknown`/`ReprintApproved` is left alone, and stays so for good (a finished work item is permanent); every other status, including a stuck `Failed` or `AwaitingOperatorReview` job, is scrubbed. The ticket items are scrubbed after the slips, because the slips are cleaned with the item notes as they were; the helper `privacy.scrub_slip_notes` comes with migration 233. |
 | Reservation reason | `table_mgmt.table_reservations.reason`, `release_reason` | `status IN (Claimed, Cancelled, Expired)` **and** `reserved_at` older than **5 years** | both `-> '[anonymized]'` |
-| Bill free text (`BillFreeText`, added to the retention policy by migration 232) | `billing.bill_items.notes`, `billing.bill_adjustments.notes`, `billing.bills.cancellation_reason`, `payments.refund_requests.reason` and `decision_note` | bill `status IN (Paid, Cancelled)` **and** `created_at` older than **5 years** (the order window) | each text `-> '[anonymized]'`. A bill with a refund request still `Requested` or `AwaitingManualRefund` is not due until the request is closed. Amounts, states and dates are not touched. |
+| Bill free text (`BillFreeText`, added to the retention policy by migration 232) | `billing.bill_items.notes`, `billing.bill_adjustments.notes`, `billing.bills.cancellation_reason`, `payments.refund_requests.reason` and `decision_note`, and through `payments.payments.bill_id` the payment texts: `payments.payment_status_history.reason`, `payments.payment_reversals.reason`, `payments.manual_card_confirmations.request_note` and `decision_note` | bill `status IN (Paid, Cancelled)` **and** `created_at` older than **5 years** (the order window) | each text `-> '[anonymized]'`. A bill is not due while a refund request is `Requested` or `AwaitingManualRefund`. The texts of a payment still `Initiated`, `Pending`, `Unknown` or `ReconciliationRequired` and of a manual card confirmation still `Pending` are left alone because they are needed to settle it; the rest of the bill is scrubbed, and those texts then stay for good (a finished work item is permanent). Amounts, states and dates are not touched. `payments.payment_reversals` is an append-only ledger (migration 233): its guard accepts one change only, the `reason` becoming exactly `[anonymized]` with every other column identical (the guard does not look at the row's age: which rows are due is decided by the retention job only). |
 
 ### Staff data that is kept, and for how long (V1-RMD-672)
 
@@ -112,16 +113,18 @@ complete financial record, only the free-text / identifying fields are scrubbed.
 
 ## Free-text columns outside this job
 
-The job scrubs the columns in the table above and nothing else. These free-text columns have no retention class yet and
-need a Product Owner decision (window, and for the ledger whether it is legal retention) before one can be added:
-`kitchen.kitchen_ticket_items.notes` (a copy of the order line note) and `kitchen.kitchen_tickets.cancellation_reason`,
-`payments.payment_reversals.reason`, `payments.payment_status_history.reason`, `cash.cash_transactions.notes`, the decision
-notes of `cash.cash_movement_requests` and `payments.manual_card_confirmations`, the reasons of table transfers and merges
-in `table_mgmt`, and `customer_account.account_transactions.note` (append-only ledger).
+The job scrubs the columns in the table above and nothing else. The Product Owner decided (2026-11-18) that the remaining
+free-text columns follow the same 5-year rule; the cash and table-movement texts (`cash.cash_transactions.notes`, the
+cash session, count and movement request texts, the reasons of table transfers and merges) are not scrubbed yet.
+
+`customer_account.account_transactions.note` is deliberately **not** scrubbed: the customer account ledger is append-only
+and legal retention (see "Customers and suppliers"), its guard has no exception, and customer data has its own windows
+(2 and 10 years), not the order window.
 
 A record that an earlier run already finished is never selected again (a finished work item is permanent). Orders finished
-by a run before migration 232 therefore keep their `order_status_history.reason`; a deployment younger than the 5-year window
-has no such orders.
+by a run before the kitchen texts were added (and bills finished before the payment texts) therefore keep those texts; a
+deployment younger than the 5-year window has no such records. The dry-run counters `order_notes` and `item_notes` count
+only the order and order line notes; an order whose only remaining text is on the kitchen side is still picked up by the apply.
 
 ## What it never touches (legal retention)
 

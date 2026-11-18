@@ -1,0 +1,21 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Privacy.RetentionExecution.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:07.61]     ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AClosedBillIsDueWhileAPaymentTextRemainsUnlessAConfirmationIsPendingOrAPaymentIsUnsettled [FAIL]
+  Başarısız ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AClosedBillIsDueWhileAPaymentTextRemainsUnlessAConfirmationIsPendingOrAPaymentIsUnsettled [108 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: HashSets differ
+Expected: [Tuple (BillFreeText, 20c54e8f-ca1e-4b26-a50b-30c93ad0aac5), Tuple (BillFreeText, 06733105-cc57-4790-96c6-a4f4ccc57cb3), Tuple (BillFreeText, e6f04e2e-cab6-4198-a339-e862e55a951a), Tuple (BillFreeText, 5f4d1b07-d048-4c47-a6a3-0f85ac6badbd)]
+Actual:   [Tuple (BillFreeText, 06733105-cc57-4790-96c6-a4f4ccc57cb3), Tuple (BillFreeText, 20c54e8f-ca1e-4b26-a50b-30c93ad0aac5), Tuple (BillFreeText, 5f4d1b07-d048-4c47-a6a3-0f85ac6badbd), Tuple (BillFreeText, d7d151f8-3893-4756-806b-59f7ab74e172), Tuple (BillFreeText, e6f04e2e-cab6-4198-a339-e862e55a951a)]
+  Yığın İzleme:
+     at ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AClosedBillIsDueWhileAPaymentTextRemainsUnlessAConfirmationIsPendingOrAPaymentIsUnsettled() in D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\RetentionExecutionTests.cs:line 246
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 3 s - ALKAROS.Privacy.RetentionExecution.Tests.dll (net8.0)

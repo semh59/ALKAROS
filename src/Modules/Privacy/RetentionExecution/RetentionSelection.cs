@@ -15,8 +15,11 @@ internal static class RetentionSelection
         WHERE u.active = false AND u.display_name <> @marker
         """;
 
-    private const string OrderNotes =
-        """
+    // The kitchen slip is printed text, so a line "NOT: <note>" (an item note) or "NEDEN: <reason>" (a reprint reason) is a copy; a line already scrubbed does not match.
+    private const string UnscrubbedNoteLine = @"'(^|\n) *(NOT|NEDEN): (?!\[anonymized\](\r|\n|$))'";
+
+    private static readonly string OrderNotes =
+        $"""
         SELECT o.order_id AS subject_id, o.created_at AS basis_at
         FROM orders.orders o
         WHERE o.status IN ('Completed', 'Cancelled', 'Rejected')
@@ -24,11 +27,24 @@ internal static class RetentionSelection
                OR EXISTS (SELECT 1 FROM orders.order_items i
                           WHERE i.order_id = o.order_id AND i.notes IS NOT NULL AND i.notes <> @marker)
                OR EXISTS (SELECT 1 FROM orders.order_status_history h
-                          WHERE h.order_id = o.order_id AND h.reason IS NOT NULL AND h.reason <> @marker))
+                          WHERE h.order_id = o.order_id AND h.reason IS NOT NULL AND h.reason <> @marker)
+               OR EXISTS (SELECT 1 FROM kitchen.kitchen_tickets t
+                          WHERE t.order_id = o.order_id AND t.cancellation_reason IS NOT NULL AND t.cancellation_reason <> @marker)
+               OR EXISTS (SELECT 1 FROM kitchen.kitchen_tickets t JOIN kitchen.kitchen_ticket_items ki ON ki.ticket_id = t.id
+                          WHERE t.order_id = o.order_id
+                            AND ((ki.notes IS NOT NULL AND ki.notes <> @marker) OR (ki.cancellation_reason IS NOT NULL AND ki.cancellation_reason <> @marker)))
+               OR EXISTS (SELECT 1 FROM kitchen.kitchen_tickets t JOIN kitchen.print_jobs j ON j.ticket_id = t.id
+                          WHERE t.order_id = o.order_id AND j.status NOT IN ('Pending', 'Leased', 'Printing') AND j.payload ~ {UnscrubbedNoteLine})
+               OR EXISTS (SELECT 1 FROM kitchen.kitchen_tickets t JOIN kitchen.physical_print_deliveries d ON d.ticket_id = t.id
+                          WHERE t.order_id = o.order_id AND d.status NOT IN ('InFlight', 'ReprintInFlight', 'Unknown', 'ReprintApproved')
+                            AND (d.payload_snapshot ~ {UnscrubbedNoteLine} OR d.reprint_payload ~ {UnscrubbedNoteLine}
+                                 OR (d.operator_reason IS NOT NULL AND d.operator_reason <> @marker))))
         """;
 
     // A closed bill's free texts follow the order window. A bill with a refund request still open is not due yet: the request's
     // texts are needed to process it, and the bill is picked up once the request is closed (a finished work item is never reopened).
+    // The texts of a payment not yet settled or of a card confirmation still pending are never counted: they are needed to settle
+    // it, and the rest of the bill is scrubbed without them.
     private const string BillFreeText =
         """
         SELECT b.bill_id AS subject_id, b.created_at AS basis_at
@@ -43,7 +59,15 @@ internal static class RetentionSelection
                           WHERE a.bill_id = b.bill_id AND a.notes IS NOT NULL AND a.notes <> @marker)
                OR EXISTS (SELECT 1 FROM payments.refund_requests r
                           WHERE r.bill_id = b.bill_id AND r.status IN ('Completed', 'Rejected')
-                            AND (r.reason <> @marker OR (r.decision_note IS NOT NULL AND r.decision_note <> @marker))))
+                            AND (r.reason <> @marker OR (r.decision_note IS NOT NULL AND r.decision_note <> @marker)))
+               OR EXISTS (SELECT 1 FROM payments.payments p JOIN payments.payment_status_history h ON h.payment_id = p.payment_id
+                          WHERE p.bill_id = b.bill_id AND p.status NOT IN ('Initiated', 'Pending', 'Unknown', 'ReconciliationRequired')
+                            AND h.reason IS NOT NULL AND h.reason <> @marker)
+               OR EXISTS (SELECT 1 FROM payments.payments p JOIN payments.payment_reversals v ON v.payment_id = p.payment_id
+                          WHERE p.bill_id = b.bill_id AND v.reason <> @marker)
+               OR EXISTS (SELECT 1 FROM payments.manual_card_confirmations m
+                          WHERE m.bill_id = b.bill_id AND m.status IN ('Approved', 'Rejected')
+                            AND ((m.request_note IS NOT NULL AND m.request_note <> @marker) OR (m.decision_note IS NOT NULL AND m.decision_note <> @marker))))
         """;
 
     private const string ReservationReason =

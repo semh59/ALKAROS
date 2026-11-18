@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "232"
+    "max": "233"
   },
   "migrations": [
     {
@@ -1992,6 +1992,14 @@
       "phase": "B",
       "tables": [
         "retention_rules"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "233",
+      "phase": "B",
+      "tables": [
+        "payment_reversals"
       ],
       "deferredConstraints": []
     }

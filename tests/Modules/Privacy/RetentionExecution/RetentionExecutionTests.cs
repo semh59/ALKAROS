@@ -1,3 +1,4 @@
+using System.Globalization;
 using ALKAROS.Privacy.RetentionExecution.Tests.Fixtures;
 using Npgsql;
 using Xunit;
@@ -166,6 +167,130 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
         var plan = await _service.PlanAsync(AsOf);
 
         Assert.Equal([(RetentionClass.OrderNotes, withReason)], Keys(plan));
+    }
+
+    [Fact]
+    public async Task AnOldClosedOrderIsDueWhileATextRemainsOnTheKitchenSideAndRunningPrintsDoNotCount()
+    {
+        const string Slip = "SIPARIS\n      NOT: {0}\n---";
+        var byTicket = await SeedKitchenOrderAsync(ticketReason: "Ali Bey");
+        var byItem = await SeedKitchenOrderAsync(itemNote: "Ali Bey");
+        var byItemReason = await SeedKitchenOrderAsync(itemReason: "Ali Bey");
+        var byJob = await SeedKitchenOrderAsync(jobStatus: "Printed", jobPayload: string.Format(CultureInfo.InvariantCulture, Slip, "Ali Bey"));
+        var bySnapshot = await SeedKitchenOrderAsync(deliveryStatus: "Printed", snapshot: string.Format(CultureInfo.InvariantCulture, Slip, "Ali Bey"));
+        var byReprint = await SeedKitchenOrderAsync(deliveryStatus: "Reprinted", reprint: string.Format(CultureInfo.InvariantCulture, Slip, "Ali Bey"));
+        var byOperator = await SeedKitchenOrderAsync(deliveryStatus: "ReprintRejected", operatorReason: "Ali Bey");
+        await SeedKitchenOrderAsync(ticketReason: "[anonymized]", itemNote: "[anonymized]", itemReason: "[anonymized]", jobStatus: "Printed",
+            jobPayload: string.Format(CultureInfo.InvariantCulture, Slip, "[anonymized]"), deliveryStatus: "Printed", snapshot: string.Format(CultureInfo.InvariantCulture, Slip, "[anonymized]"), operatorReason: "[anonymized]");
+        var byLookalike = await SeedKitchenOrderAsync(jobStatus: "Printed", jobPayload: string.Format(CultureInfo.InvariantCulture, Slip, "[anonymized] Ali Bey"));
+        await SeedKitchenOrderAsync(jobStatus: "Printed", jobPayload: "SIPARIS\r\n      NOT: [anonymized]\r\n1     Kuru NOT: fasulye\r\n---");
+        var byBanner = await SeedKitchenOrderAsync(deliveryStatus: "Reprinted", reprint: "####\nNEDEN: Ali Bey\n----\nSIPARIS");
+        var settledJobs = new List<Guid>();
+        foreach (var settled in new[] { "DeadLetter", "Cancelled", "Failed", "AwaitingOperatorReview" })
+            settledJobs.Add(await SeedKitchenOrderAsync(jobStatus: settled, jobPayload: string.Format(CultureInfo.InvariantCulture, Slip, "Ali Bey")));
+        foreach (var running in new[] { "Pending", "Leased", "Printing" })
+            await SeedKitchenOrderAsync(jobStatus: running, jobPayload: string.Format(CultureInfo.InvariantCulture, Slip, "Ali Bey"));
+        foreach (var running in new[] { "InFlight", "Unknown", "ReprintInFlight" })
+            await SeedKitchenOrderAsync(deliveryStatus: running, snapshot: string.Format(CultureInfo.InvariantCulture, Slip, "Ali Bey"), operatorReason: "Ali Bey");
+        await SeedKitchenOrderAsync(deliveryStatus: "ReprintApproved", reprint: string.Format(CultureInfo.InvariantCulture, Slip, "Ali Bey"));
+        await SeedKitchenOrderAsync(ticketReason: "yakin", ago: Ago(4, 11));
+        await SeedKitchenOrderAsync(ticketReason: "taslak", status: "Draft");
+
+        var plan = await _service.PlanAsync(AsOf);
+
+        Assert.Equal(
+            new HashSet<(RetentionClass, Guid)>
+            {
+                (RetentionClass.OrderNotes, byTicket), (RetentionClass.OrderNotes, byItem), (RetentionClass.OrderNotes, byItemReason),
+                (RetentionClass.OrderNotes, byJob), (RetentionClass.OrderNotes, bySnapshot), (RetentionClass.OrderNotes, byReprint),
+                (RetentionClass.OrderNotes, byOperator), (RetentionClass.OrderNotes, byLookalike), (RetentionClass.OrderNotes, byBanner),
+            }.Concat(settledJobs.Select(order => (RetentionClass.OrderNotes, order))).ToHashSet(),
+            Keys(plan));
+    }
+
+    private async Task<Guid> SeedKitchenOrderAsync(
+        string? ticketReason = null, string? itemNote = null, string? itemReason = null, string? jobStatus = null, string? jobPayload = null,
+        string? deliveryStatus = null, string? snapshot = null, string? reprint = null, string? operatorReason = null,
+        string status = "Completed", DateTimeOffset? ago = null)
+    {
+        var at = ago ?? Ago(5, 2);
+        var order = await _database.SeedOrderAsync(status, at, orderNote: "[anonymized]", itemNote: "[anonymized]");
+        await _database.ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO kitchen.kitchen_tickets (id, order_id, ticket_number, station_id, status, created_at, cancellation_reason)
+            VALUES (@t::uuid, @o::uuid, @tn::text, 'hot', 'Cancelled', @at::timestamptz, @tr::text);
+            INSERT INTO kitchen.kitchen_ticket_items (id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity, status, notes, created_at, cancellation_reason)
+            VALUES (gen_random_uuid(), @t::uuid, gen_random_uuid(), gen_random_uuid(), 'Test', 1, 'Cancelled', @in::text, @at::timestamptz, @ir::text);
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, created_at)
+            VALUES (@j::uuid, @t::uuid, gen_random_uuid(), 'k-' || @j::text, COALESCE(@jp::text, 'SIPARIS'), COALESCE(@js::text, 'Printed'), @at::timestamptz);
+            INSERT INTO kitchen.physical_print_deliveries (id, print_job_id, ticket_id, printer_id, status, operator_reason, payload_snapshot, reprint_payload, created_at)
+            SELECT gen_random_uuid(), @j::uuid, @t::uuid, gen_random_uuid(), @ds::text, @opr::text, COALESCE(@snap::text, 'SIPARIS'), @rp::text, @at::timestamptz WHERE @ds::text IS NOT NULL;
+            """,
+            ("t", Guid.NewGuid()), ("o", order), ("tn", $"T-{order:N}"[..20]), ("at", at), ("tr", (object?)ticketReason ?? DBNull.Value),
+            ("in", (object?)itemNote ?? DBNull.Value), ("ir", (object?)itemReason ?? DBNull.Value), ("j", Guid.NewGuid()),
+            ("jp", (object?)jobPayload ?? DBNull.Value), ("js", (object?)jobStatus ?? DBNull.Value), ("ds", (object?)deliveryStatus ?? DBNull.Value),
+            ("opr", (object?)operatorReason ?? DBNull.Value), ("snap", (object?)snapshot ?? DBNull.Value), ("rp", (object?)reprint ?? DBNull.Value));
+        return order;
+    }
+
+    [Fact]
+    public async Task AClosedBillIsDueWhileASettledPaymentTextRemainsAndTheTextsOfAnUnsettledOrPendingOnesDoNotCount()
+    {
+        var byHistory = await SeedBillWithPaymentAsync(historyReason: "Ali Bey");
+        var byReversal = await SeedBillWithPaymentAsync(reversalReason: "Ali Bey");
+        var byRequestNote = await SeedBillWithPaymentAsync(confirmationStatus: "Approved", requestNote: "Ali Bey");
+        var byDecisionNote = await SeedBillWithPaymentAsync(confirmationStatus: "Rejected", decisionNote: "Ali Bey");
+        await SeedBillWithPaymentAsync(historyReason: "[anonymized]", reversalReason: "[anonymized]", confirmationStatus: "Approved", requestNote: "[anonymized]", decisionNote: "[anonymized]");
+        await SeedBillWithPaymentAsync(paymentStatus: "Approved", confirmationStatus: "Pending", requestNote: "bekliyor");
+        foreach (var open in new[] { "Initiated", "Pending", "Unknown", "ReconciliationRequired" })
+            await SeedBillWithPaymentAsync(historyReason: "Ali Bey", paymentStatus: open);
+        await SeedBillWithPaymentAsync(historyReason: "yakin", ago: Ago(4, 11));
+        var mixed = await SeedBillWithPaymentAsync(historyReason: "Ali Bey");
+        await SeedPaymentAsync(mixed, "Pending", historyReason: "acik odeme");
+
+        var plan = await _service.PlanAsync(AsOf);
+
+        Assert.Equal(
+            new HashSet<(RetentionClass, Guid)>
+            {
+                (RetentionClass.BillFreeText, byHistory), (RetentionClass.BillFreeText, byReversal),
+                (RetentionClass.BillFreeText, byRequestNote), (RetentionClass.BillFreeText, byDecisionNote),
+                (RetentionClass.BillFreeText, mixed),
+            },
+            Keys(plan));
+    }
+
+    private async Task<Guid> SeedBillWithPaymentAsync(
+        string? historyReason = null, string? reversalReason = null, string? confirmationStatus = null, string? requestNote = null,
+        string? decisionNote = null, string paymentStatus = "Refunded", DateTimeOffset? ago = null)
+    {
+        var bill = await SeedBillAsync("Paid", ago ?? Ago(5, 2));
+        await SeedPaymentAsync(bill, paymentStatus, historyReason, reversalReason, confirmationStatus, requestNote, decisionNote);
+        return bill;
+    }
+
+    private async Task SeedPaymentAsync(
+        Guid bill, string paymentStatus, string? historyReason = null, string? reversalReason = null, string? confirmationStatus = null,
+        string? requestNote = null, string? decisionNote = null)
+    {
+        await _database.ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount, initiated_at, created_at, updated_at)
+            VALUES (@p, @b, @st::text, 50, CASE WHEN @st::text <> 'Initiated' THEN 50 END, CASE WHEN @st::text IN ('Approved', 'Refunded', 'PartiallyRefunded') THEN 50 END, now(), now(), now());
+            INSERT INTO payments.payment_status_history (payment_status_history_id, payment_id, old_status, new_status, reason, changed_at)
+            VALUES (gen_random_uuid(), @p, 'Approved', 'Refunded', @hr, now());
+            INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            SELECT gen_random_uuid(), @p, 'FullRefund', 50, @rr, gen_random_uuid(), 'k-' || @p::text, now() WHERE @rr::text IS NOT NULL;
+            INSERT INTO payments.manual_card_confirmations (confirmation_id, payment_id, bill_id, slip_number, amount, status, requested_by, requested_at, request_note, decided_by, decided_at, decision_note)
+            SELECT gen_random_uuid(), @p, @b, 'S-' || @p::text, 50, @cs, gen_random_uuid(), now(), @rn,
+                   CASE WHEN @cs <> 'Pending' THEN gen_random_uuid() END, CASE WHEN @cs <> 'Pending' THEN now() END, @dn
+            WHERE @cs::text IS NOT NULL;
+            """,
+            ("p", Guid.NewGuid()), ("b", bill), ("st", paymentStatus), ("hr", (object?)historyReason ?? DBNull.Value),
+            ("rr", (object?)reversalReason ?? DBNull.Value), ("cs", (object?)confirmationStatus ?? DBNull.Value),
+            ("rn", (object?)requestNote ?? DBNull.Value), ("dn", (object?)decisionNote ?? DBNull.Value));
     }
 
     private async Task<Guid> SeedBillAsync(

@@ -519,6 +519,247 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         Assert.Equal("sonradan acildi", await ScalarAsync<string>("SELECT reason FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", late)));
     }
 
+    private const string SlipLines = "SIPARIS\r\n1     Kuru NOT: fasulye\r\n      + az sut\r\n      NOT: {0}\n      NOT: az\n      NOT: acisiz\n      NOT: [anonymized] sizinti\n---";
+
+    private static string Slip(string note) => SlipLines.Replace("{0}", note, StringComparison.Ordinal);
+
+    private const string ReprintReason = "Ali Bey istedi\nmasa 4";
+
+    private static string Banner(string reason, string slip) => "####\r\nONAYLAYAN: u1\r\nNEDEN: " + reason + "\r\nTEKRAR TARIHI: x\r\n----\r\n" + slip;
+
+    private sealed record SeededKitchen(Guid TicketId, Guid ItemId, Guid PrintedJobId, Guid PendingJobId, Guid ReprintedId, Guid InFlightId, Guid LookalikeJobId);
+
+    private async Task<SeededKitchen> SeedKitchenAsync(Guid orderId, int createdAgoYears, string note = "az pisirin\nAli Bey'in masasi")
+    {
+        var k = new SeededKitchen(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO kitchen.kitchen_tickets (id, order_id, ticket_number, station_id, status, created_at, cancelled_at, cancellation_reason)
+            VALUES (@t, @o, @tn, 'hot', 'Cancelled', now() - make_interval(years => @ago), now() - make_interval(years => @ago), 'Ali Bey gitti');
+            INSERT INTO kitchen.kitchen_ticket_items (id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity, status, notes, created_at, cancelled_at, cancellation_reason)
+            VALUES (@i, @t, gen_random_uuid(), gen_random_uuid(), 'Test', 1, 'Cancelled', @note, now() - make_interval(years => @ago), now() - make_interval(years => @ago), 'Ali Bey gitti');
+            INSERT INTO kitchen.kitchen_ticket_items (id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity, status, notes, created_at)
+            VALUES (gen_random_uuid(), @t, gen_random_uuid(), gen_random_uuid(), 'Test', 1, 'Cancelled', 'az', now() - make_interval(years => @ago));
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, created_at)
+            VALUES (@pj, @t, gen_random_uuid(), 'k-' || @pj::text, @payload, 'Printed', now() - make_interval(years => @ago)),
+                   (@qj, @t, gen_random_uuid(), 'k-' || @qj::text, @payload, 'Pending', now() - make_interval(years => @ago)),
+                   (@lj, @t, gen_random_uuid(), 'k-' || @lj::text, @lookalike, 'Cancelled', now() - make_interval(years => @ago));
+            INSERT INTO kitchen.physical_print_deliveries (id, print_job_id, ticket_id, printer_id, status, operator_reason, payload_snapshot, reprint_payload, created_at)
+            VALUES (@rd, @pj, @t, gen_random_uuid(), 'Reprinted', @reason, @payload, @banner, now() - make_interval(years => @ago)),
+                   (@fd, @qj, @t, gen_random_uuid(), 'InFlight', 'Ali Bey istedi', @payload, NULL, now() - make_interval(years => @ago));
+            """,
+            ("t", k.TicketId), ("o", orderId), ("tn", $"T-{k.TicketId:N}"[..20]), ("ago", createdAgoYears), ("i", k.ItemId), ("note", note),
+            ("pj", k.PrintedJobId), ("qj", k.PendingJobId), ("rd", k.ReprintedId), ("fd", k.InFlightId), ("lj", k.LookalikeJobId),
+            ("payload", Slip(note)), ("reason", ReprintReason), ("banner", Banner(ReprintReason, Slip(note))), ("lookalike", "SIPARIS\n      NOT: [anonymized] sizinti\n---"));
+        return k;
+    }
+
+    private Task<string> KitchenRowsAsync(SeededKitchen k) => ScalarAsync<string>(
+        """
+        SELECT concat_ws('|',
+            (SELECT concat_ws(',', status, created_at, cancelled_at, row_version, cancellation_reason) FROM kitchen.kitchen_tickets WHERE id = @t),
+            (SELECT concat_ws(',', notes, cancellation_reason) FROM kitchen.kitchen_ticket_items WHERE id = @i),
+            (SELECT concat_ws(',', status, payload) FROM kitchen.print_jobs WHERE id = @pj),
+            (SELECT concat_ws(',', status, payload) FROM kitchen.print_jobs WHERE id = @qj),
+            (SELECT concat_ws(',', status, operator_reason, payload_snapshot, reprint_payload) FROM kitchen.physical_print_deliveries WHERE id = @rd),
+            (SELECT concat_ws(',', status, operator_reason, payload_snapshot) FROM kitchen.physical_print_deliveries WHERE id = @fd));
+        """,
+        ("t", k.TicketId), ("i", k.ItemId), ("pj", k.PrintedJobId), ("qj", k.PendingJobId), ("rd", k.ReprintedId), ("fd", k.InFlightId));
+
+    [Fact]
+    public async Task KitchenTextsOfAnOldClosedOrderAreScrubbedWhileTheRestOfTheSlipAndRunningPrintsStay()
+    {
+        var productId = await SeedProductAsync();
+        var old = await SeedOrderAsync(productId, "Completed", 6, Marker);
+        var recent = await SeedOrderAsync(productId, "Completed", 1, Marker);
+        var draft = await SeedOrderAsync(productId, "Draft", 6, Marker);
+        var oldKitchen = await SeedKitchenAsync(old, 6);
+        var recentKitchen = await SeedKitchenAsync(recent, 1);
+        var draftKitchen = await SeedKitchenAsync(draft, 6);
+        var recentBefore = await KitchenRowsAsync(recentKitchen);
+        var draftBefore = await KitchenRowsAsync(draftKitchen);
+        var runningBefore = await ScalarAsync<string>(
+            "SELECT concat_ws('|', (SELECT payload FROM kitchen.print_jobs WHERE id = @q), (SELECT concat_ws(',', operator_reason, payload_snapshot) FROM kitchen.physical_print_deliveries WHERE id = @f));",
+            ("q", oldKitchen.PendingJobId), ("f", oldKitchen.InFlightId));
+
+        Assert.Contains("failed=0", Apply(), StringComparison.Ordinal);
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE data_class = 'OrderNotes';"));
+
+        const string ScrubbedSlip = "SIPARIS\r\n1     Kuru NOT: fasulye\r\n      + az sut\r\n      NOT: [anonymized]\n      NOT: [anonymized]\n      NOT: [anonymized]\n      NOT: [anonymized]\n---";
+        Assert.Equal(Marker + "," + Marker, await ScalarAsync<string>("SELECT concat_ws(',', notes, cancellation_reason) FROM kitchen.kitchen_ticket_items WHERE id = @i;", ("i", oldKitchen.ItemId)));
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT cancellation_reason FROM kitchen.kitchen_tickets WHERE id = @t;", ("t", oldKitchen.TicketId)));
+        Assert.Equal("Cancelled", await ScalarAsync<string>("SELECT status FROM kitchen.kitchen_tickets WHERE id = @t;", ("t", oldKitchen.TicketId)));
+        Assert.Equal(ScrubbedSlip, await ScalarAsync<string>("SELECT payload FROM kitchen.print_jobs WHERE id = @j;", ("j", oldKitchen.PrintedJobId)));
+        Assert.Equal("SIPARIS\n      NOT: [anonymized]\n---", await ScalarAsync<string>("SELECT payload FROM kitchen.print_jobs WHERE id = @j;", ("j", oldKitchen.LookalikeJobId)));
+        Assert.Equal(
+            "2,2,1",
+            await ScalarAsync<string>(
+                "SELECT (SELECT row_version FROM kitchen.print_jobs WHERE id = @j) || ',' || (SELECT row_version FROM kitchen.physical_print_deliveries WHERE id = @d) || ',' || (SELECT row_version FROM kitchen.print_jobs WHERE id = @q);",
+                ("j", oldKitchen.PrintedJobId), ("d", oldKitchen.ReprintedId), ("q", oldKitchen.PendingJobId)));
+        Assert.Equal(
+            Marker + "|" + ScrubbedSlip + "|" + Banner(Marker, ScrubbedSlip),
+            await ScalarAsync<string>("SELECT concat_ws('|', operator_reason, payload_snapshot, reprint_payload) FROM kitchen.physical_print_deliveries WHERE id = @d;", ("d", oldKitchen.ReprintedId)));
+        Assert.Equal(runningBefore, await ScalarAsync<string>(
+            "SELECT concat_ws('|', (SELECT payload FROM kitchen.print_jobs WHERE id = @q), (SELECT concat_ws(',', operator_reason, payload_snapshot) FROM kitchen.physical_print_deliveries WHERE id = @f));",
+            ("q", oldKitchen.PendingJobId), ("f", oldKitchen.InFlightId)));
+        Assert.Equal(recentBefore, await KitchenRowsAsync(recentKitchen));
+        Assert.Equal(draftBefore, await KitchenRowsAsync(draftKitchen));
+
+        var oldAfter = await KitchenRowsAsync(oldKitchen);
+        Assert.Contains("failed=0", Apply(), StringComparison.Ordinal);
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE data_class = 'OrderNotes';"));
+        Assert.Equal(oldAfter, await KitchenRowsAsync(oldKitchen));
+    }
+
+    [Fact]
+    public async Task AnOrderWhoseOnlyRemainingTextIsOnTheKitchenSideIsScrubbedAndAHeldOrderKeepsItsKitchenTexts()
+    {
+        var productId = await SeedProductAsync();
+        var onlyKitchen = await SeedOrderAsync(productId, "Completed", 6, Marker);
+        var held = await SeedOrderAsync(productId, "Completed", 6, Marker);
+        var kitchen = await SeedKitchenAsync(onlyKitchen, 6);
+        var heldKitchen = await SeedKitchenAsync(held, 6);
+        var heldBefore = await KitchenRowsAsync(heldKitchen);
+        var excludeFile = Path.Combine(Path.GetTempPath(), $"kvkk-hold-{Guid.NewGuid():N}.txt");
+        await File.WriteAllTextAsync(excludeFile, held + Environment.NewLine);
+        try
+        {
+            Assert.Contains("failed=0", Apply(excludeFile), StringComparison.Ordinal);
+        }
+        finally
+        {
+            File.Delete(excludeFile);
+        }
+
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE data_class = 'OrderNotes';"));
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT notes FROM kitchen.kitchen_ticket_items WHERE id = @i;", ("i", kitchen.ItemId)));
+        Assert.Equal(heldBefore, await KitchenRowsAsync(heldKitchen));
+    }
+
+    private sealed record SeededPayment(Guid PaymentId, Guid HistoryId, Guid ReversalId, Guid ConfirmationId);
+
+    private async Task<SeededPayment> SeedPaymentAsync(Guid billId, string status, int agoYears, string confirmationStatus = "Approved")
+    {
+        var p = new SeededPayment(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount, initiated_at, created_at, updated_at)
+            VALUES (@p, @b, @st::text, 50, CASE WHEN @st::text <> 'Initiated' THEN 50 END, CASE WHEN @st::text IN ('Approved', 'Refunded', 'PartiallyRefunded') THEN 50 END,
+                    now() - make_interval(years => @ago), now() - make_interval(years => @ago), now() - make_interval(years => @ago));
+            INSERT INTO payments.payment_status_history (payment_status_history_id, payment_id, old_status, new_status, reason, changed_at)
+            VALUES (@h, @p, 'Approved', 'Refunded', 'Ali Bey memnun kalmadi', now() - make_interval(years => @ago));
+            INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            VALUES (@r, @p, 'FullRefund', 50, 'Ali Bey memnun kalmadi', gen_random_uuid(), 'k-' || @r::text, now() - make_interval(years => @ago));
+            INSERT INTO payments.manual_card_confirmations (confirmation_id, payment_id, bill_id, slip_number, amount, status, requested_by, requested_at, request_note, decided_by, decided_at, decision_note)
+            VALUES (@c, @p, @b, 'S-' || @c::text, 50, @cs, gen_random_uuid(), now() - make_interval(years => @ago), 'Ali Bey istedi',
+                    CASE WHEN @cs <> 'Pending' THEN gen_random_uuid() END, CASE WHEN @cs <> 'Pending' THEN now() - make_interval(years => @ago) END,
+                    CASE WHEN @cs <> 'Pending' THEN 'Ali Bey ile konusuldu' END);
+            """,
+            ("p", p.PaymentId), ("b", billId), ("st", status), ("ago", agoYears), ("h", p.HistoryId), ("r", p.ReversalId), ("c", p.ConfirmationId), ("cs", confirmationStatus));
+        return p;
+    }
+
+    private Task<string> PaymentRowsAsync(SeededPayment p) => ScalarAsync<string>(
+        """
+        SELECT concat_ws('|',
+            (SELECT concat_ws(',', status, requested_amount, approved_amount, initiated_at, row_version) FROM payments.payments WHERE payment_id = @p),
+            (SELECT concat_ws(',', old_status, new_status, changed_at, reason) FROM payments.payment_status_history WHERE payment_status_history_id = @h),
+            (SELECT concat_ws(',', reversal_type, amount, occurred_at, idempotency_key, reason) FROM payments.payment_reversals WHERE reversal_id = @r),
+            (SELECT concat_ws(',', slip_number, amount, status, decided_at, row_version, request_note, decision_note) FROM payments.manual_card_confirmations WHERE confirmation_id = @c));
+        """,
+        ("p", p.PaymentId), ("h", p.HistoryId), ("r", p.ReversalId), ("c", p.ConfirmationId));
+
+    [Fact]
+    public async Task PaymentTextsOfAnOldClosedBillAreScrubbedWhileAmountsStatesAndDatesStayAndASecondRunChangesNothing()
+    {
+        var old = await SeedBillAsync("Paid", 6, "iptal yok");
+        var recent = await SeedBillAsync("Paid", 1, "yakin");
+        var oldPayment = await SeedPaymentAsync(old.BillId, "Refunded", 6);
+        var rejected = await SeedPaymentAsync(old.BillId, "Declined", 6, "Rejected");
+        var recentPayment = await SeedPaymentAsync(recent.BillId, "Refunded", 1);
+        var recentBefore = await PaymentRowsAsync(recentPayment);
+        var amountsBefore = await ScalarAsync<string>(
+            "SELECT concat_ws('|', (SELECT concat_ws(',', status, requested_amount, approved_amount, initiated_at, row_version) FROM payments.payments WHERE payment_id = @p), (SELECT concat_ws(',', reversal_type, amount, occurred_at, idempotency_key) FROM payments.payment_reversals WHERE reversal_id = @r));",
+            ("p", oldPayment.PaymentId), ("r", oldPayment.ReversalId));
+
+        Assert.Contains("bill_texts=1", Apply(), StringComparison.Ordinal);
+
+        foreach (var payment in new[] { oldPayment, rejected })
+        {
+            Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM payments.payment_status_history WHERE payment_status_history_id = @h;", ("h", payment.HistoryId)));
+            Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM payments.payment_reversals WHERE reversal_id = @r;", ("r", payment.ReversalId)));
+            Assert.Equal(Marker + "," + Marker, await ScalarAsync<string>("SELECT concat_ws(',', request_note, decision_note) FROM payments.manual_card_confirmations WHERE confirmation_id = @c;", ("c", payment.ConfirmationId)));
+        }
+
+        Assert.Equal(amountsBefore, await ScalarAsync<string>(
+            "SELECT concat_ws('|', (SELECT concat_ws(',', status, requested_amount, approved_amount, initiated_at, row_version) FROM payments.payments WHERE payment_id = @p), (SELECT concat_ws(',', reversal_type, amount, occurred_at, idempotency_key) FROM payments.payment_reversals WHERE reversal_id = @r));",
+            ("p", oldPayment.PaymentId), ("r", oldPayment.ReversalId)));
+        Assert.Equal(recentBefore, await PaymentRowsAsync(recentPayment));
+
+        var after = await PaymentRowsAsync(oldPayment);
+        Assert.Contains("bill_texts=0", Apply(), StringComparison.Ordinal);
+        Assert.Equal(after, await PaymentRowsAsync(oldPayment));
+    }
+
+    [Fact]
+    public async Task ABillWithAPendingCardConfirmationOrAnUnsettledPaymentKeepsThoseTextsWhileTheRestOfTheBillIsScrubbed()
+    {
+        var pending = await SeedBillAsync("Paid", 6, "iptal yok");
+        var unsettled = await SeedBillAsync("Paid", 6, "iptal yok");
+        var pendingPayment = await SeedPaymentAsync(pending.BillId, "Approved", 6, "Pending");
+        var unsettledPayment = await SeedPaymentAsync(unsettled.BillId, "ReconciliationRequired", 6);
+
+        Assert.Contains("bill_texts=2", Apply(), StringComparison.Ordinal);
+
+        foreach (var bill in new[] { pending, unsettled })
+            Assert.Equal(Marker, await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", bill.BillId)));
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM payments.payment_reversals WHERE reversal_id = @r;", ("r", pendingPayment.ReversalId)));
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM payments.payment_status_history WHERE payment_status_history_id = @h;", ("h", pendingPayment.HistoryId)));
+        Assert.Equal(
+            "Ali Bey istedi",
+            await ScalarAsync<string>("SELECT request_note FROM payments.manual_card_confirmations WHERE confirmation_id = @c;", ("c", pendingPayment.ConfirmationId)));
+        Assert.Equal("Ali Bey memnun kalmadi", await ScalarAsync<string>("SELECT reason FROM payments.payment_status_history WHERE payment_status_history_id = @h;", ("h", unsettledPayment.HistoryId)));
+    }
+
+    [Fact]
+    public async Task APaymentTextOfABillUnderALegalHoldStays()
+    {
+        var held = await SeedBillAsync("Paid", 6, "dava konusu");
+        var payment = await SeedPaymentAsync(held.BillId, "Refunded", 6);
+        await ExecuteAsync(
+            "INSERT INTO privacy.legal_holds (hold_id, data_class, subject_id, reason, placed_by) VALUES (gen_random_uuid(), 'BillFreeText', @b, 'Vergi incelemesi', gen_random_uuid());",
+            ("b", held.BillId));
+        var before = await PaymentRowsAsync(payment);
+
+        Assert.Contains("bill_texts=0", Apply(), StringComparison.Ordinal);
+        Assert.Equal(before, await PaymentRowsAsync(payment));
+    }
+
+    [Fact]
+    public async Task ThePaymentReversalLedgerAcceptsOnlyTheMarkerAsATextChangeAndStillRefusesEverythingElse()
+    {
+        var bill = await SeedBillAsync("Paid", 6, "x");
+        var payment = await SeedPaymentAsync(bill.BillId, "Refunded", 6);
+        static string Update(string set) => $"UPDATE payments.payment_reversals SET {set} WHERE reversal_id = @r;";
+        var r = ("r", (object)payment.ReversalId);
+
+        foreach (var tamper in new[] { "amount = 49", "reversal_type = 'PartialRefund'", "reason = 'baska metin'", "reason = '[anonymized]', amount = 49", "reason = '[anonymized]', occurred_at = now()" })
+            Assert.Equal("23000", await SqlStateAsync(() => ExecuteAsync(Update(tamper), r)));
+        Assert.Equal("23000", await SqlStateAsync(() => ExecuteAsync("DELETE FROM payments.payment_reversals WHERE reversal_id = @r;", r)));
+
+        await ExecuteAsync(Update("reason = '[anonymized]'"), r);
+        await ExecuteAsync(Update("reason = '[anonymized]'"), r);
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM payments.payment_reversals WHERE reversal_id = @r;", r));
+    }
+
+    private static async Task<string> SqlStateAsync(Func<Task> action)
+    {
+        var failure = await Assert.ThrowsAsync<PostgresException>(action);
+        return failure.SqlState;
+    }
+
     private sealed record SeededBill(Guid BillId, Guid ItemId, Guid AdjustmentId, Guid RefundId);
 
     private async Task<SeededBill> SeedBillAsync(string status, int createdAgoYears, string cancellationReason, string? decisionNote = "Ali Bey ile konusuldu")
