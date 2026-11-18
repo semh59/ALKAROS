@@ -1,0 +1,5 @@
+# V1-RMD-1159 sonuc
+Kok neden: urun regresyonu yok; istemci sinirlari sunucuyla ayni. Test varsayimi eskidi: kasa ekranina sonradan cekmece notu 200 (V1-RMD-1135) ve yonetici kullanici adi 64 / parola 256 (V1-RMD-1144) eklendi; iade ekrani kesfi "refund + maxLength" ile ilgisiz dosyalari (Bekleyen hesaplar, eslestirme kodu 8) yakaliyordu.
+Duzeltme: kasa ekranindaki her sinir sunucu kaynagindaki sayiya baglandi (500 sabit, 200 CashDrawerService, 64/256 DualScreenApplication.CashSession); iade ekranlari refund-requests/refundApi cagrisiyla bulunur, 64/256 yalniz parola alani olan dosyada serbest. Gevsetme yok: siniflanmamis sayi kirar, toplam 13 sabit.
+Kanit: red.log (4 kirmizi), green.log 9/9, mutations.txt M1-M5 killed (cp+cmp), CashSession HTTP siniflari 39+35+47+44 yesil (PG 55432, 5432'ye gidilmedi).
+Acik riskler (qa dusuk): (1) kasa testi sayi adedine bakar, alan kimligine degil; kullanici adi/parola sinirlari kendi aralarinda yer degistirse yakalamaz; (2) iade ekraninda dosyada "password" gecerse 64/256 o dosyanin her alaninda serbest; (3) maxLength'siz yeni iade ekrani kesfin disinda (eski davranis).

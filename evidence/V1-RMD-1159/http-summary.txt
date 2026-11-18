@@ -1,0 +1,4 @@
+CashSessionHttpTests: Başarılı!  - Başarısız:     0, Başarılı:    39, Atlanan:     0, Toplam:    39, Süre: 4 m 19 s - ALKA 5432=0
+CashDrawerHttpTests: Başarılı!  - Başarısız:     0, Başarılı:    35, Atlanan:     0, Toplam:    35, Süre: 4 m 26 s - ALKA 5432=0
+CashMovementApprovalHttpTests: Başarılı!  - Başarısız:     0, Başarılı:    47, Atlanan:     0, Toplam:    47, Süre: 5 m 28 s - ALKA 5432=0
+CashCloseSafetyHttpTests: Başarılı!  - Başarısız:     0, Başarılı:    44, Atlanan:     0, Toplam:    44, Süre: 5 m 37 s - ALKA 5432=0

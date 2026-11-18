@@ -1,7 +1,7 @@
 # V1-RMD-1159 - İstemci sınır kilidi testleri gerçek sınırları izler (4 kırmızı kök neden)
 
 - Task ID: V1-RMD-1159
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

@@ -68,8 +68,15 @@ public sealed class ClientLimitLockTests
         var script = File.ReadAllText(Path.Combine(
             Root, "src", "Clients", "Cashier", "wwwroot", "payments", "cash-session", "cash-session.js"));
         var limits = Limits(script);
-        Assert.Equal(7, limits.Length);
-        Assert.All(limits, limit => Assert.Equal(CashSessionPolicy.MaxExplanationLength, limit));
+        Assert.Equal(7, limits.Count(limit => limit == CashSessionPolicy.MaxExplanationLength));
+
+        // The drawer note and the manager credentials are private server limits, so the server source must still state the same number.
+        var drawerNote = ServerLimit(Path.Combine("Host", "DualScreen", "CashDrawerService.cs"), "MaxNoteLength = (\\d+);");
+        var (username, password) = CredentialLimits(Path.Combine("Host", "DualScreen", "DualScreenApplication.CashSession.cs"), "ManagerUsername", "ManagerPassword");
+        Assert.Equal(4, limits.Count(limit => limit == drawerNote));
+        Assert.Equal(1, limits.Count(limit => limit == username));
+        Assert.Equal(1, limits.Count(limit => limit == password));
+        Assert.Equal(7 + 4 + 2, limits.Length);
     }
 
     // Every client file that calls the refund endpoints, found rather than listed, so a new refund screen is covered at once.
@@ -85,8 +92,8 @@ public sealed class ClientLimitLockTests
                          && !path.Contains(Path.DirectorySeparatorChar + "dist" + Path.DirectorySeparatorChar, StringComparison.Ordinal)
                          && !path.Contains(".test.", StringComparison.Ordinal)))
         {
-            if (File.ReadAllText(file).Contains("refund", StringComparison.OrdinalIgnoreCase)
-                && Regex.IsMatch(File.ReadAllText(file), "max[Ll]ength"))
+            var text = File.ReadAllText(file);
+            if (Regex.IsMatch(text, "refund-requests|refundApi") && Regex.IsMatch(text, "max[Ll]ength"))
             {
                 found++;
                 data.Add(Path.GetRelativePath(FindRoot(), file).Replace(Path.DirectorySeparatorChar, '/'));
@@ -109,8 +116,10 @@ public sealed class ClientLimitLockTests
 
         Assert.Contains(PaymentRefundStore.MaxTextLength, limits);
         Assert.Contains(PaymentRefundStore.MaxSlipLength, limits);
+        var (username, password) = CredentialLimits(Path.Combine("Host", "Experience", "Billing", "BillingSplitApplication.cs"), "Username", "Password");
         Assert.All(limits, limit => Assert.True(
-            limit == PaymentRefundStore.MaxTextLength || limit == PaymentRefundStore.MaxSlipLength,
+            limit == PaymentRefundStore.MaxTextLength || limit == PaymentRefundStore.MaxSlipLength
+                || (source.Contains("password", StringComparison.OrdinalIgnoreCase) && (limit == username || limit == password)),
             $"{screen} states a length limit of {limit} that no server rule has."));
     }
 
@@ -119,6 +128,17 @@ public sealed class ClientLimitLockTests
         .Matches(source, "max[Ll]ength[=:]?\\{?\"?(\\d+)|(?:notes|note|reason)\\.length > (\\d+)|(\\d+) karakter")
         .Select(match => int.Parse(match.Groups.Cast<Group>().Skip(1).First(group => group.Success).Value, CultureInfo.InvariantCulture))
         .ToArray();
+
+    private static int ServerLimit(string sourceFile, string pattern)
+    {
+        var match = Regex.Match(File.ReadAllText(Path.Combine(Root, "src", sourceFile)), pattern);
+        Assert.True(match.Success, $"{sourceFile} no longer states {pattern}.");
+        return int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+    }
+
+    private static (int Username, int Password) CredentialLimits(string sourceFile, string usernameField, string passwordField) => (
+        ServerLimit(sourceFile, $"request\\.{usernameField}\\.Length > (\\d+)"),
+        ServerLimit(sourceFile, $"request\\.{passwordField}\\.Length > (\\d+)"));
 
     private static string FindRoot()
     {
