@@ -1,0 +1,6 @@
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AWalArchiveOverItsLimitIsAnErrorUntilTheNextRecordIsUnderIt() in D:\PROJECT\ALKAROS\tests\Host\Observability\DomainDetectors\DomainDetectorsTests.cs:line 444
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 2 s - ALKAROS.Host.Observability.DomainDetectors.Tests.dll (net8.0)
+[xUnit.net 00:00:02.03]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AWalArchiveOverItsLimitIsAnErrorUntilTheNextRecordIsUnderIt [FAIL]

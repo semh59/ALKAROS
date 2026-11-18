@@ -1,7 +1,7 @@
 # V1-RMD-1168 - Yedek alarmları: tür bazında başarısızlık ve bayatlama, makine dışı kopya ve WAL arşivi büyüklüğü
 
 - Task ID: V1-RMD-1168
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

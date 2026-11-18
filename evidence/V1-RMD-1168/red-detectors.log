@@ -1,0 +1,65 @@
+D:\PROJECT\ALKAROS\tests\Host\Observability\DomainDetectors\bin\Debug\net8.0\ALKAROS.Host.Observability.DomainDetectors.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.96]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AWalArchiveOverItsLimitIsAnErrorUntilTheNextRecordIsUnderIt [FAIL]
+[xUnit.net 00:00:02.10]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.EachBackupKindGoesStaleOnItsOwnClock [FAIL]
+[xUnit.net 00:00:02.14]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.TheOffMachineCopyStateOfTheLatestDumpIsAWarningWhenOffAndAnErrorWhenFailing [FAIL]
+  Başarısız ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AWalArchiveOverItsLimitIsAnErrorUntilTheNextRecordIsUnderIt [237 ms]
+  Hata İletisi:
+   Expected (StatusAsync("backup.wal_archive_oversize")) to be "Open", but "None" differs near "Non" (index 0).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.StringEqualityValidator.ValidateAgainstMismatch()
+   at FluentAssertions.Primitives.StringValidator.Validate()
+   at FluentAssertions.Primitives.StringAssertions`1.Be(String expected, String because, Object[] becauseArgs)
+   at ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AWalArchiveOverItsLimitIsAnErrorUntilTheNextRecordIsUnderIt() in D:\PROJECT\ALKAROS\tests\Host\Observability\DomainDetectors\DomainDetectorsTests.cs:line 392
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.EachBackupKindGoesStaleOnItsOwnClock [43 ms]
+  Hata İletisi:
+   Expected (OpenCountAsync("backup.stale")) to be 1L, but found 0L (difference of -1).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.EachBackupKindGoesStaleOnItsOwnClock() in D:\PROJECT\ALKAROS\tests\Host\Observability\DomainDetectors\DomainDetectorsTests.cs:line 353
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.TheOffMachineCopyStateOfTheLatestDumpIsAWarningWhenOffAndAnErrorWhenFailing [36 ms]
+  Hata İletisi:
+   Expected (StatusAsync("backup.offsite_unavailable")) to be "Open", but "None" differs near "Non" (index 0).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.StringEqualityValidator.ValidateAgainstMismatch()
+   at FluentAssertions.Primitives.StringValidator.Validate()
+   at FluentAssertions.Primitives.StringAssertions`1.Be(String expected, String because, Object[] becauseArgs)
+   at ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.TheOffMachineCopyStateOfTheLatestDumpIsAWarningWhenOffAndAnErrorWhenFailing() in D:\PROJECT\ALKAROS\tests\Host\Observability\DomainDetectors\DomainDetectorsTests.cs:line 374
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.32]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AFailedBaseBackupIsNotHiddenByALaterGoodDump [FAIL]
+  Başarısız ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AFailedBaseBackupIsNotHiddenByALaterGoodDump [35 ms]
+  Hata İletisi:
+   Expected (OpenCountAsync("backup.failed")) to be 1L, but found 0L (difference of -1).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AFailedBaseBackupIsNotHiddenByALaterGoodDump() in D:\PROJECT\ALKAROS\tests\Host\Observability\DomainDetectors\DomainDetectorsTests.cs:line 339
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     4, Başarılı:    14, Atlanan:     0, Toplam:    18, Süre: 1 s - ALKAROS.Host.Observability.DomainDetectors.Tests.dll (net8.0)
+exit=1

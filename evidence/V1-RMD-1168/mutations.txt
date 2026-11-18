@@ -1,0 +1,16 @@
+M1 KILLED backup.failed not grouped by kind :: 
+M2 KILLED logical stale threshold equals the general one :: 
+M3 KILLED offsite failed is only a warning :: 
+M4 KILLED offsite copied also alarms :: 
+M5 KILLED wal oversize comparison inverted :: 
+M6 KILLED offsite reads the oldest dump instead of the latest :: 
+M7 KILLED logical stale default 30 hours :: 
+M8 KILLED stale counts failed attempts as completed :: 
+M9 KILLED wal oversize reads the oldest record :: 
+M10 KILLED offsite only looks at any kind :: 
+M11 KILLED manual rows alarm next to a healthy scheduler :: 
+M12 KILLED any metadata kind is accepted as its own group :: 
+M13 KILLED non-numeric wal size not guarded :: 
+M14 KILLED wal oversize alarms at exactly the limit :: 
+M15 KILLED offsite disabled raised to an error :: 
+DONE

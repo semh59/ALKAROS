@@ -18,6 +18,7 @@ public sealed class DomainDetectorOptions
     public int ProviderFailureStreakForError { get; set; } = 5;
     public int DeliveryStuckMinutes { get; set; } = 10;
     public int BackupMaxAgeHours { get; set; } = 26;
+    public int LogicalBackupMaxAgeHours { get; set; } = 3;
     public int FiscalRpoMinutes { get; set; } = 5;
     public int OrdersInventoryRpoMinutes { get; set; } = 60;
     public int SettingsRpoMinutes { get; set; } = 1440;
@@ -45,6 +46,10 @@ public sealed class DomainDetectorRunner(
 
     private static Action<NpgsqlCommand, DomainDetectorOptions> Minutes(string name, Func<DomainDetectorOptions, int> value) =>
         (command, options) => command.Parameters.AddWithValue(name, value(options));
+
+    private const string SchedulerKinds = "('logical', 'base')";
+    private const string BackupKind = $"(CASE WHEN metadata->>'kind' IN {SchedulerKinds} THEN metadata->>'kind' ELSE 'manual' END)";
+    private const string SchedulerRows = $"SELECT 1 FROM operations.backups WHERE metadata->>'kind' IN {SchedulerKinds}";
 
     private static readonly DomainCheck[] Checks =
     [
@@ -96,17 +101,45 @@ public sealed class DomainDetectorRunner(
             WHERE status = 'Pending' AND last_error IS NOT NULL AND requested_at < now() - make_interval(mins => @m)
             GROUP BY channel;
             """, Minutes("m", o => o.DeliveryStuckMinutes)),
+        // The backup scheduler writes one row per attempt tagged metadata.kind (logical | base). Any other row (written through
+        // the API) is a "manual" row; manual rows only count while no scheduler row exists, so an old manual row cannot raise an
+        // alarm forever next to a healthy scheduler. Per kind, so a good hourly dump cannot hide a failed daily base backup.
         new(ErrorLayer.Backup, "backup.failed",
-            """
-            SELECT 2, 'latest backup failed' FROM (
-                SELECT status FROM operations.backups ORDER BY started_at DESC LIMIT 1) latest WHERE status = 'Failed';
+            $"""
+            SELECT 2, 'kind=' || kind FROM (
+                SELECT DISTINCT ON ({BackupKind}) {BackupKind} AS kind, status
+                FROM operations.backups ORDER BY {BackupKind}, started_at DESC) latest
+            WHERE status = 'Failed' AND (kind <> 'manual' OR NOT EXISTS ({SchedulerRows}));
             """, NoBinding),
         new(ErrorLayer.Backup, "backup.stale",
+            $"""
+            SELECT 1, 'kind=' || kind FROM (
+                SELECT {BackupKind} AS kind,
+                       coalesce(max(completed_at) FILTER (WHERE status = 'Completed'), '-infinity') AS last_completed
+                FROM operations.backups GROUP BY 1) per_kind
+            WHERE last_completed < now() - make_interval(hours => CASE kind WHEN 'logical' THEN @logical ELSE @h END)
+              AND (kind <> 'manual' OR NOT EXISTS ({SchedulerRows}));
+            """, (command, o) =>
+            {
+                command.Parameters.AddWithValue("logical", o.LogicalBackupMaxAgeHours);
+                command.Parameters.AddWithValue("h", o.BackupMaxAgeHours);
+            }),
+        new(ErrorLayer.Backup, "backup.offsite_unavailable",
             """
-            SELECT 1, 'no recent completed backup' FROM operations.backups
-            HAVING count(*) > 0
-               AND coalesce(max(completed_at) FILTER (WHERE status = 'Completed'), '-infinity') < now() - make_interval(hours => @h);
-            """, Minutes("h", o => o.BackupMaxAgeHours)),
+            SELECT CASE offsite WHEN 'failed' THEN 2 ELSE 1 END, 'offsite=' || offsite FROM (
+                SELECT metadata->>'offsite' AS offsite FROM operations.backups
+                WHERE metadata->>'kind' = 'logical' AND status = 'Completed' ORDER BY started_at DESC LIMIT 1) latest
+            WHERE offsite IN ('failed', 'disabled');
+            """, NoBinding),
+        // HealthProbe measures the api container's root file system, which on Docker Desktop is the virtual disk and says
+        // nothing about the real drive, so the disk alarm is the WAL archive's own size against the limit the scheduler recorded.
+        new(ErrorLayer.Backup, "backup.wal_archive_oversize",
+            """
+            SELECT 2, 'wal archive over limit' FROM (
+                SELECT metadata FROM operations.backups WHERE metadata ? 'walArchiveBytes' ORDER BY started_at DESC LIMIT 1) latest
+            WHERE CASE WHEN jsonb_typeof(metadata->'walArchiveBytes') = 'number' AND jsonb_typeof(metadata->'walArchiveLimitBytes') = 'number'
+                       THEN (metadata->>'walArchiveBytes')::numeric > (metadata->>'walArchiveLimitBytes')::numeric ELSE false END;
+            """, NoBinding),
         new(ErrorLayer.Backup, "backup.rpo_exceeded",
             """
             SELECT 2, 'data class=' || r.data_class FROM operations.offsite_backup_receipts r

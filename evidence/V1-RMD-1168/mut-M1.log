@@ -1,0 +1,6 @@
+
+Başarısız! - Başarısız:     4, Başarılı:    15, Atlanan:     0, Toplam:    19, Süre: 2 s - ALKAROS.Host.Observability.DomainDetectors.Tests.dll (net8.0)
+[xUnit.net 00:00:01.05]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.FailedBackupAndMissedOffsiteTargetAreEventsAndResolveOnRecovery [FAIL]
+[xUnit.net 00:00:01.14]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.ManualBackupRowsOnlyCountUntilTheSchedulerHasWrittenItsOwn [FAIL]
+[xUnit.net 00:00:01.81]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AWalArchiveOverItsLimitIsAnErrorUntilTheNextRecordIsUnderIt [FAIL]
+[xUnit.net 00:00:02.69]     ALKAROS.Host.Observability.DomainDetectors.Tests.DomainDetectorsTests.AFailedBaseBackupIsNotHiddenByALaterGoodDump [FAIL]

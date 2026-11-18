@@ -315,4 +315,143 @@ public sealed class DomainDetectorsTests : IClassFixture<DomainDatabase>
         await RunAsync();
         (await StatusAsync("backup.stale")).Should().Be("Open");
     }
+
+    private async Task SeedBackupAsync(string kind, string status, int minutesAgo, string extraMetadata = "")
+        => await _database.ExecuteAsync(
+            """
+            INSERT INTO operations.backups (backup_id, backup_type, file_path, file_size_bytes, checksum_sha256, status, started_at, completed_at, metadata)
+            VALUES (@b, 'Full', 'f', 1, 'c', @s, now() - make_interval(mins => @m),
+                    CASE WHEN @s = 'Completed' THEN now() - make_interval(mins => @m) END,
+                    ('{"kind": "' || @k || '"' || @x || '}')::jsonb);
+            """, ("b", Guid.NewGuid()), ("s", status), ("m", minutesAgo), ("k", kind), ("x", extraMetadata));
+
+    private Task<string> OpenSeverityAsync(string category) =>
+        _database.ScalarAsync<string>($"SELECT coalesce((SELECT severity FROM observability.error_events WHERE category = '{category}' AND status <> 'Resolved' LIMIT 1), 'None');");
+
+    private Task<long> OpenCountAsync(string category) =>
+        _database.ScalarAsync<long>($"SELECT count(*) FROM observability.error_events WHERE category = '{category}' AND status <> 'Resolved';");
+
+    [Fact]
+    public async Task AFailedBaseBackupIsNotHiddenByALaterGoodDump()
+    {
+        await ResetAsync();
+        await SeedBackupAsync("base", "Failed", 30);
+        await SeedBackupAsync("logical", "Completed", 10);
+
+        await RunAsync();
+        (await OpenCountAsync("backup.failed")).Should().Be(1);
+
+        await SeedBackupAsync("base", "Completed", 1);
+        await RunAsync();
+        (await OpenCountAsync("backup.failed")).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ManualBackupRowsOnlyCountUntilTheSchedulerHasWrittenItsOwn()
+    {
+        await ResetAsync();
+        await _database.ExecuteAsync(
+            "INSERT INTO operations.backups (backup_id, backup_type, file_path, file_size_bytes, checksum_sha256, status) VALUES (@b, 'Full', 'f', 0, 'c', 'Failed');",
+            ("b", Guid.NewGuid()));
+        await RunAsync();
+        (await OpenCountAsync("backup.failed")).Should().Be(1);
+        await SeedBackupAsync("logical", "Completed", 2);
+        await RunAsync();
+        (await OpenCountAsync("backup.failed")).Should().Be(0);
+
+        await ResetAsync();
+        await SeedBackupAsync("weird", "Failed", 5);
+        await RunAsync();
+        (await OpenCountAsync("backup.failed")).Should().Be(1);
+
+        await SeedBackupAsync("logical", "Completed", 2);
+        await SeedBackupAsync("base", "Completed", 2);
+        await _database.ExecuteAsync("UPDATE operations.backups SET completed_at = now() - interval '3 days' WHERE metadata->>'kind' = 'weird';");
+        await RunAsync();
+        (await OpenCountAsync("backup.failed")).Should().Be(0);
+        (await OpenCountAsync("backup.stale")).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task EachBackupKindGoesStaleOnItsOwnClock()
+    {
+        await ResetAsync();
+        await SeedBackupAsync("base", "Completed", 27 * 60);
+        await SeedBackupAsync("logical", "Completed", 5);
+        await RunAsync();
+        (await OpenCountAsync("backup.stale")).Should().Be(1);
+
+        await ResetAsync();
+        await SeedBackupAsync("base", "Completed", 5);
+        await SeedBackupAsync("logical", "Completed", 4 * 60);
+        await RunAsync();
+        (await OpenCountAsync("backup.stale")).Should().Be(1);
+
+        await ResetAsync();
+        await SeedBackupAsync("base", "Completed", 25 * 60);
+        await SeedBackupAsync("logical", "Completed", 2 * 60);
+        await RunAsync();
+        (await OpenCountAsync("backup.stale")).Should().Be(0);
+
+        await ResetAsync();
+        await SeedBackupAsync("base", "Completed", 27 * 60);
+        await _database.ExecuteAsync(
+            "INSERT INTO operations.backups (backup_id, backup_type, file_path, file_size_bytes, checksum_sha256, status, started_at, completed_at, metadata) VALUES (@b, 'Full', 'f', 0, 'c', 'Failed', now(), now(), '{\"kind\": \"base\"}');",
+            ("b", Guid.NewGuid()));
+        await RunAsync();
+        (await OpenCountAsync("backup.stale")).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task TheOffMachineCopyStateOfTheLatestDumpIsAWarningWhenOffAndAnErrorWhenFailing()
+    {
+        await ResetAsync();
+        await SeedBackupAsync("logical", "Completed", 3, ", \"offsite\": \"disabled\"");
+        await RunAsync();
+        (await StatusAsync("backup.offsite_unavailable")).Should().Be("Open");
+        (await OpenSeverityAsync("backup.offsite_unavailable")).Should().Be("Warning");
+
+        await SeedBackupAsync("logical", "Completed", 2, ", \"offsite\": \"failed\"");
+        await RunAsync();
+        (await OpenSeverityAsync("backup.offsite_unavailable")).Should().Be("Error");
+
+        await SeedBackupAsync("logical", "Completed", 1, ", \"offsite\": \"copied\"");
+        await RunAsync();
+        (await OpenCountAsync("backup.offsite_unavailable")).Should().Be(0);
+
+        await SeedBackupAsync("logical", "Completed", 0, ", \"offsite\": \"disabled\"");
+        await SeedBackupAsync("base", "Completed", 0, ", \"offsite\": \"copied\"");
+        await RunAsync();
+        (await OpenCountAsync("backup.offsite_unavailable")).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task AWalArchiveOverItsLimitIsAnErrorUntilTheNextRecordIsUnderIt()
+    {
+        await ResetAsync();
+        await SeedBackupAsync("base", "Completed", 2, ", \"walArchiveBytes\": 2000, \"walArchiveLimitBytes\": 1000");
+        await RunAsync();
+        (await StatusAsync("backup.wal_archive_oversize")).Should().Be("Open");
+        (await OpenSeverityAsync("backup.wal_archive_oversize")).Should().Be("Error");
+
+        await SeedBackupAsync("logical", "Completed", 1, ", \"walArchiveBytes\": 500, \"walArchiveLimitBytes\": 1000");
+        await RunAsync();
+        (await OpenCountAsync("backup.wal_archive_oversize")).Should().Be(0);
+
+        await ResetAsync();
+        await SeedBackupAsync("base", "Completed", 1, ", \"walArchiveBytes\": 1000, \"walArchiveLimitBytes\": 1000");
+        await RunAsync();
+        (await OpenCountAsync("backup.wal_archive_oversize")).Should().Be(0);
+
+        await ResetAsync();
+        await SeedBackupAsync("manual", "Completed", 1);
+        await RunAsync();
+        (await OpenCountAsync("backup.wal_archive_oversize")).Should().Be(0);
+
+        await ResetAsync();
+        await SeedBackupAsync("base", "Completed", 1, ", \"walArchiveBytes\": \"many\", \"walArchiveLimitBytes\": 1000");
+        var runner = await RunAsync();
+        runner.Failures.Should().Be(0);
+        (await OpenCountAsync("backup.wal_archive_oversize")).Should().Be(0);
+    }
 }
