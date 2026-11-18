@@ -1,0 +1,36 @@
+# Gecici sunucuda geri yukleme denemesi (canli veritabanina dokunulmadi; gercek 15 MB dokum, canli yedek birimi salt okunur)
+basladi: 2026-11-18T19:05:06Z
+--- 1) yedek listesi (salt okunur)
+total 15216
+-rw-r--r-- 1 root root      104 Nov 18 17:17 alkaros_alkaros_20261118T171712Z.dump.sha256
+-rw-r--r-- 1 root root 15397103 Nov 18 17:17 alkaros_alkaros_20261118T171712Z.dump
+--- 2) ayri veritabanina geri yukleme (restore.sh)
+restore: checksum verified sha256=117c27dee00fd925aa52ddd58ac92cb149af7fbd2e5170d77bd161c389363ce9
+restore: recreating clean target database "alkaros_restore"
+NOTICE:  database "alkaros_restore" does not exist, skipping
+restore: pg_restore -> alkaros@rt-pg:5432/alkaros_restore
+restore: ok target=alkaros_restore seconds=27
+toplam sure: 29 sn
+--- 3) kontrol sorgulari (adim 4)
+odeme|70|2026-11-18 17:16:32.594279+00
+kasa hareketi|92
+--- 4) canliya alma: adlari degistir (adim 5; burada 'alkaros' canli veritabaninin yerine gecici sunucudaki bos veritabani)
+ALTER DATABASE
+ALTER DATABASE
+--- 5) uygulama rolu (alkaros_app) yetkisi, migrate calismadan once
+ERROR:  permission denied for schema payments
+LINE 1: SELECT count(*) FROM payments.payments
+--- 6) migrate adiminin yetki bolumu (deploy/docker/roles.sql)
+roles.sql cikis: 0
+--- 7) uygulama rolu, migrate sonrasi
+70
+--- 8) oturumlari iptal (adim 6)
+acik oturum|0
+--- 9) temizlik: gecici sunucu (ve icindeki butun deneme veritabanlari) ve ag kaldirildi
+kalan gecici kapsayici: 0
+bitti: 2026-11-18T19:05:44Z
+--- yeni makinede kopya diskinden yedek birimine tasima (komut denemesi, gecici birim)
+total 8
+-rwxr-xr-x 1 root root 5 Nov 18 19:09 alkaros_alkaros_20261118T171712Z.dump
+-rwxr-xr-x 1 root root 4 Nov 18 19:09 alkaros_alkaros_20261118T171712Z.dump.sha256
+gecici birim silindi

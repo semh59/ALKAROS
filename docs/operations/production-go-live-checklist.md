@@ -96,10 +96,13 @@ Still MANUAL before go-live:
 
 - [ ] One drill against **production-sized** data on the **real** site host, to
       record actual `pg_dump` / `pg_restore` timings and confirm they fit the
-      RTO targets in `docs/recovery/rpo-rto-targets.md` (the ~165 KB dev dataset
-      restores in <1 s and proves nothing about a full restaurant's volume).
-- [ ] Schedule the hourly backup cron from `docs/recovery/backup-restore-runbook.md`
-      and confirm artifacts land on **off-host** durable storage.
+      RTO targets in `docs/recovery/rpo-rto-targets.md` (a 15 MB dump of the dev
+      database restored in 27-55 s on a laptop, see `docs/operations/yedekten-geri-donus.md`;
+      that proves nothing about a full restaurant's volume).
+- [x] Hourly dump and daily base backup are scheduled by the `backup-scheduler` service
+      (V1-RMD-1167; starts with the stack).
+- [ ] Set `ALKAROS_OFFSITE_COPY_TARGET` to a drive-letter path and confirm files arrive
+      (`docs/operations/yedekten-geri-donus.md` section 6).
 - [ ] **DECISION** — `V0-BKP-002` numeric RPO/RTO targets still need a named
       business approver; see the competitive calibration below.
 
@@ -136,8 +139,8 @@ now the authoritative table in `docs/recovery/rpo-rto-targets.md`:
 | Data class | RPO | RTO | Mechanism | V1 status |
 | --- | --- | --- | --- | --- |
 | In-progress orders (client-side) | ~0 | n/a (keeps operating) | offline queue + local-first sync | **shipped** |
-| Financial (bills, payments), fiscal, audit | 5 min | 2 h | PostgreSQL WAL archiving + physical base backup → PITR (`V1-RMD-095`) | **shipped** (cron + off-host copy pending) |
-| Orders, kitchen, inventory, customer | 1 h | 4 h | hourly `pg_dump` + off-host copy | **shipped** (cron + off-host copy pending) |
+| Financial (bills, payments), fiscal, audit | 5 min | 2 h | PostgreSQL WAL archiving + physical base backup → PITR (`V1-RMD-095`) | **shipped** (scheduled; off-host target pending) |
+| Orders, kitchen, inventory, customer | 1 h | 4 h | hourly `pg_dump` + off-host copy | **shipped** (scheduled; off-host target pending) |
 | Settings, config | 24 h | 8 h | daily `pg_dump` | **shipped** |
 | Uptime aspiration | — | — | — | 99.9% north-star; single-node V1 cannot contract to it (needs warm standby, `V15-BKP`) |
 
@@ -146,11 +149,11 @@ WAL archiving shipped in wave 22 (`V1-RMD-095`): `archive_mode = on` +
 `deploy/docker/restore-pitr.sh`, `deploy/docker/pitr-selfcheck.sh` (proven
 end to end against the live schema — see `evidence/V1-RMD-095/`).
 
-- [ ] Schedule `docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup`
-      after every migration and daily; copy each base backup **and** the growing
-      `alkaros-wal-archive` volume to off-host storage (hourly for WAL).
-- [ ] Prune the off-host WAL archive after each verified base backup per
-      `docs/recovery/rpo-rto-targets.md` §3.
+- [x] Base backup (daily) and pruning (2 base backups, WAL back to the oldest kept) run in
+      `backup-scheduler`; see `docs/recovery/rpo-rto-targets.md` section 3.
+- [ ] Copy each base backup **and** the WAL to off-host storage: set
+      `ALKAROS_OFFSITE_COPY_TARGET` (a drive-letter path; the scheduler copies every 5 minutes
+      and prunes the copy with the same rule).
 
 ## 4. Monitoring and alerting — PARTIAL
 
@@ -278,7 +281,7 @@ nasıl yürüyeceği burada ele alınmaz.)
 | Production-sized restore timing | **pending — site** |
 | RPO/RTO numeric sign-off (`V0-BKP-002`) | approved 2026-09-01 (Semih); table in §3a and `docs/recovery/rpo-rto-targets.md` |
 | Local/offline order RPO ≈ 0 (competitor parity) | shipped |
-| PITR / WAL archiving (5 min RPO for money/fiscal/audit) | shipped (`V1-RMD-095`); off-host copy + cron pending |
+| PITR / WAL archiving (5 min RPO for money/fiscal/audit) | shipped (`V1-RMD-095`), scheduled and pruned (`V1-RMD-1167`); off-host target pending |
 | Off-host copy of base backups + WAL archive | **pending — ops wiring** |
 | Kasada internet kesilince elle satış prosedürü (§6) | **pending — kasiyer eğitimi ve defter basımı** |
 

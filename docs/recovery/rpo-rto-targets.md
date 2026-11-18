@@ -55,8 +55,10 @@ Conclusions:
    streaming replication. That is a `V15-BKP` item; V1 accepts the 5-minute
    WAL-archive RPO for the single-store pilot.
 3. Off-host copy: the WAL archive volume and each base backup must be copied to
-   storage on a different machine, at least hourly for WAL, after every base
-   backup. 3-2-1: live DB + local backup volume + off-host copy.
+   storage on a different machine. `backup-scheduler` does this every 5 minutes
+   when `ALKAROS_OFFSITE_COPY_TARGET` names a drive-letter path (a UNC path is
+   not supported); without a target the `backup.offsite_unavailable` warning
+   stays open. 3-2-1: live DB + local backup volume + off-host copy.
 4. PII in backups follows the retention/disposal rules of the `V0-CMP-003`
    inventory; do not keep customer-identifying data in backups past the
    approved window.
@@ -70,14 +72,14 @@ WAL archiving is configured in `deploy/docker/postgresql.tuned.conf`
 every 5 minutes). `deploy/docker/pg_hba.conf` allows the replication connection
 `pg_basebackup` needs.
 
-1. **Base backup** — after every schema migration and on a daily schedule:
+1. **Base backup** — taken daily by `backup-scheduler` (and by hand after a schema migration):
 
    ```sh
    docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup
    ```
 
    Writes `alkaros-backups:/backups/base/alkaros_base_<UTC>` (tar.gz +
-   `SHA256SUMS`). Copy it and the growing WAL archive off-host.
+   `SHA256SUMS`). `backup-scheduler` copies it and the growing WAL archive off-host when a target is set.
 
 2. **Recover to a point in time** — into a side data directory, never the live one:
 
@@ -98,27 +100,41 @@ every 5 minutes). `deploy/docker/pg_hba.conf` allows the replication connection
    (`SELECT pg_is_in_recovery()` returns `f`; check row counts and the newest
    `orders` / `reporting` timestamps).
 
-4. **Promote** only after verification, by swapping data directories (same steps
-   as `docs/recovery/backup-restore-runbook.md` → "Promoting a restored copy").
+4. **Promoting** a recovered cluster to live (swapping data directories) is not
+   rehearsed and has no written procedure. The rehearsed way back into live is the
+   dump restore with database renames in `docs/operations/yedekten-geri-donus.md`
+   (section 3); use the recovered cluster to read the data of the chosen moment
+   and carry what is needed over.
 
 ### WAL archive retention
 
-The `alkaros-wal-archive` volume grows continuously. After each verified base
-backup, WAL segments older than the second-most-recent base backup can be
-pruned from the off-host copy (keep an overlap so you can always recover from at
-least the previous base). Never prune segments newer than the oldest base
-backup you still keep.
+The `alkaros-wal-archive` volume grows continuously, so `backup-scheduler`
+(`deploy/docker/backup-scheduler.sh`, V1-RMD-1167) prunes it after every
+verified base backup. The policy is one number: **keep the newest 2 base
+backups** (`ALKAROS_BASE_BACKUP_KEEP`, minimum 2; one base can turn out bad, so
+the one before it must stay restorable) and every WAL segment from the START
+WAL file written in the oldest kept base's own `backup_label` onward;
+`pg_archivecleanup -b` removes everything older. Nothing is pruned until the new
+base backup verified (checksum, `gzip -t`, readable `backup_label`), and nothing
+is pruned when that label cannot be read. With a daily base backup this is about
+two days of point-in-time recovery; the measured archive growth was ~0.5 GB/day
+(2556 segments of 16 MB archived between 1 September and 18 November 2026, about 33
+segments a day; worst case 288 forced segments x 16 MB x 2 days ~ 9.2 GB, hence the 10 GB
+`ALKAROS_WAL_ARCHIVE_MAX_GB` alarm, `backup.wal_archive_oversize`). The same
+rule prunes the off-machine copy. `backup-scheduler.sh prune` runs the pruning
+alone. The 30-day dump retention (48 h of all dumps, then the first dump of each
+UTC day) covers older recoveries.
 
-Pruning is a manual step today (no script runs it). With the archive volume mounted, give
-`pg_archivecleanup <archive directory> <oldest kept base backup's .backup file name>` the
-label file of the oldest base backup you still keep; it removes every segment older than that.
-Run it after each verified base backup, and check the volume's free space at least weekly: a
-full archive volume makes `archive_command` fail and WAL then piles up inside the database.
+Free-space monitoring: `HealthProbe` measures the api container's root file
+system, which on Docker Desktop is the virtual disk (1007 GB reported while the
+real drive had 167 GB free), so it cannot warn about the real drive; the
+WAL-archive size alarm above is the disk-fill guard.
 
 ## 4. What is out of scope
 
 - Streaming replication / hot standby for RPO ≈ 0 — `V15-BKP`.
-- Encrypted off-site automation and scheduled resumable restore drills —
+- Encrypting the off-machine copy written by `backup-scheduler` (it is plain; keep the target disk encrypted).
+- Encrypted off-site upload of dumps by the api and scheduled resumable restore drills —
   `V15-BKP-001`, `V15-BKP-002`, `V20-DRL-001`.
 - Application behaviour — unchanged; this is PostgreSQL configuration, operator
   scripts and documentation only.

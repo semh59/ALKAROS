@@ -3,9 +3,12 @@
 > Source basis: PDF:II.2.23, PDF:III.25, EXT:POSTGRESQL-18.4, PO:2026-09-01
 > Owner task: V1-RMD-086
 
-This runbook covers the **on-demand local** backup and restore of the ALKAROS
-PostgreSQL database. Off-site encrypted copies and scheduled automatic restore
-drills are out of scope here (`V15-BKP-001`, `V15-BKP-002`).
+This runbook covers the local backup and restore of the ALKAROS PostgreSQL
+database. Backups are taken automatically by the `backup-scheduler` service
+(V1-RMD-1167); the plain-language restore procedure for the owner is
+`docs/operations/yedekten-geri-donus.md`. Encrypted off-site upload by the api
+and scheduled automatic restore drills are separate (`V15-BKP-001`,
+`V15-BKP-002`).
 
 ## What ships
 
@@ -41,24 +44,23 @@ restore.
 
 ### Retention
 
-The mechanism does not delete anything. Recommended starting policy for a single
-restaurant (adjust to the approved RPO/RTO in `V0-BKP-002`):
+`backup-scheduler` takes a dump every 60 minutes and prunes it: all dumps of the
+last 48 hours, then the first dump of each UTC day for 30 days; the newest dump
+is never pruned. These numbers match the policy this runbook used to recommend;
+change them with `ALKAROS_DUMP_KEEP_HOURS` / `ALKAROS_DUMP_KEEP_DAILY_DAYS`. A
+manual `backup` run (above) is not pruned until the scheduler's next pass.
+Base-backup and WAL retention are described in `docs/recovery/rpo-rto-targets.md`
+section 3.
 
-- Hourly backup during trading hours, kept 48 hours.
-- One end-of-day backup kept 30 days.
-- One end-of-month backup kept 12 months, stored off the restaurant premises.
 - PII in old backups follows the retention/disposal rules from the `V0-CMP-003`
   inventory; do not keep customer-identifying data in backups longer than the
-  approved window.
-
-A cron entry gives you the schedule:
-
-```cron
-# every hour, on the hour
-0 * * * * cd /opt/alkaros && docker compose -f compose.yaml -f compose.ops.yaml run --rm backup >> /var/log/alkaros-backup.log 2>&1
-```
-
-RPO is then approximately the cron interval.
+  approved window. After a restore re-run the disposal jobs (see "After a
+  restore" below).
+- RPO is the dump interval (60 minutes) for dump-based recovery; point-in-time
+  recovery from the base backup and WAL archive reaches 5 minutes.
+- The optional copy to another machine (`ALKAROS_OFFSITE_COPY_TARGET`, a
+  drive-letter path; UNC is not supported) is plain, not encrypted: keep that
+  disk encrypted and out of the premises.
 
 ## Restoring
 
@@ -87,14 +89,18 @@ the most recent `orders` / `reporting.daily_business_days` timestamps.
 
 ### Promoting a restored copy to live
 
-1. Stop everything that holds a connection to the live database: `docker compose stop api connector watchdog`.
+1. Stop everything that holds a connection to the live database: `docker compose stop api connector watchdog backup-scheduler`.
    The renames below fail while another session is connected, and the QR relay
    `connector` keeps its own connection pool.
 2. Rename databases (psql as a superuser):
    `ALTER DATABASE alkaros RENAME TO alkaros_broken_<date>;`
    `ALTER DATABASE alkaros_restore RENAME TO alkaros;`
-3. Start the services again: `docker compose start api connector watchdog`.
-4. Once confirmed healthy, drop `alkaros_broken_<date>`.
+3. Re-grant the runtime roles: `docker compose run --rm migrate`. The restore uses `--no-privileges`, so without this
+   `alkaros_app` gets "permission denied" on every schema (reproduced on a throwaway server; the grants come back with
+   `deploy/docker/roles.sql`, which `migrate` runs).
+4. Revoke the device sessions (see "Identity after a restore" below) before the next step.
+5. Start the services again: `docker compose start api connector watchdog backup-scheduler`.
+6. Once confirmed healthy, drop `alkaros_broken_<date>`.
 
 ### What a backup does not contain
 

@@ -1,7 +1,7 @@
 # V1-RMD-1169 - Sade Türkçe "Yedekten geri dönüş" prosedürü ve yedek zamanlaması/hedef ayarı belgeleri
 
 - Task ID: V1-RMD-1169
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: documentation
 - Surface state: Existing
