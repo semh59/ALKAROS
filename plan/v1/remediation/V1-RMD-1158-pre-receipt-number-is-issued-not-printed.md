@@ -1,7 +1,7 @@
 # V1-RMD-1158 - Hesap ön fişi: numara basımdan önce verilir, iptal edilen yazdırma numarayı tüketir (karar kaydı)
 
 - Task ID: V1-RMD-1158
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: analysis
 - Surface state: Existing

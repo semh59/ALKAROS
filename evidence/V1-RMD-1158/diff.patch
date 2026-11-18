@@ -1,0 +1,18 @@
+diff --git a/docs/domain/bill-pre-receipt.md b/docs/domain/bill-pre-receipt.md
+index 89d3853c3..dc335df56 100644
+--- a/docs/domain/bill-pre-receipt.md
++++ b/docs/domain/bill-pre-receipt.md
+@@ -25,6 +25,13 @@ Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmay
+ - Yetki `bills.split` (hesap açma ve bölme yetkisiyle aynı): Öde düğmesini gösteren ekranlar bu yetkiyle çalışır.
+ - Hesap başka bir kasada açıksa yalnız o kasa ya da `cash.session.override` yetkisi olan kullanıcı basabilir.
+ 
++## Numara ve yazdırma penceresi (karar: V1-RMD-1158)
++
++- "Hesap fişi no", yazdırma penceresi açılmadan önce verilir: sunucu `order.pre-receipt.printed` kaydını yazıp işlemi kapatır, sonra istemci `window.print()` çağırır (`preReceipt.ts`; masa ekranı `TableOrderBridge.tsx` ile Bekleyen hesaplar `PendingChecksWorkspace.tsx` aynı işlevi çağırır). Numara bu yüzden "basılan" değil "verilen" numaradır.
++- Kasiyer yazdırma penceresini iptal ederse numara kullanılmış kalır; sonraki dokunuş bir sonraki numarayı alır. Her numaranın `order.pre-receipt.printed` kaydı vardır (iptal edilen yazdırmanın da); kayıtlarda boşluk oluşmaz, boşluk yalnız basılı fişlerle kayıtlar karşılaştırılınca görünür. Ön fiş mali değildir ve sayaç ödenmiş hesabın orijinal/kopya hakkından ayrıdır; repoda ön fiş numarası için ardışıklık kuralı yoktur. Ön fişin bulut yolundaki "Hesap Özeti Bilgi Fişi" yerine geçip geçmediği (V13-FSC-004) ve boşluğun o belge için sorun olup olmadığı aşağıdaki mali müşavir teyidine bağlıdır. Numara denetim kayıtlarından sayıldığı için, kayıtlar saklama süresi sonunda silinirse numara 1'den başlar. Denetim kaydı iptali ayırt etmez: boşluğun nedeni kayıttan okunmaz.
++- "Yalnız gerçekten yazdırılınca artsın" tarayıcı penceresiyle uygulanamaz: HTML standardı (8.9.2 Printing) `afterprint` olayını yazdırma teklifinden sonra koşulsuz tetikler ve `print()` sonucu döndürmez; kullanıcının basıp basmadığı sayfaya bildirilmez. Doğrudan yazıcıya basım (iptalin bilindiği yol) bu kararın kapsamı dışındadır.
++- Yazdırma penceresi açıkken sayfa beklemesi uygulama hatası değildir: standart, tarayıcının kullanıcı kabul ya da ret edene kadar `print()` çağrısını durdurmasına izin verir. Uygulamada zamanlayıcı ya da yeniden deneme yoktur; fiş içeriği yalnız `@media print` içinde görünür (`pre-receipt.css`), bu yüzden `afterprint` hiç gelmeyen bir ortamda (otomasyon) ekran etkilenmez. Yerel yazdırma penceresini göremeyen otomasyon araçları bu yüzden takılır; gerçek kasiyer pencereyi kapatınca devam eder.
++
+ ## Dış bağımlılık: mali müşavirle teyit edilecek
+ 
+ Aşağıdakiler henüz doğrulanmadı ve mali müşavirle teyit edilecektir; teyide kadar fişte mali değer iddiası bulunmaz:
