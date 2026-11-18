@@ -1,7 +1,7 @@
 # V1-RMD-1171 - Eskimiş dağıtım sözleşmesi testi (test_container_contract.py) güncel compose ile uyuşur
 
 - Task ID: V1-RMD-1171
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
