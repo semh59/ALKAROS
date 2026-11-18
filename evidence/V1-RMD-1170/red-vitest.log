@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-error-events/ErrorEventsSection.test.tsx (40 tests | 2 failed) 790ms
+     × category backup.offsite_unavailable has a Turkish label 24ms
+     × category backup.wal_archive_oversize has a Turkish label 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-error-events/ErrorEventsSection.test.tsx > error events section > category backup.offsite_unavailable has a Turkish label
+ FAIL  src/features/management-error-events/ErrorEventsSection.test.tsx > error events section > category backup.wal_archive_oversize has a Turkish label
+AssertionError: expected 'Telegram bildirimi yapılandırılmamış;…' not to contain 'Bilinmiyor'
+
+Expected: "Bilinmiyor"
+Received: "Telegram bildirimi yapılandırılmamış; hatalar yalnız bu ekranda görünür.KatmanTümüVeritabanıSunucuArka plan işiYazıcıÖdemeMutfakEntegrasyonTarayıcıGüvenlikYedeklemeÖnemTümüBilgiUyarıHataKritikDurumTümüAçıkGörüldüÇözüldüSistem hatalarıTürKatmanÖnemDurumAdetSon görülmeCihazİşlemBilinmiyorYazıcıKritikAçık416.10.2026 12:00:00terminal:ab12cd34AyrıntıGördümÇözüldüÖncekiSayfa 1 / 1Sonraki"
+
+ ❯ src/features/management-error-events/ErrorEventsSection.test.tsx:107:43
+    105|     const list = vi.fn().mockResolvedValue(page([{ ...item, category }…
+    106|     await render(<ErrorEventsSection capabilities={manager} client={fa…
+    107|     expect(document.body.textContent).not.toContain("Bilinmiyor");
+       |                                           ^
+    108|     expect(document.body.textContent).not.toContain(category);
+    109|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 38 passed (40)
+   Start at  22:12:46
+   Duration  3.94s (transform 310ms, setup 0ms, import 497ms, tests 790ms, environment 1.99s)
+
+exit=1

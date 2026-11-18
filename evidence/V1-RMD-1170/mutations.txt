@@ -1,0 +1,4 @@
+backup.offsite_unavailable label removed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 39 passed (40)
+backup.wal_archive_oversize label removed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 39 passed (40)

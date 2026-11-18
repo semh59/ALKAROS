@@ -27,7 +27,7 @@ export const categoryLabel = label({
   "browser.offline_queue_backlog": "Çevrimdışı kuyruk birikti", "api.server_error_response": "Sunucu hata yanıtı verdi",
   "db.slow_query": "Yavaş sorgu", "db.slow_query_plan": "Yavaş sorgu planı", "db.n_plus_one": "Tekrarlayan sorgu", "db.pool_saturation": "Bağlantı havuzu doldu",
   "db.statement": "Sorgu ayrıntısı", "background.job_missed": "Arka plan işi çalışmadı",
-  "backup.failed": "Yedekleme başarısız", "backup.restore_failed": "Geri yükleme başarısız", "backup.rpo_exceeded": "Yedek sıklığı aşıldı", "backup.stale": "Yedek eski",
+  "backup.failed": "Yedekleme başarısız", "backup.restore_failed": "Geri yükleme başarısız", "backup.rpo_exceeded": "Yedek sıklığı aşıldı", "backup.stale": "Yedek eski", "backup.offsite_unavailable": "Makine dışı kopya kullanılamıyor", "backup.wal_archive_oversize": "Yedek kayıt arşivi sınırı aştı",
   "integration.external_call_failed": "Dış servis çağrısı başarısız", "integration.external_call_slow": "Dış servis çağrısı yavaş",
   "integration.catalog_undelivered": "Menü platforma iletilemedi", "integration.provider_poll_failing": "Platform siparişleri alınamıyor",
   "integration.qr_tunnel_down": "QR bağlantı tüneli kapalı", "integration.store_status_undelivered": "Restoran durumu platforma iletilemedi",

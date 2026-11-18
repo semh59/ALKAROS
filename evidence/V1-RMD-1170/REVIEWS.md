@@ -1,0 +1,3 @@
+# V1-RMD-1170 qa
+1. qa-ux-tasarim: bulgu yok; sunucu kategori adlari birebir eslesiyor, terim "Yedek..." kalibina uyuyor, ikinci bir sozluk/Telegram metni yok. Dusuk: "aştı" yerine "aşıldı" onerisi - 1169 belgesindeki ad ile tutarlilik icin korundu; sunucu detay metinleri Ingilizce ama ekran bunlari gostermez (kategori etiketi gosterilir) ve 1170 oncesinden var.
+2. qa-test-kalitesi: 6 backup.* kategorisi tam kapsandi, test hem "Bilinmiyor" hem ham ad sizmasini yakaliyor. Orta (kapsam disi, devir): 1170 disinda 5 sunucu kategorisi etiketsiz ("Bilinmiyor" gorunur): resource.disk_high, resource.memory_high, system.unreachable, outbox.dead_letter, monitoring.retention_failed - ayri plan gerekir; sunucu sabitlerinden etiket eslesme testi yok.

@@ -96,7 +96,7 @@ describe("error events section", () => {
   });
 
   it.each([
-    "api.server_error_response", "background.job_missed", "backup.failed", "backup.restore_failed", "backup.rpo_exceeded", "backup.stale",
+    "api.server_error_response", "background.job_missed", "backup.failed", "backup.offsite_unavailable", "backup.restore_failed", "backup.rpo_exceeded", "backup.stale", "backup.wal_archive_oversize",
     "browser.offline_queue_backlog", "db.n_plus_one", "db.pool_saturation", "db.slow_query", "db.slow_query_plan", "db.statement",
     "integration.catalog_undelivered", "integration.external_call_failed", "integration.external_call_slow", "integration.provider_poll_failing",
     "integration.qr_tunnel_down", "integration.store_status_undelivered", "kitchen.ticket_not_accepted", "payment.reconciliation_required",
