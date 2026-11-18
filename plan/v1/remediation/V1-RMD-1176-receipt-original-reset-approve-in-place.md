@@ -1,7 +1,7 @@
 # V1-RMD-1176 - Yerinde yönetici onayı: kasiyer ekranında fişin orijinal hakkını yöneticinin şifresiyle sıfırlama
 
 - Task ID: V1-RMD-1176
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
