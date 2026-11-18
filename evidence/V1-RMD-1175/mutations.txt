@@ -1,0 +1,6 @@
+C1-body-key:       Tests  1 failed | 4 passed (5)
+C2-empty-check:       Tests  1 failed | 4 passed (5)
+C3-form-always:       Tests  4 failed | 1 passed (5)
+S1-decider-is-cashier: Başarısız! - Başarısız:     1, Başarılı:     0, Atl
+S2-ownership-check-removed: Başarısız! - Başarısız:     1, Başarılı:     0, Atl
+RESTORED

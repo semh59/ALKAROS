@@ -123,6 +123,7 @@
     // İptal ve iade: kasiyerin gerekçeyle hesabı iptal etmesi, ödemeyi iade istemesi ve (yetkiliyse) isteği onaylaması.
     cancelReason: '',
     canApproveRefund: false,
+    refundApprover: { id: null, name: '', error: null, busy: false },
     cancelOrder: false,
     orderCancelled: false,
     refundRequests: null,
@@ -1951,6 +1952,56 @@
     );
   }
 
+  function renderRefundApproveHere(requestId) {
+    var mine = state.refundApprover.id === requestId ? state.refundApprover : { name: '', error: null, busy: false };
+    var disabled = mine.busy || state.refundBusy ? ' disabled' : '';
+    var id = escapeHtml(requestId);
+    return (
+      '<div class="sp-field"><span class="sp-field-label">Yönetici burada onaylasın</span>' +
+      (mine.error ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(mine.error) + '</div>' : '') +
+      '<input class="sp-input" type="text" data-approver-name="' + id + '" id="refund-approver-name-' + id + '" autocomplete="off" maxlength="64"' +
+      ' placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı"' + disabled + ' value="' + escapeHtml(mine.name) + '">' +
+      '<input class="sp-input" type="password" id="refund-approver-secret-' + id + '" autocomplete="off" maxlength="256"' +
+      ' placeholder="Yönetici şifresi" aria-label="Yönetici şifresi"' + disabled + '>' +
+      '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="approve-here" data-request-id="' + id + '"' + disabled + '>' +
+      (mine.busy ? 'Onaylanıyor…' : 'Yönetici onayı ver') + '</button></div>'
+    );
+  }
+
+  // The manager's password is read from the field when the button is pressed and is never kept in state.
+  function approveRefundHere(requestId) {
+    var name = document.getElementById('refund-approver-name-' + requestId).value.trim();
+    var secret = document.getElementById('refund-approver-secret-' + requestId).value;
+    if (!name || !secret) {
+      state.refundApprover = { id: requestId, name: name, error: 'Yönetici adı ve şifresini girin.', busy: false };
+      render();
+      return;
+    }
+    state.refundApprover = { id: requestId, name: name, error: null, busy: true };
+    render();
+    api(refundsBase() + '/' + requestId + '/approve', {
+      method: 'POST', body: { ManagerUsername: name, ManagerPassword: secret },
+    }).then(function (result) {
+      if (!result.ok) {
+        state.refundApprover = { id: requestId, name: name, error: describeHttpFailure(result.status, result.body), busy: false };
+        render();
+        if (result.status === 409) loadEverything();
+        return;
+      }
+      state.refundApprover = { id: null, name: '', error: null, busy: false };
+      if (result.body && result.body.billCancelled) {
+        state.phase = 'cancelled';
+        render();
+        return;
+      }
+      state.refundNotice = 'İade isteği onaylandı.';
+      loadEverything();
+    }).catch(function () {
+      state.refundApprover = { id: requestId, name: name, error: 'Bağlantı kesildi. Onay gitmiş olabilir; iade isteklerini kontrol edin.', busy: false };
+      render();
+    });
+  }
+
   function renderRefundRequests() {
     var rows = state.refundRequests || [];
     if (rows.length === 0) return '';
@@ -1961,7 +2012,7 @@
         var id = escapeHtml(row.requestId);
         var actions = '';
         if (row.status === 'Requested' && row.mayDecide === false) {
-          actions = '<span class="sp-alert-body">Başka bir yetkili onaylamalı.</span>';
+          actions = '<span class="sp-alert-body">Başka bir yetkili onaylamalı.</span>' + renderRefundApproveHere(row.requestId);
         } else if (row.status === 'Requested') {
           actions =
             renderReasonField('note:' + row.requestId, 'Ret gerekçesi') +
@@ -2024,6 +2075,10 @@
       state.phase = 'checking';
       render();
       loadEverything();
+      return;
+    }
+    if (action === 'approve-here') {
+      approveRefundHere(requestId);
       return;
     }
     if (action === 'dismiss') {
@@ -2196,6 +2251,11 @@
         else cancelButton.setAttribute('aria-describedby', 'cancel-hint');
       }
       toggle('[data-refund-action="cancel"]');
+      return;
+    }
+    var approverFor = el.getAttribute && el.getAttribute('data-approver-name');
+    if (approverFor) {
+      state.refundApprover = { id: approverFor, name: el.value, error: null, busy: false };
       return;
     }
     var reasonFor = el.getAttribute && el.getAttribute('data-refund-reason');

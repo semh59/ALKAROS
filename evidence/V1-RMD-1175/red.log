@@ -1,0 +1,81 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:07.10]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheRefundAndIsRecordedAsTheApprover [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheRefundAndIsRecordedAsTheApprover [1 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: OK
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheRefundAndIsRecordedAsTheApprover() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1351
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheRefundAndIsRecordedAsTheApprover() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1354
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:10.82]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(username: null, password: "sifre") [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(username: null, password: "sifre") [379 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: BadRequest
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1448
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1449
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:14.41]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(username: "kullanici", password: null) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(username: "kullanici", password: null) [372 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: BadRequest
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1448
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1449
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:18.28]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AWrongManagerPasswordLeavesTheRefundWaiting [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AWrongManagerPasswordLeavesTheRefundWaiting [461 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "MANAGER_CREDENTIAL_INVALID"
+Actual:   "FORBIDDEN"
+           ↑ (pos 0)
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AWrongManagerPasswordLeavesTheRefundWaiting() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1373
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AWrongManagerPasswordLeavesTheRefundWaiting() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1374
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:22.23]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequesterCannotApproveTheirOwnRefundWithTheirOwnPassword [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequesterCannotApproveTheirOwnRefundWithTheirOwnPassword [568 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+                ↓ (pos 5)
+Expected: "SELF_APPROVAL_NOT_ALLOWED"
+Actual:   "SELF_DECISION"
+                ↑ (pos 5)
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequesterCannotApproveTheirOwnRefundWithTheirOwnPassword() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1411
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequesterCannotApproveTheirOwnRefundWithTheirOwnPassword() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1411
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:26.02]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AUserWithoutTheApprovePermissionCannotApproveInPlace [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AUserWithoutTheApprovePermissionCannotApproveInPlace [506 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "APPROVER_LACKS_PERMISSION"
+Actual:   "FORBIDDEN"
+           ↑ (pos 0)
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AUserWithoutTheApprovePermissionCannotApproveInPlace() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1392
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AUserWithoutTheApprovePermissionCannotApproveInPlace() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1392
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:29.84]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnotherCashiersRefundCannotBeApprovedInPlaceFromThisCashiersScreen [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnotherCashiersRefundCannotBeApprovedInPlaceFromThisCashiersScreen [481 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: BadRequest
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnotherCashiersRefundCannotBeApprovedInPlaceFromThisCashiersScreen() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1428
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnotherCashiersRefundCannotBeApprovedInPlaceFromThisCashiersScreen() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 1430
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     7, Başarılı:     0, Atlanan:     0, Toplam:     7, Süre: 24 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+RUN-FINISHED

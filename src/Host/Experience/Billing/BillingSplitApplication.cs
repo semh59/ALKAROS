@@ -599,14 +599,29 @@ public static class BillingSplitApplication
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (
             Guid terminalId,
             Guid requestId,
+            RefundApproveInPlaceV1? request,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
             ISettingsService settings,
             PaymentRefundStore store,
+            InPlaceManagerApproval approval,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            // With a typed manager sign-in the cashier at the till only needs the refund-request permission and the request
+            // has to be the cashier's own; without one the caller's own approve permission decides, as before.
+            if (request?.ManagerUsername is not null || request?.ManagerPassword is not null)
+            {
+                await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
+                var manager = await approval.VerifyAsync(
+                    request.ManagerUsername, request.ManagerPassword, principal.UserId, ApplicationPermissions.PaymentsRefundApprove,
+                    "refund.approval.in_place_failed", "RefundRequest", requestId, context.TraceIdentifier, cancellationToken);
+                var approved = await store.ApproveAsync(requestId, manager.UserId, false, cancellationToken, principal.UserId);
+                approval.Confirm(principal.UserId, request.ManagerUsername!);
+                return Results.Ok(approved);
+            }
+
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
             return Results.Ok(await store.ApproveAsync(
                 requestId, principal.UserId, await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken),

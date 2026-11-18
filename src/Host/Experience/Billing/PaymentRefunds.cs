@@ -25,6 +25,9 @@ public sealed record RefundRequestInputV1(Guid PaymentId, string? Reason, IReadO
 
 public sealed record RefundDecisionInputV1(string? Note);
 
+/// <summary>The manager's own sign-in when a manager approves a refund request at the cashier's till.</summary>
+public sealed record RefundApproveInPlaceV1(string? ManagerUsername, string? ManagerPassword);
+
 public sealed record RefundCompleteInputV1(string? SlipNumber, string? Note);
 
 public sealed record RefundRequestV1(
@@ -373,7 +376,7 @@ public sealed class PaymentRefundStore
     }
 
     public async Task<RefundRequestV1> ApproveAsync(
-        Guid requestId, Guid deciderId, bool selfApprovalAllowed, CancellationToken cancellationToken)
+        Guid requestId, Guid deciderId, bool selfApprovalAllowed, CancellationToken cancellationToken, Guid? onlyIfRequestedBy = null)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
@@ -381,6 +384,10 @@ public sealed class PaymentRefundStore
         await LockBillAsync(connection, transaction, request.BillId, cancellationToken);
         if (request.Status != "Requested")
             throw new RefundStateException(requestId, request.Status);
+        if (onlyIfRequestedBy is { } requester && request.RequestedBy != requester)
+            throw new RefundInputException(
+                $"Refund request {requestId} was not asked by the caller.", "REFUND_REQUEST_NOT_YOURS",
+                "Bu iade isteğini siz açmadınız; yönetici onayı yalnız isteği açan kasiyerin ekranından verilebilir.");
         EnsureMayDecide(request.RequestedBy, deciderId, selfApprovalAllowed);
         var mode = request.RequestedBy == deciderId ? "Self" : "Manager";
 

@@ -1321,6 +1321,135 @@ public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
         return (await response.Content.ReadFromJsonAsync<RefundRequestV1>())!;
     }
 
+    private const string InPlacePassword = "Mudur-Sifre-1";
+
+    private async Task<(Guid Id, string Username)> ManagerWithPasswordAsync(string token, params string[] permissions)
+    {
+        var (id, _) = await _database.SeedSessionWithPermissionsAsync(_terminalId, token, permissions);
+        await _database.SetPasswordAsync(id, InPlacePassword);
+        return (id, "rmd103-api-" + id.ToString("N"));
+    }
+
+    private async Task<HttpResponseMessage> ApproveInPlaceAsync(
+        HttpClient client, Guid requestId, string? username, string? password, string? cookie = null)
+        => await client.SendAsync(Post($"refund-requests/{requestId:D}/approve", cookie ?? _cashierCookie,
+            new { ManagerUsername = username, ManagerPassword = password }));
+
+    [Fact]
+    public async Task AManagerTypingHerPasswordAtTheTillApprovesTheRefundAndIsRecordedAsTheApprover()
+    {
+        var manager = await ManagerWithPasswordAsync("in-place-manager", "payments.refund.approve");
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Yanlış tutar alındı");
+
+        using var response = await ApproveInPlaceAsync(client, request.RequestId, manager.Username, InPlacePassword);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Completed", (await response.Content.ReadFromJsonAsync<RefundRequestV1>())!.Status);
+        Assert.Equal("Refunded", await Scalar<string>("SELECT status FROM payments.payments WHERE payment_id = @p", paymentId));
+        Assert.Equal(1L, await Scalar<long>(
+            "SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @p AND event_name = 'payment.refunded' AND actor_id = @a",
+            paymentId, ("a", manager.Id)));
+    }
+
+    [Fact]
+    public async Task AWrongManagerPasswordLeavesTheRefundWaiting()
+    {
+        var manager = await ManagerWithPasswordAsync("in-place-manager", "payments.refund.approve");
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+
+        using var response = await ApproveInPlaceAsync(client, request.RequestId, manager.Username, "yanlis-sifre");
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCode(response));
+        Assert.Equal("Requested", await Scalar<string>(
+            "SELECT status FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+    }
+
+    [Fact]
+    public async Task AUserWithoutTheApprovePermissionCannotApproveInPlace()
+    {
+        var notManager = await ManagerWithPasswordAsync("in-place-not-manager", "payments.refund.request");
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+
+        using var response = await ApproveInPlaceAsync(client, request.RequestId, notManager.Username, InPlacePassword);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("APPROVER_LACKS_PERMISSION", await ErrorCode(response));
+    }
+
+    [Fact]
+    public async Task TheRequesterCannotApproveTheirOwnRefundWithTheirOwnPassword()
+    {
+        var (selfId, selfCookie) = await _database.SeedSessionWithPermissionsAsync(
+            _terminalId, "in-place-self", "payments.refund.request", "payments.refund.approve");
+        await _database.SetPasswordAsync(selfId, InPlacePassword);
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(selfId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme", selfCookie);
+
+        using var response = await ApproveInPlaceAsync(client, request.RequestId, "rmd103-api-" + selfId.ToString("N"), InPlacePassword, selfCookie);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", await ErrorCode(response));
+    }
+
+    [Fact]
+    public async Task AnotherCashiersRefundCannotBeApprovedInPlaceFromThisCashiersScreen()
+    {
+        var manager = await ManagerWithPasswordAsync("in-place-manager", "payments.refund.approve");
+        var (_, otherCookie) = await _database.SeedSessionWithPermissionsAsync(_terminalId, "other", "payments.refund.request");
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+
+        using var response = await ApproveInPlaceAsync(client, request.RequestId, manager.Username, InPlacePassword, otherCookie);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("REFUND_REQUEST_NOT_YOURS", await ErrorCode(response));
+        Assert.Equal("Requested", await Scalar<string>(
+            "SELECT status FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+    }
+
+    [Theory]
+    [InlineData("kullanici", null)]
+    [InlineData(null, "sifre")]
+    public async Task ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(string? username, string? password)
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+
+        using var response = await ApproveInPlaceAsync(client, request.RequestId, username, password);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("Requested", await Scalar<string>(
+            "SELECT status FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+    }
+
     private HttpRequestMessage Post(string path, string cookie, object? body = null, string? key = null)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/terminals/{_terminalId:D}/billing/{path}");
