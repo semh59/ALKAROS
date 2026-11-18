@@ -1442,6 +1442,9 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             error?.Message);
         Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
         Assert.Equal(3L, await _database.AuditCountAsync("bill.approval.in_place_failed", waiting.RequesterId, waiting.BillId));
+        Assert.All(
+            await _database.FailedApprovalUsernamesAsync(waiting.BillId),
+            attempted => Assert.Equal(username[..2] + "***", attempted));
         Assert.False(await _database.IsLockedAsync(managerId));
     }
 
@@ -1491,6 +1494,33 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         using var stopped = await client.SendAsync(ApproveInPlace(
             second.TerminalId, second.BillId, second.GrantId, second.Cookie, second.Key, username, ManagerPassword));
         Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
+    }
+
+    [Fact]
+    public async Task AFinishedApprovalClearsTheManagersFailureCountForEveryCashier()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var first = await PendingDiscountAsync(client);
+        var second = await PendingDiscountAsync(client);
+        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
+
+        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures - 1; attempt++)
+        {
+            using var wrong = await client.SendAsync(ApproveInPlace(
+                first.TerminalId, first.BillId, first.GrantId, first.Cookie, first.Key, username, "yanlis"));
+            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
+        }
+        using var approved = await client.SendAsync(ApproveInPlace(
+            first.TerminalId, first.BillId, first.GrantId, first.Cookie, first.Key, username, ManagerPassword));
+        Assert.Equal(HttpStatusCode.OK, approved.StatusCode);
+
+        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures - 1; attempt++)
+        {
+            using var wrong = await client.SendAsync(ApproveInPlace(
+                second.TerminalId, second.BillId, second.GrantId, second.Cookie, second.Key, username, "yanlis"));
+            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
+        }
     }
 
     [Theory]
@@ -2886,6 +2916,17 @@ internal sealed class BillingSplitTestDatabase
         await using var command = DataSource.CreateCommand("SELECT approver_user_id FROM identity.authorization_grants WHERE grant_id = @grant_id;");
         command.Parameters.AddWithValue("grant_id", grantId);
         return await command.ExecuteScalarAsync() is Guid approver ? approver : null;
+    }
+
+    public async Task<List<string>> FailedApprovalUsernamesAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT after_state_json::jsonb ->> 'attemptedUsername' FROM audit.audit_events WHERE event_name = 'bill.approval.in_place_failed' AND aggregate_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        var names = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync()) names.Add(reader.GetString(0));
+        return names;
     }
 
     public async Task<long> AuditCountAsync(string eventName, Guid actorId, Guid aggregateId)

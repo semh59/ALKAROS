@@ -1,0 +1,3 @@
+# V1-RMD-1173 qa
+1. qa-guvenlik-yetki: regresyon yok; sayac anahtarlari/sifirlama zamani, sifre sizintisi, hata esleme korundu. Dusuk: olu using (2 adet, kaldirildi + derleme dogrulandi); denetim kaydindan grantId alani kayboldu (kayit aggregateId=billId ile bulunur, kabul); dogrulama sirasi (grant yokken bos alan artik 404/409, eskiden 400; kabul, davranis degisikligi olarak not edildi); kendini onaylayan yonetici artik APPROVER_LACKS_PERMISSION yerine SELF_APPROVAL_NOT_ALLOWED alir.
+2. qa-backend: Kritik/Yuksek/Orta yok; DI omru, istisna sirasi, Trim/buyuk-kucuk harf anahtar tutarliligi, 400 esleme dogrulandi. Dusuk: billing'de InPlaceSelfApprovalException'i dogrudan sinayan test yok (depo kurali once yakalar; bilesen kurali CashClose testleriyle kilitli, M4 olu).

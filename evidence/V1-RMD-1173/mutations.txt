@@ -1,0 +1,6 @@
+M1 maskeleme kaldirildi (tam kullanici adi): killed (ACashierIsStoppedAfterThreeWrongPasswords...)
+M2 yonetici anahtarina basarisiz kayit yazilmiyor: killed (ASecondCashierCannotKeepGuessing...)
+M3 basarisiz deneme denetim olay adi sabitlendi: killed (ACashierIsStoppedAfterThreeWrongPasswords...)
+M4 kendini onaylama kontrolu kaldirildi: killed (CashClose: TheCashierCannotApproveHerOwnClose..., ARefusedSelfApprovalDoesNotWipe...); billing'de deponun kendi kurali yakalar
+M5 basarida yonetici anahtari sifirlanmiyor: killed (AFinishedApprovalClearsTheManagersFailureCountForEveryCashier, yeni test)
+Not: M1-M4 tek derlemede birlikte (4 test kirmizi/2 test), M5 ve M4 ayri derlemede. Ilk deneme M5'i Confirm'i bos birakarak CA1822 analizor hatasi verdi, M5 yonetici anahtari sifirlamasini kaldirarak yeniden yapildi.

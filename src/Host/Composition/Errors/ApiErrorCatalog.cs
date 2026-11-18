@@ -736,7 +736,7 @@ public static class ApiErrorCatalog
             ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."),
             ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
             InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."),
-            CashCloseSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
+            InPlaceSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
             ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
             CashDrawerDisabledException => (409, "CASH_DRAWER_DISABLED", "Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir."),
             CashDrawerSessionNotOpenException => (409, "CASH_DRAWER_SESSION_NOT_OPEN", "Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır."),

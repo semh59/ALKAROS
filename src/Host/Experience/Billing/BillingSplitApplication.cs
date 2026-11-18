@@ -101,6 +101,7 @@ public static class BillingSplitApplication
         services.TryAddScoped<IBehaviouralTighteningService, BehaviouralTighteningService>();
         services.TryAddScoped<AuthorizationDecisionStore>();
         services.TryAddSingleton<InPlaceApprovalThrottle>();
+        services.TryAddTransient<InPlaceManagerApproval>();
         // V1-SET-004: ApplyTipAsync checks GarsonFeature.VoluntaryTip — same
         // DbDataSource/ISettingValidator gap every other settings-backed
         // experience registration already had to close on its own.
@@ -379,20 +380,14 @@ public static class BillingSplitApplication
             ApproveGrantInPlaceRequestV1 request,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationGrantRepository grants,
-            AuthenticationService authentication,
-            IAuthorizationService authorization,
+            InPlaceManagerApproval approval,
             AuthorizationDecisionStore decisions,
-            IAuditEventStore auditEvents,
-            InPlaceApprovalThrottle throttle,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
-            if (string.IsNullOrWhiteSpace(request.IdempotencyKey)
-                || string.IsNullOrWhiteSpace(request.Username)
-                || string.IsNullOrEmpty(request.Password)
-                || request.Username.Length > 64 || request.Password.Length > 256)
-                throw new ArgumentException("IdempotencyKey, Username (at most 64) and Password (at most 256) are required.", nameof(request));
+            if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+                throw new ArgumentException("IdempotencyKey is required.", nameof(request));
 
             var grant = await grants.GetAsync(grantId, cancellationToken);
             if (grant is null
@@ -404,47 +399,12 @@ public static class BillingSplitApplication
                 throw new AuthorizationGrantAlreadyResolvedException(grantId);
 
             // Wrong guesses count against the manager's own sign-in lock, so both the cashier and the named manager are
-            // stopped here first, before that lock is reached.
-            var cashierKey = $"cashier:{principal.UserId:N}";
-            var managerKey = $"manager:{request.Username.Trim().ToUpperInvariant()}";
-            if (throttle.IsBlocked(cashierKey, DateTimeOffset.UtcNow) || throttle.IsBlocked(managerKey, DateTimeOffset.UtcNow))
-                throw new InPlaceApprovalThrottledException();
-
-            var login = await authentication.LoginAsync(
-                request.Username.Trim(), request.Password, DateTimeOffset.UtcNow, cancellationToken);
-            if (login is not LoginSuccess manager)
-            {
-                var lockedOut = login is LoginFailure { Reason: LoginFailureReason.LockedOut };
-                throttle.RecordFailure(cashierKey, DateTimeOffset.UtcNow);
-                throttle.RecordFailure(managerKey, DateTimeOffset.UtcNow);
-                await auditEvents.AppendAsync(
-                    new AuditEvent(
-                        id: Guid.NewGuid(),
-                        eventName: "bill.approval.in_place_failed",
-                        aggregateType: "Bill",
-                        aggregateId: billId,
-                        actorType: "User",
-                        correlationId: context.TraceIdentifier,
-                        actorId: principal.UserId,
-                        reason: lockedOut ? "manager_locked" : "credential_invalid",
-                        afterStateJson: JsonSerializer.Serialize(new { grantId, attemptedUsername = request.Username.Trim() })),
-                    cancellationToken);
-                throw new ManagerCredentialException(lockedOut);
-            }
-
-            try
-            {
-                await authorization.AuthorizeAsync(manager.UserId, ApplicationPermissions.ReportsView, cancellationToken);
-            }
-            catch (AuthorizationDeniedException)
-            {
-                throw new ApproverLacksPermissionException(ApplicationPermissions.ReportsView);
-            }
-
+            // stopped first, before that lock is reached.
+            var manager = await approval.VerifyAsync(
+                request.Username, request.Password, principal.UserId, ApplicationPermissions.ReportsView, "bill.approval.in_place_failed",
+                "Bill", billId, context.TraceIdentifier, cancellationToken);
             await decisions.ApproveAsync(grantId, manager.UserId, context.TraceIdentifier, cancellationToken);
-            // Only a finished approval clears the counts: a correct password that is then refused proves nothing.
-            throttle.Reset(cashierKey);
-            throttle.Reset(managerKey);
+            approval.Confirm(principal.UserId, request.Username);
             return Results.Ok(new GrantApprovedInPlaceV1(grantId, manager.UserId, manager.DisplayName));
         });
 
@@ -933,7 +893,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."),
         ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."),
         ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
-        AuthorizationSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
+        AuthorizationSelfApprovalException or InPlaceSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
         ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
         AuthorizationGrantAlreadyResolvedException => (409, "ALREADY_RESOLVED", "Bu talep zaten yanıtlanmış."),
         GrantDeniedException { Complimentary: false } => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),

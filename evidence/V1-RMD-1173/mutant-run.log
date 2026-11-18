@@ -1,0 +1,27 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:08.70]     ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.TheCashierCannotApproveHerOwnCloseWithHerOwnPassword [FAIL]
+  Başarısız ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.TheCashierCannotApproveHerOwnCloseWithHerOwnPassword [4 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   OK
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.AssertErrorAsync(HttpResponseMessage response, HttpStatusCode status, String code, String messagePart) in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashCloseSafetyHttpTests.cs:line 683
+   at ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.TheCashierCannotApproveHerOwnCloseWithHerOwnPassword() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashCloseSafetyHttpTests.cs:line 526
+   at ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.TheCashierCannotApproveHerOwnCloseWithHerOwnPassword() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashCloseSafetyHttpTests.cs:line 527
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:16.03]     ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.ARefusedSelfApprovalDoesNotWipeTheCashiersFailureCount [FAIL]
+  Başarısız ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.ARefusedSelfApprovalDoesNotWipeTheCashiersFailureCount [3 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   OK
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.AssertErrorAsync(HttpResponseMessage response, HttpStatusCode status, String code, String messagePart) in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashCloseSafetyHttpTests.cs:line 683
+   at ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.ARefusedSelfApprovalDoesNotWipeTheCashiersFailureCount() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashCloseSafetyHttpTests.cs:line 571
+   at ALKAROS.Host.Experience.CashSession.Tests.CashCloseSafetyHttpTests.ARefusedSelfApprovalDoesNotWipeTheCashiersFailureCount() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashCloseSafetyHttpTests.cs:line 576
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 12 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+TEST-FINISHED

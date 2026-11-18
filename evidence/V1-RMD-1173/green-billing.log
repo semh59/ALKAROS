@@ -1,0 +1,16 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:06:31.48]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied [15 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+Expected: "Pending"
+Actual:   null
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1297
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1316
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:    89, Atlanan:     0, Toplam:    90, Süre: 7 m 34 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+TEST-FINISHED
