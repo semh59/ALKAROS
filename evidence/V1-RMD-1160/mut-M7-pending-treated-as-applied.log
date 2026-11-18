@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (66 tests | 1 failed) 571ms
+     × tells a manager approval is pending, does not report the line as voided, and resends the same key on the next try 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > tells a manager approval is pending, does not report the line as voided, and resends the same key on the next try
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ src/routes/TableOrderBridge.test.tsx:749:24
+    747|     await chooseAndConfirm("Yanlış girdim");
+    748|
+    749|     expect(onSent).not.toHaveBeenCalled();
+       |                        ^
+    750|     expect(document.querySelector("[role=status]")?.textContent).toBe(…
+    751|     expect(document.querySelector(".table-order-bridge__void")).toBeNu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 86 passed (87)
+   Start at  11:48:20
+   Duration  2.23s (transform 302ms, setup 0ms, import 451ms, tests 633ms, environment 941ms)
+

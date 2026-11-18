@@ -190,7 +190,16 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .table-order-bridge { display: grid; gap: 1rem; }
 .table-workspace__side--map > .table-order-bridge { border: 1px solid var(--ds-color-line); border-radius: 16px; padding: 1rem 1.2rem; background: var(--ds-color-surface); }
 .table-order-bridge__lines { display: grid; gap: .3rem; max-height: 14rem; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
-.table-order-bridge__lines li, .table-order-bridge__total { display: flex; justify-content: space-between; gap: .6rem; font-size: .875rem; }
+.table-order-bridge__lines:has(.table-order-bridge__void) { max-height: none; }
+.table-order-bridge__lines li, .table-order-bridge__total { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem; font-size: .875rem; }
+.table-order-bridge__void, .table-order-bridge__void-open { flex-basis: 100%; }
+.table-order-bridge__void { display: grid; gap: 1rem; padding: .5rem 0 1rem; }
+.table-order-bridge__void button, .table-order-bridge__void-open { min-height: 48px; border: 1px solid var(--ds-color-line); border-radius: 12px; padding: .5rem 1rem; color: var(--ds-color-ink); background: var(--ds-color-surface); font-size: 1rem; font-weight: 700; }
+.table-order-bridge__void [aria-pressed="true"] { border-color: var(--ds-color-brand); background: var(--ds-color-accent); }
+.table-order-bridge__void-open { border-color: var(--ds-color-danger); color: var(--ds-color-danger); }
+.table-order-bridge__void .table-order-bridge__void-confirm { border-color: var(--ds-color-danger); color: var(--ds-color-surface); background: var(--ds-color-danger); }
+.table-order-bridge__void-confirm:disabled { border-color: var(--ds-color-line); color: var(--ds-color-muted); background: var(--ds-color-surface-subtle); }
+.table-order-bridge__void-open:disabled { border-color: var(--ds-color-line); color: var(--ds-color-muted); background: var(--ds-color-surface-subtle); }
 .table-order-bridge__total { margin: 0; border-top: 1px solid var(--line); padding-top: .5rem; font-size: 1rem; }
 .table-order-bridge__total strong { font-size: 1.15rem; }
 .table-order-bridge__lines-note { margin: 0; }

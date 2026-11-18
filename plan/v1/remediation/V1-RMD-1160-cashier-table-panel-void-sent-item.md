@@ -1,7 +1,7 @@
 # V1-RMD-1160 - Kasa masa panelinde mutfağa giden kalem için iptal isteği
 
 - Task ID: V1-RMD-1160
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

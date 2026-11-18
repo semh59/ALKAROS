@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (66 tests | 1 failed) 567ms
+     × reads the lines again after a conflict, so a line served meanwhile loses its action 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > reads the lines again after a conflict, so a line served meanwhile loses its action
+AssertionError: expected <button …(3)></button> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<button
+  class="table-order-bridge__void-open"
+  data-telemetry-id="b.routes.tableorderbridge.void-open"
+  type="button"
+>
+  Mutfaktaki ürünü iptal et
+</button>
+
+ ❯ src/routes/TableOrderBridge.test.tsx:784:28
+    782|
+    783|     expect(document.querySelector("[role=alert]")?.textContent).toBe("…
+    784|     expect(button(action)).toBeUndefined();
+       |                            ^
+    785|   });
+    786|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 86 passed (87)
+   Start at  11:48:15
+   Duration  2.14s (transform 294ms, setup 0ms, import 439ms, tests 621ms, environment 958ms)
+

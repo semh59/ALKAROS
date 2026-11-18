@@ -270,6 +270,29 @@ export const api = {
       throw error;
     }
   },
+  voidSentItem: async (
+    terminalId: string,
+    orderId: string,
+    itemId: string,
+    expectedRowVersion: number,
+    reasonCode: string,
+  ) => {
+    // Pending approval and a lost answer keep the key, so the request the manager approved is the one applied.
+    const attempt = `void-sent:${orderId}:${itemId}:${reasonCode}`;
+    const idempotencyKey = pendingSubmissions.get(attempt) ?? crypto.randomUUID();
+    pendingSubmissions.set(attempt, idempotencyKey);
+    try {
+      const result = await request<{ status: "Applied" | "Pending"; stockRestored?: boolean }>(
+        `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}/void-sent`,
+        { method: "POST", body: JSON.stringify({ idempotencyKey, expectedRowVersion, reasonCode }) },
+      );
+      if (result.status === "Applied") pendingSubmissions.delete(attempt);
+      return result;
+    } catch (error) {
+      if (error instanceof ApiError && error.status >= 400 && error.status < 500) pendingSubmissions.delete(attempt);
+      throw error;
+    }
+  },
   submitOrder: async (terminalId: string, orderId: string, expectedRevision: number) => {
     // A retry after a timeout must carry the key of the attempt that may have reached the server.
     const attempt = `${orderId}:${expectedRevision}`;

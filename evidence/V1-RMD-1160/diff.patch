@@ -1,0 +1,415 @@
+diff --git a/src/Clients/PosTerminal/src/api.test.ts b/src/Clients/PosTerminal/src/api.test.ts
+index cbb2a86c7..3fb5209aa 100644
+--- a/src/Clients/PosTerminal/src/api.test.ts
++++ b/src/Clients/PosTerminal/src/api.test.ts
+@@ -214,3 +214,52 @@ describe("api.submitOrder operation key", () => {
+     expect(keys[1]).not.toBe(keys[0]);
+   });
+ });
++
++describe("api.voidSentItem idempotency key", () => {
++  afterEach(() => {
++    vi.unstubAllGlobals();
++    vi.restoreAllMocks();
++  });
++
++  const stubFetch = (outcomes: Array<"offline" | "refused" | "pending" | "applied">) => {
++    const bodies: Array<{ idempotencyKey: string; reasonCode: string; expectedRowVersion: number }> = [];
++    vi.stubGlobal("fetch", vi.fn(async (_path: string, init: RequestInit) => {
++      bodies.push(JSON.parse(String(init.body)) as (typeof bodies)[number]);
++      const outcome = outcomes.shift();
++      if (outcome === "offline") throw new TypeError("Failed to fetch");
++      if (outcome === "refused") return jsonResponse({ error: { code: "GRANT_DENIED", message: "İptal talebi reddedildi." } }, 403);
++      return outcome === "pending" ? jsonResponse({ status: "Pending" }, 202) : jsonResponse({ status: "Applied" });
++    }));
++    return bodies;
++  };
++
++  it("posts to the item's void-sent address with the row version and reason", async () => {
++    const bodies = stubFetch(["applied"]);
++
++    await api.voidSentItem("t1", "v1", "i1", 7, "OperatorError");
++
++    expect(fetch).toHaveBeenCalledWith("/api/v1/terminals/t1/orders/v1/items/i1/void-sent", expect.objectContaining({ method: "POST" }));
++    expect(bodies[0]).toMatchObject({ expectedRowVersion: 7, reasonCode: "OperatorError" });
++  });
++
++  it("keeps the key while the request is pending approval or got no answer, so the approved request is the one applied", async () => {
++    const bodies = stubFetch(["pending", "offline", "applied"]);
++
++    await api.voidSentItem("t1", "v2", "i1", 7, "OperatorError");
++    await expect(api.voidSentItem("t1", "v2", "i1", 7, "OperatorError")).rejects.toBeInstanceOf(Error);
++    await api.voidSentItem("t1", "v2", "i1", 7, "OperatorError");
++
++    expect(new Set(bodies.map((body) => body.idempotencyKey)).size).toBe(1);
++  });
++
++  it("uses a new key once the void was applied, for another reason, and after a refusal", async () => {
++    const bodies = stubFetch(["applied", "applied", "refused", "applied"]);
++
++    await api.voidSentItem("t1", "v3", "i1", 7, "OperatorError");
++    await api.voidSentItem("t1", "v3", "i1", 7, "OperatorError");
++    await expect(api.voidSentItem("t1", "v3", "i1", 7, "CustomerChange")).rejects.toBeInstanceOf(ApiError);
++    await api.voidSentItem("t1", "v3", "i1", 7, "CustomerChange");
++
++    expect(new Set(bodies.map((body) => body.idempotencyKey)).size).toBe(4);
++  });
++});
+diff --git a/src/Clients/PosTerminal/src/api.ts b/src/Clients/PosTerminal/src/api.ts
+index 1728117a5..79309c043 100644
+--- a/src/Clients/PosTerminal/src/api.ts
++++ b/src/Clients/PosTerminal/src/api.ts
+@@ -270,6 +270,29 @@ export const api = {
+       throw error;
+     }
+   },
++  voidSentItem: async (
++    terminalId: string,
++    orderId: string,
++    itemId: string,
++    expectedRowVersion: number,
++    reasonCode: string,
++  ) => {
++    // Pending approval and a lost answer keep the key, so the request the manager approved is the one applied.
++    const attempt = `void-sent:${orderId}:${itemId}:${reasonCode}`;
++    const idempotencyKey = pendingSubmissions.get(attempt) ?? crypto.randomUUID();
++    pendingSubmissions.set(attempt, idempotencyKey);
++    try {
++      const result = await request<{ status: "Applied" | "Pending"; stockRestored?: boolean }>(
++        `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}/void-sent`,
++        { method: "POST", body: JSON.stringify({ idempotencyKey, expectedRowVersion, reasonCode }) },
++      );
++      if (result.status === "Applied") pendingSubmissions.delete(attempt);
++      return result;
++    } catch (error) {
++      if (error instanceof ApiError && error.status >= 400 && error.status < 500) pendingSubmissions.delete(attempt);
++      throw error;
++    }
++  },
+   submitOrder: async (terminalId: string, orderId: string, expectedRevision: number) => {
+     // A retry after a timeout must carry the key of the attempt that may have reached the server.
+     const attempt = `${orderId}:${expectedRevision}`;
+diff --git a/src/Clients/PosTerminal/src/contracts.ts b/src/Clients/PosTerminal/src/contracts.ts
+index 33d749e25..a5da168af 100644
+--- a/src/Clients/PosTerminal/src/contracts.ts
++++ b/src/Clients/PosTerminal/src/contracts.ts
+@@ -272,6 +272,7 @@ export interface TableOrder {
+     totalPrice: number;
+     status: string;
+     kitchenState?: string;
++    canVoidSent?: boolean;
+     addedWithoutKitchenReason?: string | null;
+   }[];
+ }
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index ec2f1a818..1257fd78d 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -6,6 +6,7 @@ import { readFileSync } from "node:fs";
+ import { join } from "node:path";
+ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ import { registerSessionExpiredHandler } from "../api";
++import { formatMoney } from "../format";
+ import { TableOrderBridge } from "./TableOrderBridge";
+ 
+ (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+@@ -644,3 +645,161 @@ describe("TableOrderBridge", () => {
+     });
+   });
+ });
++
++describe("TableOrderBridge mutfaktaki ürünü iptal et", () => {
++  const sentOrder = {
++    ...tableOrder,
++    items: [
++      { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Active", kitchenState: "Sent", canVoidSent: true },
++      { itemId: "i2", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active", kitchenState: "Served", canVoidSent: false },
++      { itemId: "i4", productName: "Ayran", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Draft", kitchenState: "NotSent" },
++    ],
++  };
++  const action = "Mutfaktaki ürünü iptal et";
++  const flush = () => act(async () => { await Promise.resolve(); });
++  const press = (target: Element | undefined) => act(async () => { target!.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
++  const reasonButton = (label: string) => [...document.querySelectorAll<HTMLButtonElement>(".table-order-bridge__void button")].find((b) => b.textContent === label);
++  const confirmButton = () => document.querySelector<HTMLButtonElement>(".table-order-bridge__void-confirm");
++  const voidCalls = (mock: ReturnType<typeof stubFetch>) => mock.mock.calls.filter(([url]) => String(url).includes("/void-sent"));
++  const chooseAndConfirm = async (label: string) => {
++    await press(button(action));
++    await press(reasonButton(label));
++    await press(confirmButton()!);
++    await flush();
++  };
++
++  it("offers the action only on a line the server marks voidable, once per line", async () => {
++    stubFetch(undefined, sentOrder);
++    render();
++    await flush();
++
++    expect([...document.querySelectorAll(".table-order-bridge__lines li")].map((li) => li.textContent?.includes(action))).toEqual([true, false, false]);
++  });
++
++  it("names the line in the action's accessible name, so a screen reader can tell the lines apart", async () => {
++    stubFetch(undefined, sentOrder);
++    render();
++    await flush();
++
++    expect(button(action)?.getAttribute("aria-label")).toBe(`${action}: Çay`);
++  });
++
++  it("offers it to nobody who may not read the lines, and closes it while another till holds the bill or the screen is busy", async () => {
++    stubFetch(undefined, sentOrder);
++    render({ canReadLines: false });
++    await flush();
++    expect(button(action)).toBeUndefined();
++
++    render({ busy: true });
++    await flush();
++    expect(button(action)?.disabled).toBe(true);
++
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: true } });
++    await flush();
++    expect(button(action)?.disabled).toBe(true);
++  });
++
++  it("sends nothing on the first touch and lists four reasons with none chosen and the confirm button closed with its reason", async () => {
++    const mock = stubFetch(undefined, sentOrder);
++    render();
++    await flush();
++    await press(button(action));
++
++    expect(voidCalls(mock)).toHaveLength(0);
++    expect([...document.querySelectorAll(".table-order-bridge__void button[aria-pressed]")].map((b) => [b.textContent, b.getAttribute("aria-pressed")])).toEqual([
++      ["Müşteri vazgeçti", "false"], ["Yanlış girdim", "false"], ["Ürün kalmadı", "false"], ["İki kez girilmiş", "false"],
++    ]);
++    expect(confirmButton()?.disabled).toBe(true);
++    expect(document.querySelector(".table-order-bridge__void")?.textContent).toContain("Gerekçe seçin");
++  });
++
++  it("names the table, the line and its amount on the confirm button once a reason is chosen", async () => {
++    stubFetch(undefined, sentOrder);
++    render();
++    await flush();
++    await press(button(action));
++    await press(reasonButton("Yanlış girdim"));
++
++    expect(confirmButton()?.disabled).toBe(false);
++    expect(confirmButton()?.textContent).toBe(`T-4 masasındaki 2 × Çay (${formatMoney(50)}) ürününü iptal et`);
++    expect(reasonButton("Yanlış girdim")?.getAttribute("aria-pressed")).toBe("true");
++  });
++
++  it("sends the order's own row version, the reason and a key, then reads the lines again and tells the table list", async () => {
++    const mock = stubFetch(() => reply(200, { status: "Applied", stockRestored: false }), sentOrder);
++    const { onSent } = render();
++    await flush();
++    await chooseAndConfirm("Ürün kalmadı");
++
++    const [url, init] = voidCalls(mock)[0];
++    expect(url).toBe("/api/v1/terminals/t-1/orders/o-1/items/i1/void-sent");
++    expect(JSON.parse(String(init!.body))).toEqual({ idempotencyKey: expect.any(String), expectedRowVersion: 3, reasonCode: "ProductUnavailable" });
++    expect(onSent).toHaveBeenCalledTimes(1);
++    expect(document.querySelector(".table-order-bridge__void")).toBeNull();
++    expect(document.querySelector("[role=status]")?.textContent).toBe("Ürün iptal edildi.");
++  });
++
++  it("says the stock went back when the server reports it", async () => {
++    stubFetch(() => reply(200, { status: "Applied", stockRestored: true }), sentOrder);
++    render();
++    await flush();
++    await chooseAndConfirm("Müşteri vazgeçti");
++
++    expect(document.querySelector("[role=status]")?.textContent).toBe("Ürün iptal edildi, stok geri alındı.");
++  });
++
++  it("tells a manager approval is pending, does not report the line as voided, and resends the same key on the next try", async () => {
++    const mock = stubFetch(() => reply(202, { status: "Pending", grantId: "g-1" }), sentOrder);
++    const { onSent } = render();
++    await flush();
++    await chooseAndConfirm("Yanlış girdim");
++
++    expect(onSent).not.toHaveBeenCalled();
++    expect(document.querySelector("[role=status]")?.textContent).toBe("İptal yönetici onayına gönderildi. Onaylandıktan sonra aynı gerekçeyle yeniden isteyin.");
++    expect(document.querySelector(".table-order-bridge__void")).toBeNull();
++
++    await chooseAndConfirm("Yanlış girdim");
++    const keys = voidCalls(mock).map(([, init]) => (JSON.parse(String(init!.body)) as { idempotencyKey: string }).idempotencyKey);
++    expect(keys).toHaveLength(2);
++    expect(keys[1]).toBe(keys[0]);
++  });
++
++  it("shows the server's Turkish refusal and keeps the line and the table list as they were", async () => {
++    stubFetch(() => reply(403, { error: { code: "GRANT_DENIED", message: "İptal talebi reddedildi." } }), sentOrder);
++    const { onSent } = render();
++    await flush();
++    await chooseAndConfirm("Yanlış girdim");
++
++    expect(document.querySelector("[role=alert]")?.textContent).toBe("İptal talebi reddedildi.");
++    expect(onSent).not.toHaveBeenCalled();
++    expect(document.querySelector(".table-order-bridge__lines")?.textContent).toContain("Çay");
++  });
++
++  it("reads the lines again after a conflict, so a line served meanwhile loses its action", async () => {
++    let reads = 0;
++    const served = { ...sentOrder, items: sentOrder.items.map((item) => item.itemId === "i1" ? { ...item, kitchenState: "Served", canVoidSent: false } : item) };
++    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
++      if (String(url).includes("/void-sent")) return reply(409, { error: { code: "ITEM_ALREADY_SERVED", message: "Ürün zaten servis edildi." } });
++      if (String(url).includes("/orders/table/") && init?.method !== "POST") return reply(200, ++reads === 1 ? sentOrder : served);
++      return reply(500, {});
++    }));
++    render();
++    await flush();
++    await chooseAndConfirm("Yanlış girdim");
++    await flush();
++
++    expect(document.querySelector("[role=alert]")?.textContent).toBe("Ürün zaten servis edildi.");
++    expect(button(action)).toBeUndefined();
++  });
++
++  it("Vazgeç closes the reasons without sending anything", async () => {
++    const mock = stubFetch(undefined, sentOrder);
++    render();
++    await flush();
++    await press(button(action));
++    await press(button("Vazgeç"));
++
++    expect(document.querySelector(".table-order-bridge__void")).toBeNull();
++    expect(voidCalls(mock)).toHaveLength(0);
++  });
++});
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index f953738a0..bda6382bf 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -6,7 +6,7 @@ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
+ import { collectionHref } from "../features/pending-checks/pendingChecksApi";
+ import { printPreReceipt, PreReceiptError } from "../features/pending-checks/preReceipt";
+-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, preReceiptText, servedBillNote } from "../strings";
++import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, preReceiptText, servedBillNote, voidSentText } from "../strings";
+ 
+ interface BridgeTable {
+   tableId: string;
+@@ -71,6 +71,11 @@ export function TableOrderBridge({
+   const [sendError, setSendError] = useState<string>();
+   // Sending changes the lines but not the table row, so the effect below needs its own cue to read them again.
+   const [sentCount, setSentCount] = useState(0);
++  const [voidingId, setVoidingId] = useState<string | null>(null);
++  const [voidReason, setVoidReason] = useState<string | null>(null);
++  const [voiding, setVoiding] = useState(false);
++  const [voidError, setVoidError] = useState<string>();
++  const [voidNotice, setVoidNotice] = useState<string>();
+   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
+   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
+   const sentCheck = hasCheck || !canCollect ? undefined : awaitingCheck;
+@@ -110,6 +115,32 @@ export function TableOrderBridge({
+       setSending(false);
+     }
+   };
++  const closeVoid = () => { setVoidingId(null); setVoidReason(null); };
++  const voidLine = async (itemId: string) => {
++    if (!read || read === "failed" || !voidReason) return;
++    setVoiding(true);
++    setVoidError(undefined);
++    setVoidNotice(undefined);
++    try {
++      const result = await api.voidSentItem(terminalId, read.orderId, itemId, read.rowVersion, voidReason);
++      closeVoid();
++      if (result.status === "Pending") {
++        setVoidNotice(voidSentText.pending);
++        return;
++      }
++      setVoidNotice(result.stockRestored ? voidSentText.appliedRestored : voidSentText.applied);
++      setSentCount((count) => count + 1);
++      onSent();
++    } catch (reason) {
++      setVoidError(reason instanceof ApiError ? reason.message : voidSentText.failed);
++      if (reason instanceof ApiError && reason.status === 409) {
++        closeVoid();
++        setSentCount((count) => count + 1);
++      }
++    } finally {
++      setVoiding(false);
++    }
++  };
+   const collect = async () => {
+     const orderId = table.currentOrderId ?? sentCheck?.orderId;
+     if (!orderId && !table.currentBillId) return;
+@@ -174,11 +205,23 @@ export function TableOrderBridge({
+     {hasCheck && canManage && !onTransfer && !otherTill && <small className="table-order-bridge__reason">Bu masa şu anda taşınamaz.</small>}
+     {table.currentBillId && canCollect && <div className="table-order-bridge__danger"><button data-telemetry-id="b.routes.tableorderbridge.cancel" className="table-order-bridge__cancel" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button></div>}
+     {canManage && !orderAllowed && !sentCheck && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
+-    {(error ?? collectError ?? sendError ?? printError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError ?? printError}</p>}
++    {(error ?? collectError ?? sendError ?? printError ?? voidError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError ?? printError ?? voidError}</p>}
++    {voidNotice && <p role="status">{voidNotice}</p>}
+     {hasCheck ? !canReadLines ? null : read === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+       : read && <>
+         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
++          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span>
++            {line.canVoidSent && (voidingId === line.itemId
++              ? <div className="table-order-bridge__void" role="group" aria-label={voidSentText.pickReason}>
++                <strong>{voidSentText.pickReason}</strong>
++                <p>{voidSentText.warning}</p>
++                {voidSentText.reasons.map((reason) => <button data-telemetry-id="b.routes.tableorderbridge.void-reason" key={reason.code} type="button" aria-pressed={voidReason === reason.code} disabled={voiding} onClick={() => setVoidReason(reason.code)}>{reason.label}</button>)}
++                {!voidReason && <small>{voidSentText.needReason}</small>}
++                <button data-telemetry-id="b.routes.tableorderbridge.void-confirm" className="table-order-bridge__void-confirm" type="button" disabled={!voidReason || voiding} aria-busy={voiding} onClick={() => void voidLine(line.itemId)}>{voiding ? voidSentText.busy : voidSentText.confirm(table.tableNumber, line.quantity, line.productName, formatMoney(line.totalPrice))}</button>
++                <button data-telemetry-id="b.routes.tableorderbridge.void-dismiss" type="button" disabled={voiding} onClick={closeVoid}>{voidSentText.dismiss}</button>
++              </div>
++              : <button data-telemetry-id="b.routes.tableorderbridge.void-open" className="table-order-bridge__void-open" type="button" disabled={busy || voiding || sending || collecting || printing || otherTill} aria-label={`${voidSentText.open}: ${line.productName}`} title={otherTill ? billOnOtherTillText : undefined} onClick={() => { setVoidNotice(undefined); setVoidError(undefined); setVoidReason(null); setVoidingId(line.itemId); }}>{voidSentText.open}</button>)}
++          </li>)}
+         </ul>
+         <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(read.totalAmount)}</strong></p>
+       </> : sentCheck ? <p className="table-order-bridge__total"><span>{sentCheck.itemCount} kalem</span><strong>{formatMoney(sentCheck.total)}</strong></p>
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index d65768cc0..89db98d89 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1422,6 +1422,27 @@ export const refundMethodLabels: Record<string, string> = {
+   Account: "Cari hesap",
+ };
+ 
++/** Cancelling a line the kitchen already has; the codes are the server's void reasons, only the wording is ours. */
++export const voidSentText = {
++  open: "Mutfaktaki ürünü iptal et",
++  pickReason: "İptal gerekçesi",
++  reasons: [
++    { code: "CustomerChange", label: "Müşteri vazgeçti" },
++    { code: "OperatorError", label: "Yanlış girdim" },
++    { code: "ProductUnavailable", label: "Ürün kalmadı" },
++    { code: "DuplicateEntry", label: "İki kez girilmiş" },
++  ],
++  warning: "Mutfak bileti iptal edilir. Yetkiniz yoksa istek yönetici onayına gider.",
++  needReason: "Gerekçe seçin.",
++  confirm: (table: string, quantity: number, name: string, amount: string) => `${table} masasındaki ${quantity} × ${name} (${amount}) ürününü iptal et`,
++  dismiss: "Vazgeç",
++  busy: "İptal ediliyor…",
++  applied: "Ürün iptal edildi.",
++  appliedRestored: "Ürün iptal edildi, stok geri alındı.",
++  pending: "İptal yönetici onayına gönderildi. Onaylandıktan sonra aynı gerekçeyle yeniden isteyin.",
++  failed: "Ürün iptal edilemedi.",
++} as const;
++
+ /** The "Hesap fişi" slip printed before payment: a non-fiscal information slip with its own print counter. */
+ export const preReceiptText = {
+   action: "Hesap fişi",
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index 0f5deb5e5..fb99434d6 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -190,7 +190,16 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
+ .table-order-bridge { display: grid; gap: 1rem; }
+ .table-workspace__side--map > .table-order-bridge { border: 1px solid var(--ds-color-line); border-radius: 16px; padding: 1rem 1.2rem; background: var(--ds-color-surface); }
+ .table-order-bridge__lines { display: grid; gap: .3rem; max-height: 14rem; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+-.table-order-bridge__lines li, .table-order-bridge__total { display: flex; justify-content: space-between; gap: .6rem; font-size: .875rem; }
++.table-order-bridge__lines:has(.table-order-bridge__void) { max-height: none; }
++.table-order-bridge__lines li, .table-order-bridge__total { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem; font-size: .875rem; }
++.table-order-bridge__void, .table-order-bridge__void-open { flex-basis: 100%; }
++.table-order-bridge__void { display: grid; gap: 1rem; padding: .5rem 0 1rem; }
++.table-order-bridge__void button, .table-order-bridge__void-open { min-height: 48px; border: 1px solid var(--ds-color-line); border-radius: 12px; padding: .5rem 1rem; color: var(--ds-color-ink); background: var(--ds-color-surface); font-size: 1rem; font-weight: 700; }
++.table-order-bridge__void [aria-pressed="true"] { border-color: var(--ds-color-brand); background: var(--ds-color-accent); }
++.table-order-bridge__void-open { border-color: var(--ds-color-danger); color: var(--ds-color-danger); }
++.table-order-bridge__void .table-order-bridge__void-confirm { border-color: var(--ds-color-danger); color: var(--ds-color-surface); background: var(--ds-color-danger); }
++.table-order-bridge__void-confirm:disabled { border-color: var(--ds-color-line); color: var(--ds-color-muted); background: var(--ds-color-surface-subtle); }
++.table-order-bridge__void-open:disabled { border-color: var(--ds-color-line); color: var(--ds-color-muted); background: var(--ds-color-surface-subtle); }
+ .table-order-bridge__total { margin: 0; border-top: 1px solid var(--line); padding-top: .5rem; font-size: 1rem; }
+ .table-order-bridge__total strong { font-size: 1.15rem; }
+ .table-order-bridge__lines-note { margin: 0; }

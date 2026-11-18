@@ -6,7 +6,7 @@ import { BillingSplitApiError } from "../features/billing";
 import { collectionHrefForOrder } from "../collectOrder";
 import { collectionHref } from "../features/pending-checks/pendingChecksApi";
 import { printPreReceipt, PreReceiptError } from "../features/pending-checks/preReceipt";
-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, preReceiptText, servedBillNote } from "../strings";
+import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, preReceiptText, servedBillNote, voidSentText } from "../strings";
 
 interface BridgeTable {
   tableId: string;
@@ -71,6 +71,11 @@ export function TableOrderBridge({
   const [sendError, setSendError] = useState<string>();
   // Sending changes the lines but not the table row, so the effect below needs its own cue to read them again.
   const [sentCount, setSentCount] = useState(0);
+  const [voidingId, setVoidingId] = useState<string | null>(null);
+  const [voidReason, setVoidReason] = useState<string | null>(null);
+  const [voiding, setVoiding] = useState(false);
+  const [voidError, setVoidError] = useState<string>();
+  const [voidNotice, setVoidNotice] = useState<string>();
   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
   const sentCheck = hasCheck || !canCollect ? undefined : awaitingCheck;
@@ -108,6 +113,32 @@ export function TableOrderBridge({
       setSendError(reason instanceof ApiError ? reason.message : "Sipariş mutfağa gönderilemedi.");
     } finally {
       setSending(false);
+    }
+  };
+  const closeVoid = () => { setVoidingId(null); setVoidReason(null); };
+  const voidLine = async (itemId: string) => {
+    if (!read || read === "failed" || !voidReason) return;
+    setVoiding(true);
+    setVoidError(undefined);
+    setVoidNotice(undefined);
+    try {
+      const result = await api.voidSentItem(terminalId, read.orderId, itemId, read.rowVersion, voidReason);
+      closeVoid();
+      if (result.status === "Pending") {
+        setVoidNotice(voidSentText.pending);
+        return;
+      }
+      setVoidNotice(result.stockRestored ? voidSentText.appliedRestored : voidSentText.applied);
+      setSentCount((count) => count + 1);
+      onSent();
+    } catch (reason) {
+      setVoidError(reason instanceof ApiError ? reason.message : voidSentText.failed);
+      if (reason instanceof ApiError && reason.status === 409) {
+        closeVoid();
+        setSentCount((count) => count + 1);
+      }
+    } finally {
+      setVoiding(false);
     }
   };
   const collect = async () => {
@@ -174,11 +205,23 @@ export function TableOrderBridge({
     {hasCheck && canManage && !onTransfer && !otherTill && <small className="table-order-bridge__reason">Bu masa şu anda taşınamaz.</small>}
     {table.currentBillId && canCollect && <div className="table-order-bridge__danger"><button data-telemetry-id="b.routes.tableorderbridge.cancel" className="table-order-bridge__cancel" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button></div>}
     {canManage && !orderAllowed && !sentCheck && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
-    {(error ?? collectError ?? sendError ?? printError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError ?? printError}</p>}
+    {(error ?? collectError ?? sendError ?? printError ?? voidError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError ?? printError ?? voidError}</p>}
+    {voidNotice && <p role="status">{voidNotice}</p>}
     {hasCheck ? !canReadLines ? null : read === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
       : read && <>
         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span>
+            {line.canVoidSent && (voidingId === line.itemId
+              ? <div className="table-order-bridge__void" role="group" aria-label={voidSentText.pickReason}>
+                <strong>{voidSentText.pickReason}</strong>
+                <p>{voidSentText.warning}</p>
+                {voidSentText.reasons.map((reason) => <button data-telemetry-id="b.routes.tableorderbridge.void-reason" key={reason.code} type="button" aria-pressed={voidReason === reason.code} disabled={voiding} onClick={() => setVoidReason(reason.code)}>{reason.label}</button>)}
+                {!voidReason && <small>{voidSentText.needReason}</small>}
+                <button data-telemetry-id="b.routes.tableorderbridge.void-confirm" className="table-order-bridge__void-confirm" type="button" disabled={!voidReason || voiding} aria-busy={voiding} onClick={() => void voidLine(line.itemId)}>{voiding ? voidSentText.busy : voidSentText.confirm(table.tableNumber, line.quantity, line.productName, formatMoney(line.totalPrice))}</button>
+                <button data-telemetry-id="b.routes.tableorderbridge.void-dismiss" type="button" disabled={voiding} onClick={closeVoid}>{voidSentText.dismiss}</button>
+              </div>
+              : <button data-telemetry-id="b.routes.tableorderbridge.void-open" className="table-order-bridge__void-open" type="button" disabled={busy || voiding || sending || collecting || printing || otherTill} aria-label={`${voidSentText.open}: ${line.productName}`} title={otherTill ? billOnOtherTillText : undefined} onClick={() => { setVoidNotice(undefined); setVoidError(undefined); setVoidReason(null); setVoidingId(line.itemId); }}>{voidSentText.open}</button>)}
+          </li>)}
         </ul>
         <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(read.totalAmount)}</strong></p>
       </> : sentCheck ? <p className="table-order-bridge__total"><span>{sentCheck.itemCount} kalem</span><strong>{formatMoney(sentCheck.total)}</strong></p>

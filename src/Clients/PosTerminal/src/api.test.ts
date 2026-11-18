@@ -214,3 +214,52 @@ describe("api.submitOrder operation key", () => {
     expect(keys[1]).not.toBe(keys[0]);
   });
 });
+
+describe("api.voidSentItem idempotency key", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  const stubFetch = (outcomes: Array<"offline" | "refused" | "pending" | "applied">) => {
+    const bodies: Array<{ idempotencyKey: string; reasonCode: string; expectedRowVersion: number }> = [];
+    vi.stubGlobal("fetch", vi.fn(async (_path: string, init: RequestInit) => {
+      bodies.push(JSON.parse(String(init.body)) as (typeof bodies)[number]);
+      const outcome = outcomes.shift();
+      if (outcome === "offline") throw new TypeError("Failed to fetch");
+      if (outcome === "refused") return jsonResponse({ error: { code: "GRANT_DENIED", message: "İptal talebi reddedildi." } }, 403);
+      return outcome === "pending" ? jsonResponse({ status: "Pending" }, 202) : jsonResponse({ status: "Applied" });
+    }));
+    return bodies;
+  };
+
+  it("posts to the item's void-sent address with the row version and reason", async () => {
+    const bodies = stubFetch(["applied"]);
+
+    await api.voidSentItem("t1", "v1", "i1", 7, "OperatorError");
+
+    expect(fetch).toHaveBeenCalledWith("/api/v1/terminals/t1/orders/v1/items/i1/void-sent", expect.objectContaining({ method: "POST" }));
+    expect(bodies[0]).toMatchObject({ expectedRowVersion: 7, reasonCode: "OperatorError" });
+  });
+
+  it("keeps the key while the request is pending approval or got no answer, so the approved request is the one applied", async () => {
+    const bodies = stubFetch(["pending", "offline", "applied"]);
+
+    await api.voidSentItem("t1", "v2", "i1", 7, "OperatorError");
+    await expect(api.voidSentItem("t1", "v2", "i1", 7, "OperatorError")).rejects.toBeInstanceOf(Error);
+    await api.voidSentItem("t1", "v2", "i1", 7, "OperatorError");
+
+    expect(new Set(bodies.map((body) => body.idempotencyKey)).size).toBe(1);
+  });
+
+  it("uses a new key once the void was applied, for another reason, and after a refusal", async () => {
+    const bodies = stubFetch(["applied", "applied", "refused", "applied"]);
+
+    await api.voidSentItem("t1", "v3", "i1", 7, "OperatorError");
+    await api.voidSentItem("t1", "v3", "i1", 7, "OperatorError");
+    await expect(api.voidSentItem("t1", "v3", "i1", 7, "CustomerChange")).rejects.toBeInstanceOf(ApiError);
+    await api.voidSentItem("t1", "v3", "i1", 7, "CustomerChange");
+
+    expect(new Set(bodies.map((body) => body.idempotencyKey)).size).toBe(4);
+  });
+});

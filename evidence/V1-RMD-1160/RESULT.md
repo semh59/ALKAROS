@@ -1,0 +1,5 @@
+# V1-RMD-1160 sonuc
+Yapildi: kasa masa panelinde sunucunun CanVoidSent dedigi her kalemde "Mutfaktaki urunu iptal et" (gerekce secimi, masa+kalem+tutar adli onay, Pending'de ayni anahtarla yeniden gonderim, 403/409 Turkce mesaj). Kirmizi 13 test -> yesil 1569/1569, 10 mutant killed (cp+cmp), client-build-gate exit 0.
+Yapilmadi (a) kalem notu: terminal /items sozlesmesi (AddOrderItemRequest, DualScreenContracts.cs:114) ve AddItemAsync not tasimaz; Host'ta alan + OrderItem(notes:) + birlesme kurali gerekir (mutfak fisi NOT: basimi hazir).
+Yapilmadi (b) Beklet: sunucuda park sozlesmesi yok, terminal tek taslak kurali (DualScreenStore.Orders.cs:73); vanilla yalniz localStorage. Canli kasa PosTerminal, vanilla /cashier altinda sunulur ama baglantisiz. Ayrinti CONTRACTS.md.
+Acik riskler: (1) gonderilen kalem ayardan bagimsiz Sent oldugu icin dugme servis edilmis kalemde de gorunur; Host'ta servis edilmis sayilma kurali duzelmeli (ayri gorev); (2) Pending sonrasi gerekce hatirlanmaz, ayni gerekce yeniden secilmeli; (3) rowVersion bayatsa 409 ve satirlar yeniden okunur.

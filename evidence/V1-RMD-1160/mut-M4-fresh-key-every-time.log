@@ -1,0 +1,51 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (21 tests | 1 failed) 67ms
+     × keeps the key while the request is pending approval or got no answer, so the approved request is the one applied 7ms
+ ❯ src/routes/TableOrderBridge.test.tsx (66 tests | 1 failed) 647ms
+     × tells a manager approval is pending, does not report the line as voided, and resends the same key on the next try 53ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > api.voidSentItem idempotency key > keeps the key while the request is pending approval or got no answer, so the approved request is the one applied
+AssertionError: expected 3 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/api.test.ts:252:69
+    250|     await api.voidSentItem("t1", "v2", "i1", 7, "OperatorError");
+    251|
+    252|     expect(new Set(bodies.map((body) => body.idempotencyKey)).size).to…
+       |                                                                     ^
+    253|   });
+    254|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > tells a manager approval is pending, does not report the line as voided, and resends the same key on the next try
+AssertionError: expected 'f54028f3-759c-4bb8-86b6-aa7ea4543a14' to be '310959f4-d895-4ae3-ac36-c8e52205ccc1' // Object.is equality
+
+Expected: "310959f4-d895-4ae3-ac36-c8e52205ccc1"
+Received: "f54028f3-759c-4bb8-86b6-aa7ea4543a14"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:756:21
+    754|     const keys = voidCalls(mock).map(([, init]) => (JSON.parse(String(…
+    755|     expect(keys).toHaveLength(2);
+    756|     expect(keys[1]).toBe(keys[0]);
+       |                     ^
+    757|   });
+    758|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 85 passed (87)
+   Start at  11:48:06
+   Duration  2.23s (transform 307ms, setup 0ms, import 459ms, tests 714ms, environment 955ms)
+

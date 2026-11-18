@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (66 tests | 1 failed) 582ms
+     × names the table, the line and its amount on the confirm button once a reason is chosen 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > names the table, the line and its amount on the confirm button once a reason is chosen
+AssertionError: expected 'T-4 masasındaki 2 × Çay (₺150,00) ürü…' to be 'T-4 masasındaki 2 × Çay (₺50,00) ürün…' // Object.is equality
+
+Expected: "T-4 masasındaki 2 × Çay (₺50,00) ürününü iptal et"
+Received: "T-4 masasındaki 2 × Çay (₺150,00) ürününü iptal et"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:716:42
+    714|
+    715|     expect(confirmButton()?.disabled).toBe(false);
+    716|     expect(confirmButton()?.textContent).toBe(`T-4 masasındaki 2 × Çay…
+       |                                          ^
+    717|     expect(reasonButton("Yanlış girdim")?.getAttribute("aria-pressed")…
+    718|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 86 passed (87)
+   Start at  11:48:30
+   Duration  2.22s (transform 304ms, setup 0ms, import 450ms, tests 642ms, environment 1.03s)
+

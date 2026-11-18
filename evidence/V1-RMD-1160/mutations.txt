@@ -1,0 +1,11 @@
+M1-gate-removed killed (      Tests  2 failed | 85 passed (87))
+M2-table-row-version killed (      Tests  1 failed | 86 passed (87))
+M3-reason-not-required killed (      Tests  1 failed | 86 passed (87))
+M4-fresh-key-every-time killed (      Tests  2 failed | 85 passed (87))
+M5-key-dropped-on-pending killed (      Tests  2 failed | 85 passed (87))
+M6-no-reread-on-conflict killed (      Tests  1 failed | 86 passed (87))
+M7-pending-treated-as-applied killed (      Tests  1 failed | 86 passed (87))
+M8-other-till-open killed (      Tests  1 failed | 86 passed (87))
+M9-wrong-confirm-amount killed (      Tests  1 failed | 86 passed (87))
+M10-reason-code-swapped killed (      Tests  2 failed | 85 passed (87))
+done

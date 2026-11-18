@@ -1,0 +1,64 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (66 tests | 2 failed) 567ms
+     × offers the action only on a line the server marks voidable, once per line 15ms
+     × reads the lines again after a conflict, so a line served meanwhile loses its action 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > offers the action only on a line the server marks voidable, once per line
+AssertionError: expected [ true, true, true ] to deeply equal [ true, false, false ]
+
+- Expected
++ Received
+
+  [
+    true,
+-   false,
+-   false,
++   true,
++   true,
+  ]
+
+ ❯ src/routes/TableOrderBridge.test.tsx:676:123
+    674|     await flush();
+    675|
+    676|     expect([...document.querySelectorAll(".table-order-bridge__lines l…
+       |                                                                                                                           ^
+    677|   });
+    678|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > reads the lines again after a conflict, so a line served meanwhile loses its action
+AssertionError: expected <button …(3)></button> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<button
+  class="table-order-bridge__void-open"
+  data-telemetry-id="b.routes.tableorderbridge.void-open"
+  type="button"
+>
+  Mutfaktaki ürünü iptal et
+</button>
+
+ ❯ src/routes/TableOrderBridge.test.tsx:784:28
+    782|
+    783|     expect(document.querySelector("[role=alert]")?.textContent).toBe("…
+    784|     expect(button(action)).toBeUndefined();
+       |                            ^
+    785|   });
+    786|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 85 passed (87)
+   Start at  11:47:51
+   Duration  2.17s (transform 299ms, setup 0ms, import 448ms, tests 634ms, environment 989ms)
+

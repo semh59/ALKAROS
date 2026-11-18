@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (66 tests | 1 failed) 729ms
+     × sends the order's own row version, the reason and a key, then reads the lines again and tells the table list 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > sends the order's own row version, the reason and a key, then reads the lines again and tells the table list
+AssertionError: expected { …(3) } to deeply equal { idempotencyKey: Any<String>, …(2) }
+
+- Expected
++ Received
+
+  {
+-   "expectedRowVersion": 3,
++   "expectedRowVersion": 1,
+    "idempotencyKey": "24a02b5e-90f7-40dd-885a-0d3126374afb",
+    "reasonCode": "ProductUnavailable",
+  }
+
+ ❯ src/routes/TableOrderBridge.test.tsx:728:44
+    726|     const [url, init] = voidCalls(mock)[0];
+    727|     expect(url).toBe("/api/v1/terminals/t-1/orders/o-1/items/i1/void-s…
+    728|     expect(JSON.parse(String(init!.body))).toEqual({ idempotencyKey: e…
+       |                                            ^
+    729|     expect(onSent).toHaveBeenCalledTimes(1);
+    730|     expect(document.querySelector(".table-order-bridge__void")).toBeNu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 86 passed (87)
+   Start at  11:47:56
+   Duration  2.42s (transform 318ms, setup 0ms, import 469ms, tests 788ms, environment 1.01s)
+

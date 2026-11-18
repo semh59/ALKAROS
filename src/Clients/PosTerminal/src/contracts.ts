@@ -272,6 +272,7 @@ export interface TableOrder {
     totalPrice: number;
     status: string;
     kitchenState?: string;
+    canVoidSent?: boolean;
     addedWithoutKitchenReason?: string | null;
   }[];
 }

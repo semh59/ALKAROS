@@ -1422,6 +1422,27 @@ export const refundMethodLabels: Record<string, string> = {
   Account: "Cari hesap",
 };
 
+/** Cancelling a line the kitchen already has; the codes are the server's void reasons, only the wording is ours. */
+export const voidSentText = {
+  open: "Mutfaktaki ürünü iptal et",
+  pickReason: "İptal gerekçesi",
+  reasons: [
+    { code: "CustomerChange", label: "Müşteri vazgeçti" },
+    { code: "OperatorError", label: "Yanlış girdim" },
+    { code: "ProductUnavailable", label: "Ürün kalmadı" },
+    { code: "DuplicateEntry", label: "İki kez girilmiş" },
+  ],
+  warning: "Mutfak bileti iptal edilir. Yetkiniz yoksa istek yönetici onayına gider.",
+  needReason: "Gerekçe seçin.",
+  confirm: (table: string, quantity: number, name: string, amount: string) => `${table} masasındaki ${quantity} × ${name} (${amount}) ürününü iptal et`,
+  dismiss: "Vazgeç",
+  busy: "İptal ediliyor…",
+  applied: "Ürün iptal edildi.",
+  appliedRestored: "Ürün iptal edildi, stok geri alındı.",
+  pending: "İptal yönetici onayına gönderildi. Onaylandıktan sonra aynı gerekçeyle yeniden isteyin.",
+  failed: "Ürün iptal edilemedi.",
+} as const;
+
 /** The "Hesap fişi" slip printed before payment: a non-fiscal information slip with its own print counter. */
 export const preReceiptText = {
   action: "Hesap fişi",

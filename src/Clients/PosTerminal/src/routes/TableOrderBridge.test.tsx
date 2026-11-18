@@ -6,6 +6,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerSessionExpiredHandler } from "../api";
+import { formatMoney } from "../format";
 import { TableOrderBridge } from "./TableOrderBridge";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -642,5 +643,163 @@ describe("TableOrderBridge", () => {
       expect(body(".table-order-bridge__cancel")).toMatch(/border:\s*1px solid var\(--ds-color-danger\)/);
       expect(bridgeRules.map((rule) => rule.body).join(";")).not.toMatch(/#e2cfc8|#fffaf7|#795b18|#922c36|#fff0f1/);
     });
+  });
+});
+
+describe("TableOrderBridge mutfaktaki ürünü iptal et", () => {
+  const sentOrder = {
+    ...tableOrder,
+    items: [
+      { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Active", kitchenState: "Sent", canVoidSent: true },
+      { itemId: "i2", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active", kitchenState: "Served", canVoidSent: false },
+      { itemId: "i4", productName: "Ayran", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Draft", kitchenState: "NotSent" },
+    ],
+  };
+  const action = "Mutfaktaki ürünü iptal et";
+  const flush = () => act(async () => { await Promise.resolve(); });
+  const press = (target: Element | undefined) => act(async () => { target!.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+  const reasonButton = (label: string) => [...document.querySelectorAll<HTMLButtonElement>(".table-order-bridge__void button")].find((b) => b.textContent === label);
+  const confirmButton = () => document.querySelector<HTMLButtonElement>(".table-order-bridge__void-confirm");
+  const voidCalls = (mock: ReturnType<typeof stubFetch>) => mock.mock.calls.filter(([url]) => String(url).includes("/void-sent"));
+  const chooseAndConfirm = async (label: string) => {
+    await press(button(action));
+    await press(reasonButton(label));
+    await press(confirmButton()!);
+    await flush();
+  };
+
+  it("offers the action only on a line the server marks voidable, once per line", async () => {
+    stubFetch(undefined, sentOrder);
+    render();
+    await flush();
+
+    expect([...document.querySelectorAll(".table-order-bridge__lines li")].map((li) => li.textContent?.includes(action))).toEqual([true, false, false]);
+  });
+
+  it("names the line in the action's accessible name, so a screen reader can tell the lines apart", async () => {
+    stubFetch(undefined, sentOrder);
+    render();
+    await flush();
+
+    expect(button(action)?.getAttribute("aria-label")).toBe(`${action}: Çay`);
+  });
+
+  it("offers it to nobody who may not read the lines, and closes it while another till holds the bill or the screen is busy", async () => {
+    stubFetch(undefined, sentOrder);
+    render({ canReadLines: false });
+    await flush();
+    expect(button(action)).toBeUndefined();
+
+    render({ busy: true });
+    await flush();
+    expect(button(action)?.disabled).toBe(true);
+
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: true } });
+    await flush();
+    expect(button(action)?.disabled).toBe(true);
+  });
+
+  it("sends nothing on the first touch and lists four reasons with none chosen and the confirm button closed with its reason", async () => {
+    const mock = stubFetch(undefined, sentOrder);
+    render();
+    await flush();
+    await press(button(action));
+
+    expect(voidCalls(mock)).toHaveLength(0);
+    expect([...document.querySelectorAll(".table-order-bridge__void button[aria-pressed]")].map((b) => [b.textContent, b.getAttribute("aria-pressed")])).toEqual([
+      ["Müşteri vazgeçti", "false"], ["Yanlış girdim", "false"], ["Ürün kalmadı", "false"], ["İki kez girilmiş", "false"],
+    ]);
+    expect(confirmButton()?.disabled).toBe(true);
+    expect(document.querySelector(".table-order-bridge__void")?.textContent).toContain("Gerekçe seçin");
+  });
+
+  it("names the table, the line and its amount on the confirm button once a reason is chosen", async () => {
+    stubFetch(undefined, sentOrder);
+    render();
+    await flush();
+    await press(button(action));
+    await press(reasonButton("Yanlış girdim"));
+
+    expect(confirmButton()?.disabled).toBe(false);
+    expect(confirmButton()?.textContent).toBe(`T-4 masasındaki 2 × Çay (${formatMoney(50)}) ürününü iptal et`);
+    expect(reasonButton("Yanlış girdim")?.getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("sends the order's own row version, the reason and a key, then reads the lines again and tells the table list", async () => {
+    const mock = stubFetch(() => reply(200, { status: "Applied", stockRestored: false }), sentOrder);
+    const { onSent } = render();
+    await flush();
+    await chooseAndConfirm("Ürün kalmadı");
+
+    const [url, init] = voidCalls(mock)[0];
+    expect(url).toBe("/api/v1/terminals/t-1/orders/o-1/items/i1/void-sent");
+    expect(JSON.parse(String(init!.body))).toEqual({ idempotencyKey: expect.any(String), expectedRowVersion: 3, reasonCode: "ProductUnavailable" });
+    expect(onSent).toHaveBeenCalledTimes(1);
+    expect(document.querySelector(".table-order-bridge__void")).toBeNull();
+    expect(document.querySelector("[role=status]")?.textContent).toBe("Ürün iptal edildi.");
+  });
+
+  it("says the stock went back when the server reports it", async () => {
+    stubFetch(() => reply(200, { status: "Applied", stockRestored: true }), sentOrder);
+    render();
+    await flush();
+    await chooseAndConfirm("Müşteri vazgeçti");
+
+    expect(document.querySelector("[role=status]")?.textContent).toBe("Ürün iptal edildi, stok geri alındı.");
+  });
+
+  it("tells a manager approval is pending, does not report the line as voided, and resends the same key on the next try", async () => {
+    const mock = stubFetch(() => reply(202, { status: "Pending", grantId: "g-1" }), sentOrder);
+    const { onSent } = render();
+    await flush();
+    await chooseAndConfirm("Yanlış girdim");
+
+    expect(onSent).not.toHaveBeenCalled();
+    expect(document.querySelector("[role=status]")?.textContent).toBe("İptal yönetici onayına gönderildi. Onaylandıktan sonra aynı gerekçeyle yeniden isteyin.");
+    expect(document.querySelector(".table-order-bridge__void")).toBeNull();
+
+    await chooseAndConfirm("Yanlış girdim");
+    const keys = voidCalls(mock).map(([, init]) => (JSON.parse(String(init!.body)) as { idempotencyKey: string }).idempotencyKey);
+    expect(keys).toHaveLength(2);
+    expect(keys[1]).toBe(keys[0]);
+  });
+
+  it("shows the server's Turkish refusal and keeps the line and the table list as they were", async () => {
+    stubFetch(() => reply(403, { error: { code: "GRANT_DENIED", message: "İptal talebi reddedildi." } }), sentOrder);
+    const { onSent } = render();
+    await flush();
+    await chooseAndConfirm("Yanlış girdim");
+
+    expect(document.querySelector("[role=alert]")?.textContent).toBe("İptal talebi reddedildi.");
+    expect(onSent).not.toHaveBeenCalled();
+    expect(document.querySelector(".table-order-bridge__lines")?.textContent).toContain("Çay");
+  });
+
+  it("reads the lines again after a conflict, so a line served meanwhile loses its action", async () => {
+    let reads = 0;
+    const served = { ...sentOrder, items: sentOrder.items.map((item) => item.itemId === "i1" ? { ...item, kitchenState: "Served", canVoidSent: false } : item) };
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      if (String(url).includes("/void-sent")) return reply(409, { error: { code: "ITEM_ALREADY_SERVED", message: "Ürün zaten servis edildi." } });
+      if (String(url).includes("/orders/table/") && init?.method !== "POST") return reply(200, ++reads === 1 ? sentOrder : served);
+      return reply(500, {});
+    }));
+    render();
+    await flush();
+    await chooseAndConfirm("Yanlış girdim");
+    await flush();
+
+    expect(document.querySelector("[role=alert]")?.textContent).toBe("Ürün zaten servis edildi.");
+    expect(button(action)).toBeUndefined();
+  });
+
+  it("Vazgeç closes the reasons without sending anything", async () => {
+    const mock = stubFetch(undefined, sentOrder);
+    render();
+    await flush();
+    await press(button(action));
+    await press(button("Vazgeç"));
+
+    expect(document.querySelector(".table-order-bridge__void")).toBeNull();
+    expect(voidCalls(mock)).toHaveLength(0);
   });
 });
