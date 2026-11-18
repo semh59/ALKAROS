@@ -1,7 +1,7 @@
 # V1-RMD-1164 - KVKK saklama işi mutfak fişi ve ödeme geçmişi serbest metinlerini de temizler
 
 - Task ID: V1-RMD-1164
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
