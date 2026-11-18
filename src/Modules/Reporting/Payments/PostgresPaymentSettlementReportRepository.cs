@@ -130,11 +130,18 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
 
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT cash_session_id, terminal_id, status, expected_cash, actual_cash, difference
-            FROM cash.cash_sessions
-            WHERE opened_at >= $1 AND opened_at < $2
-              AND ($3::uuid IS NULL OR terminal_id = $3)
-            ORDER BY opened_at
+            SELECT s.cash_session_id, s.terminal_id, s.status, s.expected_cash, s.actual_cash, s.difference,
+                   (c.state->>'firstCountedAmount')::numeric, (c.state->>'countEntries')::int,
+                   (c.state->>'drawerSaleOpenCount')::int, (c.state->>'drawerNoSaleCount')::int,
+                   (c.state->>'drawerNoSaleKickFailedCount')::int, (c.state->>'drawerSaleKickFailedCount')::int
+            FROM cash.cash_sessions s
+            LEFT JOIN LATERAL (
+                SELECT a.after_state_json AS state FROM audit.audit_events a
+                WHERE a.aggregate_type = 'CashSession' AND a.aggregate_id = s.cash_session_id AND a.event_name = 'cash.session.closed'
+                ORDER BY a.occurred_at DESC LIMIT 1) c ON true
+            WHERE s.opened_at >= $1 AND s.opened_at < $2
+              AND ($3::uuid IS NULL OR s.terminal_id = $3)
+            ORDER BY s.opened_at
             LIMIT {MaxScanRows + 1};
             """);
         command.Parameters.AddWithValue(windowStart.UtcDateTime);
@@ -152,7 +159,13 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
                 reader.GetDecimal(3),
                 reader.GetDecimal(4),
                 reader.GetDecimal(5),
-                IsOpen: status is "Open" or "Counting" or "Closing"));
+                IsOpen: status is "Open" or "Counting" or "Closing",
+                FirstCountedAmount: reader.IsDBNull(6) ? null : reader.GetDecimal(6),
+                CorrectionCount: reader.IsDBNull(7) ? null : Math.Max(reader.GetInt32(7) - 1, 0),
+                SaleOpenCount: reader.IsDBNull(8) ? null : reader.GetInt32(8),
+                NoSaleCount: reader.IsDBNull(9) ? null : reader.GetInt32(9),
+                NoSaleKickFailedCount: reader.IsDBNull(10) ? null : reader.GetInt32(10),
+                SaleKickFailedCount: reader.IsDBNull(11) ? null : reader.GetInt32(11)));
         }
 
         if (results.Count > MaxScanRows)

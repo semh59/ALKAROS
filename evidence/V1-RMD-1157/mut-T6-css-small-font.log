@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (26 tests | 1 failed) 1597ms
+     × keeps the cash session table readable: 14px text at least, and a horizontal scroll instead of a squeezed page 8ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 25 passed (26)
+   Start at  10:20:08
+   Duration  3.63s (transform 259ms, setup 0ms, import 382ms, tests 1.60s, environment 1.31s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > keeps the cash session table readable: 14px text at least, and a horizontal scroll instead of a squeezed page
+AssertionError: expected 12 to be greater than or equal to 14
+ ❯ src/features/management-closing/ClosingSection.test.tsx:102:36
+    100|     const css = readFileSync(resolve(dirname(fileURLToPath(import.meta…
+    101|     const size = /\.closing__sessions th, \.closing__sessions td \{ fo…
+    102|     expect(Number(size?.[1]) * 16).toBeGreaterThanOrEqual(14);
+       |                                    ^
+    103|     expect(css).toMatch(/\.closing__scroll \{ overflow-x: auto; \}/);
+    104|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

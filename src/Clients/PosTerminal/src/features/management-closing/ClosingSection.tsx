@@ -202,11 +202,15 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
           <div><dt>{t.reconciliationRequired}</dt><dd>{data.unsettledPayments.reconciliationRequiredCount} · {formatMoney(data.unsettledPayments.reconciliationRequiredAmount)}</dd></div>
         </dl>
         <h4>{t.cashSessions}</h4>
-        {data.cashSessions.length === 0 ? <Empty /> : <table>
-          <thead><tr><th>{t.status}</th><th>{t.expected}</th><th>{t.actual}</th><th>{t.difference}</th></tr></thead>
+        {data.cashSessions.length === 0 ? <Empty /> : <div className="closing__scroll" role="region" aria-label={t.cashSessions}><table className="closing__sessions">
+          <thead><tr><th>{t.status}</th><th>{t.expected}</th><th>{t.actual}</th><th>{t.difference}</th>
+            <th>{t.firstCount}</th><th>{t.countCorrections}</th><th>{t.noSaleOpenings}</th><th>{t.noSaleFailed}</th><th>{t.saleFailed}</th></tr></thead>
           <tbody>{data.cashSessions.map((row) => <tr key={row.cashSessionId}>
-            <td>{row.isOpen ? t.sessionOpen : t.sessionClosed}</td><td>{formatMoney(row.expectedCash)}</td><td>{formatMoney(row.actualCash)}</td><td>{formatMoney(row.difference)}</td></tr>)}</tbody>
-        </table>}
+            <td>{row.isOpen ? t.sessionOpen : t.sessionClosed}</td><td>{formatMoney(row.expectedCash)}</td><td>{formatMoney(row.actualCash)}</td><td>{formatMoney(row.difference)}</td>
+            <td>{row.firstCountedAmount === null ? "—" : formatMoney(row.firstCountedAmount)}</td><td>{row.correctionCount ?? "—"}</td><td>{row.noSaleCount ?? "—"}</td>
+            <td>{row.noSaleKickFailedCount ?? "—"}</td><td>{row.saleKickFailedCount ?? "—"}</td></tr>)}</tbody>
+        </table></div>}
+        {data.cashSessions.length > 0 && <p className="closing__hint">{t.cashSessionsUnknown}</p>}
         <h4>{t.caseTotals}</h4>
         {data.reconciliationTotals.length === 0 ? <Empty /> : <table>
           <thead><tr><th>{t.caseType}</th><th>{t.openCases}</th><th>{t.resolvedCases}</th><th>{t.openDiscrepancy}</th></tr></thead>

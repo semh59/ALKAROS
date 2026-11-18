@@ -180,6 +180,46 @@ public sealed class PaymentSettlementReportTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ClosedSessionsCarryTheCountHistoryAndDrawerCountersOfTheirClosingRecord()
+    {
+        var closed = await _database.SeedCashSessionAsync(Guid.NewGuid(), "Closed", 1000m, 1100m, InWindow);
+        await _database.SeedCloseAuditAsync(
+            closed,
+            """{"firstCountedAmount":1050.5,"countEntries":3,"drawerSaleOpenCount":7,"drawerNoSaleCount":2,"drawerNoSaleKickFailedCount":4,"drawerSaleKickFailedCount":5}""");
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        var session = result.CashSessions.Single();
+        (session.FirstCountedAmount, session.CorrectionCount).Should().Be((1050.5m, 2));
+        (session.SaleOpenCount, session.NoSaleCount, session.NoSaleKickFailedCount, session.SaleKickFailedCount).Should().Be((7, 2, 4, 5));
+    }
+
+    [Fact]
+    public async Task ASingleCountIsNoCorrection()
+    {
+        var closed = await _database.SeedCashSessionAsync(Guid.NewGuid(), "Closed", 100m, 100m, InWindow);
+        await _database.SeedCloseAuditAsync(closed, """{"firstCountedAmount":100,"countEntries":1}""");
+
+        var session = (await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate))).CashSessions.Single();
+
+        session.CorrectionCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task OpenSessionsAndOlderClosingRecordsSayNothingInsteadOfZero()
+    {
+        await _database.SeedCashSessionAsync(Guid.NewGuid(), "Open", 100m, 100m, InWindow);
+        var older = await _database.SeedCashSessionAsync(Guid.NewGuid(), "Closed", 100m, 100m, InWindow);
+        await _database.SeedCloseAuditAsync(older, """{"status":"Closed","drawerKickFailedCount":3}""");
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.CashSessions.Should().HaveCount(2);
+        result.CashSessions.Should().OnlyContain(s => s.FirstCountedAmount == null && s.CorrectionCount == null && s.SaleOpenCount == null
+            && s.NoSaleCount == null && s.NoSaleKickFailedCount == null && s.SaleKickFailedCount == null);
+    }
+
+    [Fact]
     public async Task CashSessionsTerminalFilterNarrowsToOneTerminal()
     {
         var terminalA = Guid.NewGuid();

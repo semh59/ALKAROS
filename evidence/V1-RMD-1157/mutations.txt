@@ -1,0 +1,13 @@
+T1-first-count-null-formatted exit=1 restored=True
+T2-failed-columns-swapped exit=1 restored=True
+T3-corrections-null-as-zero exit=1 restored=True
+T4-header-says-attempt exit=1 restored=True
+T5-no-sale-null-as-zero exit=1 restored=True
+T6-css-small-font exit=1 restored=True
+T7-css-no-scroll exit=1 restored=True
+R1-corrections-equal-entries exit=1 restored=True
+R2-columns-swapped exit=1 restored=True
+R3-zero-for-missing exit=1 restored=True
+R4-first-count-last exit=1 restored=True
+T8-no-region exit=1 restored=True
+T9-no-hint exit=1 restored=True

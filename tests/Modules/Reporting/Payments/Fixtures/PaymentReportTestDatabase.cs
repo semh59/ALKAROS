@@ -112,6 +112,20 @@ public sealed class PaymentReportTestDatabase : PgTestDatabase
         return sessionId;
     }
 
+    /// <summary>Seeds the <c>cash.session.closed</c> audit record of a session with the given state JSON (what the close wrote).</summary>
+    public Task SeedCloseAuditAsync(Guid cashSessionId, string afterStateJson)
+        => ExecuteAsync(
+            """
+            INSERT INTO audit.audit_events
+                (id, event_name, aggregate_type, aggregate_id, actor_type, correlation_id, after_state_json, occurred_at)
+            VALUES
+                (@id, 'cash.session.closed', 'CashSession', @session, 'User', @correlation, @state::jsonb, now());
+            """,
+            ("id", Guid.NewGuid()),
+            ("session", cashSessionId),
+            ("correlation", cashSessionId.ToString("N")),
+            ("state", afterStateJson));
+
     /// <summary>
     /// Seeds a real Approved card_settlement_attempts row. Its own CHECK
     /// constraint (<c>ck_card_settlement_attempts_approved_fields</c>)

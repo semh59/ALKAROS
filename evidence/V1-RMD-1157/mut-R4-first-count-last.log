@@ -1,0 +1,34 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Reporting.Payments.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\bin\Debug\net8.0\ALKAROS.Reporting.Payments.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\bin\Debug\net8.0\ALKAROS.Reporting.Payments.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.ClosedSessionsCarryTheCountHistoryAndDrawerCountersOfTheirClosingRecord [150 ms]
+  Hata İletisi:
+   Expected (session.FirstCountedAmount, session.CorrectionCount) to be equal to 
+{
+    Item1 = 1050.5M, 
+    Item2 = 2
+}, but found 
+{
+    Item1 = 3M, 
+    Item2 = 2
+}.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.ComparableTypeAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.ClosedSessionsCarryTheCountHistoryAndDrawerCountersOfTheirClosingRecord() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentSettlementReportTests.cs:line 193
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 5 s - ALKAROS.Reporting.Payments.Tests.dll (net8.0)
+[xUnit.net 00:00:02.14]     ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.ClosedSessionsCarryTheCountHistoryAndDrawerCountersOfTheirClosingRecord [FAIL]

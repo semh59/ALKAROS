@@ -1,5 +1,8 @@
 // @vitest-environment jsdom
 
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -72,6 +75,35 @@ describe("closing and reconciliation section", () => {
     const facts = [...document.querySelectorAll("dl.closing__facts")].map((list) => list.textContent ?? "");
     expect(facts.some((text) => text.includes("Mutfağa gitmeden eklenen kalem3"))).toBe(true);
     expect(facts.some((text) => text.includes("Mutfağa gitmeden eklenen kalem4"))).toBe(true);
+  });
+
+  it("shows each cash session's first count, corrections and drawer counters, and a dash where the server has none", async () => {
+    const none = { firstCountedAmount: null, correctionCount: null, saleOpenCount: null, noSaleCount: null, noSaleKickFailedCount: null, saleKickFailedCount: null };
+    const settlement = {
+      paymentMix: [], unsettledPayments: { unknownCount: 0, unknownAmount: 0, reconciliationRequiredCount: 0, reconciliationRequiredAmount: 0 }, reconciliationTotals: [],
+      cashSessions: [
+        { cashSessionId: "s1", status: "Closed", expectedCash: 1000, actualCash: 1100, difference: 100, isOpen: false, firstCountedAmount: 1050, correctionCount: 2, saleOpenCount: 3, noSaleCount: 1, noSaleKickFailedCount: 4, saleKickFailedCount: 5 },
+        { cashSessionId: "s2", status: "Open", expectedCash: 0, actualCash: 0, difference: 0, isOpen: true, ...none },
+      ],
+    };
+    await render(<ClosingSection client={fakeClient({ getSettlement: vi.fn().mockResolvedValue(settlement) })} capabilities={new Set(["reports.view"])} />);
+    const table = [...document.querySelectorAll("h4")].find((h) => h.textContent === "Kasa oturumları")!.parentElement!.querySelector("table")!;
+
+    const scroll = table.parentElement!;
+    expect([scroll.getAttribute("role"), scroll.getAttribute("aria-label")]).toEqual(["region", "Kasa oturumları"]);
+    expect(document.body.textContent).toContain("— işareti: bu oturum için kayıt yok");
+    expect([...table.querySelectorAll("th")].map((cell) => cell.textContent).slice(4)).toEqual(["İlk sayım", "Düzeltme sayısı", "Satışsız açma", "Açılamayan satışsız deneme", "Ödemede açılamayan darbe"]);
+    const rows = [...table.querySelectorAll("tbody tr")].map((row) => [...row.querySelectorAll("td")].map((cell) => cell.textContent!));
+    expect(rows[0]![4]).toContain("1.050");
+    expect(rows[0]!.slice(5)).toEqual(["2", "1", "4", "5"]);
+    expect(rows[1]!.slice(4)).toEqual(["—", "—", "—", "—", "—"]);
+  });
+
+  it("keeps the cash session table readable: 14px text at least, and a horizontal scroll instead of a squeezed page", async () => {
+    const css = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "management-closing.css"), "utf8");
+    const size = /\.closing__sessions th, \.closing__sessions td \{ font-size: ([\d.]+)rem; \}/.exec(css);
+    expect(Number(size?.[1]) * 16).toBeGreaterThanOrEqual(14);
+    expect(css).toMatch(/\.closing__scroll \{ overflow-x: auto; \}/);
   });
 
   it("a view-only session sees data but no action buttons", async () => {

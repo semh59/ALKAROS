@@ -63,7 +63,11 @@ export interface BusinessDayReport {
 export interface SettlementReport {
   paymentMix: readonly { method: string; approvedCount: number; approvedAmount: number }[];
   unsettledPayments: { unknownCount: number; unknownAmount: number; reconciliationRequiredCount: number; reconciliationRequiredAmount: number };
-  cashSessions: readonly { cashSessionId: string; status: string; expectedCash: number; actualCash: number; difference: number; isOpen: boolean }[];
+  cashSessions: readonly {
+    cashSessionId: string; status: string; expectedCash: number; actualCash: number; difference: number; isOpen: boolean;
+    firstCountedAmount: number | null; correctionCount: number | null; saleOpenCount: number | null; noSaleCount: number | null;
+    noSaleKickFailedCount: number | null; saleKickFailedCount: number | null;
+  }[];
   reconciliationTotals: readonly { caseType: string; openCount: number; resolvedCount: number; openDiscrepancyAmount: number }[];
 }
 

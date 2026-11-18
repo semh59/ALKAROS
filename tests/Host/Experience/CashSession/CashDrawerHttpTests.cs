@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Reporting.Payments;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -427,6 +428,35 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
         Assert.Equal((1, 2, 1, 2), Drawer(record, "drawerSaleOpenCount", "drawerNoSaleCount", "drawerNoSaleKickFailedCount", "drawerSaleKickFailedCount"));
         Assert.False(record.TryGetProperty("drawerKickFailedCount", out _));
         Assert.Equal(0m, closed.GetProperty("difference").GetDecimal());
+    }
+
+    [Fact]
+    public async Task TheManagersSettlementReportReadsTheSameCountsTheClosingRecordHolds()
+    {
+        await using var rig = await RigAsync();
+        Assert.Equal(HttpStatusCode.OK, (await rig.TenderAsync(80m, 100m, "tender-m1")).StatusCode);
+        await rig.KicksAsync(1);
+        Assert.Equal(HttpStatusCode.OK, (await rig.NoSaleAsync("ns-m1", "Count", null)).StatusCode);
+        await _database.SetSettingAsync("cash.drawer_printer_address", "String", $"127.0.0.1:{FreePort()}");
+        Assert.False((await (await rig.NoSaleAsync("ns-m2", "Count", null)).Content.ReadFromJsonAsync<JsonElement>()).GetProperty("delivered").GetBoolean());
+        Assert.False((await (await rig.TenderAsync(80m, 100m, "tender-m2")).Content.ReadFromJsonAsync<JsonElement>()).GetProperty("drawerOpened").GetBoolean());
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/start-count", new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 300m })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 260m })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/close", new { ActualCash = 260m })).StatusCode);
+
+        var window = DateTimeOffset.UtcNow;
+        var rows = await new PostgresPaymentSettlementReportRepository(_database.DataSource)
+            .GetCashSessionsAsync(window.AddDays(-1), window.AddDays(1), null);
+
+        var session = Assert.Single(rows, row => row.CashSessionId == rig.SessionId);
+        Assert.Equal((300m, 1), (session.FirstCountedAmount, session.CorrectionCount));
+        Assert.Equal((1, 1, 1, 1), (session.SaleOpenCount, session.NoSaleCount, session.NoSaleKickFailedCount, session.SaleKickFailedCount));
+        var record = await rig.ClosedStateAsync();
+        Assert.Equal(
+            (record.GetProperty("drawerSaleOpenCount").GetInt32(), record.GetProperty("drawerNoSaleCount").GetInt32(),
+             record.GetProperty("drawerNoSaleKickFailedCount").GetInt32(), record.GetProperty("drawerSaleKickFailedCount").GetInt32()),
+            (session.SaleOpenCount, session.NoSaleCount, session.NoSaleKickFailedCount, session.SaleKickFailedCount));
     }
 
     [Fact]

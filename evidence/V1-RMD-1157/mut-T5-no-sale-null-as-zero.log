@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (26 tests | 1 failed) 1452ms
+     × shows each cash session's first count, corrections and drawer counters, and a dash where the server has none 52ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 25 passed (26)
+   Start at  10:20:02
+   Duration  3.48s (transform 320ms, setup 0ms, import 479ms, tests 1.45s, environment 1.22s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > shows each cash session's first count, corrections and drawer counters, and a dash where the server has none
+AssertionError: expected [ '—', '—', '0', '—', '—' ] to deeply equal [ '—', '—', '—', '—', '—' ]
+
+- Expected
++ Received
+
+  [
+    "—",
+    "—",
+-   "—",
++   "0",
+    "—",
+    "—",
+  ]
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:96:31
+     94|     expect(rows[0]![4]).toContain("1.050");
+     95|     expect(rows[0]!.slice(5)).toEqual(["2", "1", "4", "5"]);
+     96|     expect(rows[1]!.slice(4)).toEqual(["—", "—", "—", "—", "—"]);
+       |                               ^
+     97|   });
+     98|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

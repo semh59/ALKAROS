@@ -75,7 +75,13 @@ public sealed record CashSessionSummaryEntry(
     decimal ExpectedCash,
     decimal ActualCash,
     decimal Difference,
-    bool IsOpen);
+    bool IsOpen,
+    decimal? FirstCountedAmount = null,
+    int? CorrectionCount = null,
+    int? SaleOpenCount = null,
+    int? NoSaleCount = null,
+    int? NoSaleKickFailedCount = null,
+    int? SaleKickFailedCount = null);
 
 /// <summary>Open (unresolved) and resolved reconciliation case totals for the window, grouped by case type.</summary>
 public sealed record ReconciliationTotalsEntry(

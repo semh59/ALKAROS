@@ -187,3 +187,7 @@ by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.dra
   into one counter. The close answer (`drawer`) carries the same four numbers as `saleOpenCount`, `noSaleCount`,
   `noSaleKickFailedCount` and `saleKickFailedCount`. From the fifth delivered no-sale opening of a session the answer
   carries a warning.
+- The manager's payment settlement report (`cashSessions`, shown under Gün sonu ve mutabakat) reads the same record: each
+  closed session carries `firstCountedAmount`, `correctionCount` (`countEntries - 1`), `saleOpenCount`, `noSaleCount`,
+  `noSaleKickFailedCount` and `saleKickFailedCount` of its `cash.session.closed` event. An open session and a session
+  closed before these fields were written carry `null` (the screen shows a dash), never an invented zero.

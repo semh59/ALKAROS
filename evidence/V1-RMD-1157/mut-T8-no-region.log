@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (26 tests | 1 failed) 1005ms
+     × shows each cash session's first count, corrections and drawer counters, and a dash where the server has none 43ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 25 passed (26)
+   Start at  10:35:00
+   Duration  2.80s (transform 263ms, setup 0ms, import 383ms, tests 1.00s, environment 1.12s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > shows each cash session's first count, corrections and drawer counters, and a dash where the server has none
+AssertionError: expected [ null, null ] to deeply equal [ 'region', 'Kasa oturumları' ]
+
+- Expected
++ Received
+
+  [
+-   "region",
+-   "Kasa oturumları",
++   null,
++   null,
+  ]
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:93:78
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
