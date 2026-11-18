@@ -1,3 +1,5 @@
+import { afterEach } from "vitest";
+
 // V1-RMD-206: jsdom does not implement CSS.escape (confirmed: querying it
 // under jsdom returns undefined), so any production code that calls it
 // (waiter-app.js's own re-find-the-fresh-button-by-id logic) throws as an
@@ -12,3 +14,17 @@ if (typeof globalThis.CSS === "undefined" || typeof globalThis.CSS.escape !== "f
   globalThis.CSS.escape = (value) =>
     String(value).replace(/[^a-zA-Z0-9_-]/g, (ch) => `\\${ch}`);
 }
+
+// A page under test starts 5 s approval/confirmation checks that nothing stops when its DOM is wiped; a real browser
+// kills them on unload. Left running they answer from the NEXT test's shared fetch mock and redraw its document.
+const startedIntervals = new Set();
+const nativeSetInterval = window.setInterval.bind(window);
+window.setInterval = (...args) => {
+  const id = nativeSetInterval(...args);
+  startedIntervals.add(id);
+  return id;
+};
+afterEach(() => {
+  startedIntervals.forEach((id) => window.clearInterval(id));
+  startedIntervals.clear();
+});

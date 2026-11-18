@@ -1,0 +1,67 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ support/page-timer-teardown.test.js (2 tests | 1 failed) 159ms
+     × finds that interval stopped in the next test 98ms
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says the connection failed when the approval request cannot be sent
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794962066645-0.7480509289510997:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794962066645-0.7480509289510997:597:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794962066645-0.7480509289510997:711:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (31 tests | 1 failed) 8942ms
+     × says the connection failed when the approval request cannot be sent 1161ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says the connection failed when the approval request cannot be sent
+AssertionError: expected null not to be null
+ ❯ split-payment-discount-pending.test.js:391:61
+    389|   type("discount-value", "20");
+    390|   submit().click();
+    391|   await vi.waitFor(() => expect(approveFields().button).not.toBeNull()…
+       |                                                             ^
+    392|   return fetchMock;
+    393| }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  support/page-timer-teardown.test.js > page timer teardown > finds that interval stopped in the next test
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 3 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+  2nd vi.fn() call:
+
+    Array []
+
+  3rd vi.fn() call:
+
+    Array []
+
+
+Number of calls: 3
+
+ ❯ support/page-timer-teardown.test.js:15:23
+     13|     ticks.mockClear();
+     14|     await new Promise((done) => setTimeout(done, 80));
+     15|     expect(ticks).not.toHaveBeenCalled();
+       |                       ^
+     16|   });
+     17| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 31 passed (33)
+   Start at  03:34:17
+   Duration  10.50s (transform 2.23s, setup 75ms, import 87ms, tests 9.10s, environment 2.37s)
+
