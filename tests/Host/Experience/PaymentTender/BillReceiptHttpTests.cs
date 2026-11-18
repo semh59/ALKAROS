@@ -4,6 +4,8 @@ using System.Text.Json;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Identity.Authentication;
+using ALKAROS.Identity.DeviceSessions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -946,6 +948,147 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal([1, 1], numbers.Take(2).ToArray());
         Assert.Equal([2, 3, 4, 5, 6], numbers.Skip(2).Order().ToArray());
         Assert.Equal(6, (await PrintEventsAsync(orderId, "order.pre-receipt.printed")).Count);
+    }
+
+    private const string InPlaceManagerPassword = "Mudur-Sifre-1";
+
+    private async Task<string> UsernameWithPasswordAsync(string cookie)
+    {
+        await using var query = _database.DataSource.CreateCommand(
+            "SELECT u.user_id, u.username FROM identity.users u JOIN identity.device_sessions s ON s.user_id = u.user_id WHERE s.token_hash = @hash;");
+        query.Parameters.AddWithValue("hash", DeviceSessionToken.Hash(cookie["alkaros.cashier=".Length..]));
+        await using var reader = await query.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        var (userId, username) = (reader.GetGuid(0), reader.GetString(1));
+        await reader.CloseAsync();
+        await using var update = _database.DataSource.CreateCommand("UPDATE identity.users SET password_hash = @hash WHERE user_id = @id;");
+        update.Parameters.AddWithValue("hash", new PasswordHasher().Hash(InPlaceManagerPassword));
+        update.Parameters.AddWithValue("id", userId);
+        await update.ExecuteNonQueryAsync();
+        return username;
+    }
+
+    private static object InPlaceResetBody(string? username, string? password)
+        => new { Reason = "Yazıcı kağıdı bitti", IdempotencyKey = Guid.NewGuid(), ManagerUsername = username, ManagerPassword = password };
+
+    private async Task<(Guid TerminalId, Guid BillId, string Cashier)> PrintedBillAsync(HttpClient client, string? printerCookie = null)
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-in-place-cashier");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await PostAsync(client, PrintPath(terminalId, billId), printerCookie ?? cashier);
+        return (terminalId, billId, cashier);
+    }
+
+    [Fact]
+    public async Task AManagerTypingHerPasswordAtTheTillGivesTheOriginalBackAndIsRecordedAsTheOneWhoDidIt()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (terminalId, billId, cashier) = await PrintedBillAsync(client);
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-in-place-manager", true, "payments.refund.approve");
+        var username = await UsernameWithPasswordAsync(manager);
+
+        var reset = await PostJsonAsync(client, ResetPath(terminalId, billId), cashier, InPlaceResetBody(username, InPlaceManagerPassword));
+        var again = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.OK, reset.StatusCode);
+        Assert.False(again.GetProperty("isCopy").GetBoolean());
+        var events = await PrintEventsAsync(billId, "bill.receipt.original.reset");
+        var recorded = Assert.Single(events);
+        await using var who = _database.DataSource.CreateCommand("SELECT user_id FROM identity.users WHERE username = @name;");
+        who.Parameters.AddWithValue("name", username);
+        Assert.Equal((Guid)(await who.ExecuteScalarAsync())!, recorded.ActorId);
+    }
+
+    [Fact]
+    public async Task AWrongManagerPasswordLeavesTheOriginalUsedUp()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (terminalId, billId, cashier) = await PrintedBillAsync(client);
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-in-place-manager", true, "payments.refund.approve");
+        var username = await UsernameWithPasswordAsync(manager);
+
+        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), cashier, InPlaceResetBody(username, "yanlis-sifre"));
+        var stillCopy = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Equal("MANAGER_CREDENTIAL_INVALID", (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.True(stillCopy.GetProperty("isCopy").GetBoolean());
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
+    }
+
+    [Fact]
+    public async Task AUserWithoutTheApprovePermissionCannotResetInPlace()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (terminalId, billId, cashier) = await PrintedBillAsync(client);
+        var notManager = await _database.SeedCashierSessionAsync(terminalId, "receipt-in-place-not-manager");
+        var username = await UsernameWithPasswordAsync(notManager);
+
+        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), cashier, InPlaceResetBody(username, InPlaceManagerPassword));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Equal("APPROVER_LACKS_PERMISSION", (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+    }
+
+    [Fact]
+    public async Task TheCashierCannotResetWithTheirOwnPasswordEvenWithTheApprovePermission()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var terminalId = Guid.NewGuid();
+        var self = await _database.SeedCashierSessionAsync(terminalId, "receipt-in-place-self", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await PostAsync(client, PrintPath(terminalId, billId), self);
+        var username = await UsernameWithPasswordAsync(self);
+
+        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), self, InPlaceResetBody(username, InPlaceManagerPassword));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+    }
+
+    [Fact]
+    public async Task TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var terminalId = Guid.NewGuid();
+        var printer = await _database.SeedCashierSessionAsync(terminalId, "receipt-in-place-printer", true, "payments.refund.approve");
+        var otherCashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-in-place-other");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await PostAsync(client, PrintPath(terminalId, billId), printer);
+        var username = await UsernameWithPasswordAsync(printer);
+
+        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), otherCashier, InPlaceResetBody(username, InPlaceManagerPassword));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Equal("RECEIPT_RESET_SELF", (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
+    }
+
+    [Theory]
+    [InlineData("kullanici", null)]
+    [InlineData(null, "sifre")]
+    public async Task ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(string? username, string? password)
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (terminalId, billId, cashier) = await PrintedBillAsync(client);
+
+        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), cashier, InPlaceResetBody(username, password));
+
+        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
     }
 
     private static object ResetBody(string reason) => new { Reason = reason, IdempotencyKey = Guid.NewGuid() };

@@ -1,0 +1,98 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:12.66]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(username: null, password: "sifre") [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(username: null, password: "sifre") [7 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: BadRequest
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1090
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1091
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:19.38]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(username: "kullanici", password: null) [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(username: "kullanici", password: null) [3 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: BadRequest
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1090
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ASignInWithOnlyOneFieldIsRefusedAndResetsNothing(String username, String password) in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1091
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:39.33]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill [16 s]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Exception while reading from stream
+---- System.TimeoutException : Timeout during reading attempt
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlReadBuffer.<Ensure>g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSource.OpenConnectionAsync(CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSource.OpenConnectionAsync(CancellationToken cancellationToken)
+   at ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository.GetByBillIdAsync(Guid billId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Billing\Adjustments\PostgresBillAdjustmentRepository.cs:line 43
+   at ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository.AllocateAsync(Payment payment, Bill bill, Decimal amount, String idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Payments\Allocations\Persistence\PostgresPaymentAllocationRepository.cs:line 87
+   at ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository.AllocateAsync(Payment payment, Bill bill, Decimal amount, String idempotencyKey, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Payments\Allocations\Persistence\PostgresPaymentAllocationRepository.cs:line 32
+   at ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository.AllocateAsync(Payment payment, Bill bill, Decimal amount, String idempotencyKey, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Payments\Allocations\Persistence\PostgresPaymentAllocationRepository.cs:line 35
+   at ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository.AllocateAsync(Payment payment, Bill bill, Decimal amount, String idempotencyKey, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Payments\Allocations\Persistence\PostgresPaymentAllocationRepository.cs:line 35
+   at ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTestDatabase.SeedCollectedAsync(Guid billId, Decimal amount) in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\PaymentTenderHttpTests.cs:line 1805
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1067
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1076
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+
+[xUnit.net 00:00:45.96]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheCashierCannotResetWithTheirOwnPasswordEvenWithTheApprovePermission [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheCashierCannotResetWithTheirOwnPasswordEvenWithTheApprovePermission [3 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "SELF_APPROVAL_NOT_ALLOWED"
+Actual:   "RECEIPT_RESET_SELF"
+           ↑ (pos 0)
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheCashierCannotResetWithTheirOwnPasswordEvenWithTheApprovePermission() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1055
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheCashierCannotResetWithTheirOwnPasswordEvenWithTheApprovePermission() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1055
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:52.64]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AWrongManagerPasswordLeavesTheOriginalUsedUp [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AWrongManagerPasswordLeavesTheOriginalUsedUp [3 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "MANAGER_CREDENTIAL_INVALID"
+Actual:   "FORBIDDEN"
+           ↑ (pos 0)
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AWrongManagerPasswordLeavesTheOriginalUsedUp() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1019
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AWrongManagerPasswordLeavesTheOriginalUsedUp() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1021
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:59.63]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AManagerTypingHerPasswordAtTheTillGivesTheOriginalBackAndIsRecordedAsTheOneWhoDidIt [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AManagerTypingHerPasswordAtTheTillGivesTheOriginalBackAndIsRecordedAsTheOneWhoDidIt [3 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: OK
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AManagerTypingHerPasswordAtTheTillGivesTheOriginalBackAndIsRecordedAsTheOneWhoDidIt() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 997
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AManagerTypingHerPasswordAtTheTillGivesTheOriginalBackAndIsRecordedAsTheOneWhoDidIt() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1003
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:06.10]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AUserWithoutTheApprovePermissionCannotResetInPlace [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AUserWithoutTheApprovePermissionCannotResetInPlace [3 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "APPROVER_LACKS_PERMISSION"
+Actual:   "FORBIDDEN"
+           ↑ (pos 0)
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AUserWithoutTheApprovePermissionCannotResetInPlace() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1036
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AUserWithoutTheApprovePermissionCannotResetInPlace() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1036
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     7, Başarılı:     0, Atlanan:     0, Toplam:     7, Süre: 1 m - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+RUN-FINISHED

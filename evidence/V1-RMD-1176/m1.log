@@ -1,0 +1,15 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:08.55]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill [4 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   OK
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1074
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.TheManagerWhoPrintedTheOriginalCannotGiveItBackEvenFromAnotherCashiersTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 1076
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+RUN-FINISHED

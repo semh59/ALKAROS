@@ -153,6 +153,7 @@
     receiptBusy: false,
     receiptConfirm: false,
     resetReason: '',
+    resetApproverName: '',
     resetBusy: false,
     resetIdempotencyKey: null,
     resetKeyReason: null,
@@ -2233,6 +2234,10 @@
   function onRefundInput(event) {
     var el = event.target;
     var filled = !!String(el.value || '').trim();
+    if (el.id === 'reset-approver-name') {
+      state.resetApproverName = el.value;
+      return;
+    }
     if (el.id === 'reset-reason') {
       state.resetReason = el.value;
       return;
@@ -2872,6 +2877,19 @@
       render();
       return;
     }
+    var body = { Reason: reason, IdempotencyKey: null };
+    if (!state.canApproveRefund) {
+      // A manager at the till signs in here; the password is read from the field now and never kept in state.
+      var secretBox = document.getElementById('reset-approver-secret');
+      var name = state.resetApproverName.trim();
+      if (!name || !secretBox || !secretBox.value) {
+        state.resetError = 'Yönetici adı ve şifresini girin.';
+        render();
+        return;
+      }
+      body.ManagerUsername = name;
+      body.ManagerPassword = secretBox.value;
+    }
     state.resetBusy = true;
     state.resetError = null;
     render();
@@ -2879,11 +2897,13 @@
       state.resetIdempotencyKey = crypto.randomUUID();
       state.resetKeyReason = reason;
     }
-    api(billBase() + '/receipt/original-reset', { method: 'POST', body: { Reason: reason, IdempotencyKey: state.resetIdempotencyKey } }).then(function (result) {
+    body.IdempotencyKey = state.resetIdempotencyKey;
+    api(billBase() + '/receipt/original-reset', { method: 'POST', body: body }).then(function (result) {
       state.resetBusy = false;
       if (result.status < 500) state.resetIdempotencyKey = null;
       if (result.ok) {
         state.resetReason = '';
+        state.resetApproverName = '';
         state.receiptConfirm = false;
         state.resetNotice = 'Orijinal fiş hakkı geri verildi; bir sonraki basım orijinal olur.';
       } else {
@@ -2900,12 +2920,18 @@
   }
 
   function renderReceiptReset() {
-    if (!state.canApproveRefund) return '';
-    return '<div class="sp-card"><span class="sp-field-label">Orijinal fişi sıfırla (yönetici)</span>' +
+    var inPlace = !state.canApproveRefund;
+    return '<div class="sp-card"><span class="sp-field-label">' + (inPlace ? 'Orijinal fişi sıfırla (yönetici onayıyla)' : 'Orijinal fişi sıfırla (yönetici)') + '</span>' +
       (state.resetNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.resetNotice) + '</div>' : '') +
       (state.resetError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.resetError) + '</div>' : '') +
       '<input class="sp-input" type="text" id="reset-reason" maxlength="500" placeholder="Gerekçe (zorunlu)" aria-label="Orijinal fişi sıfırlama gerekçesi"' +
       (state.resetBusy ? ' disabled' : '') + ' value="' + escapeHtml(state.resetReason) + '">' +
+      (inPlace
+        ? '<input class="sp-input" type="text" id="reset-approver-name" autocomplete="off" maxlength="64" placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı"' +
+          (state.resetBusy ? ' disabled' : '') + ' value="' + escapeHtml(state.resetApproverName) + '">' +
+          '<input class="sp-input" type="password" id="reset-approver-secret" autocomplete="off" maxlength="256" placeholder="Yönetici şifresi" aria-label="Yönetici şifresi"' +
+          (state.resetBusy ? ' disabled' : '') + '>'
+        : '') +
       '<button class="sp-btn sp-btn-secondary" type="button" id="reset-receipt" data-receipt-action="reset"' +
       (state.resetBusy || state.receiptBusy ? ' disabled' : '') + '>' + (state.resetBusy ? 'Gönderiliyor…' : 'Orijinal hakkını geri ver') + '</button>' +
       '</div>';

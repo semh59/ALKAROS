@@ -44,17 +44,73 @@ describe("split-payment.js original receipt reset", () => {
   });
 
   it.each([[[]], [["payments.take", "cash.drawer"]], [null], [undefined], ["payments.refund.approve.x"]])(
-    "does not draw the manager only reset card for a session without the refund approval (%j)",
+    "draws the reset card with the manager sign-in fields, not the manager's own card, for a session without the refund approval (%j)",
     async (capabilities) => {
       const fetchMock = await open({ status: 200, body: {} }, capabilities === undefined ? null : capabilities);
 
       expect(document.getElementById("print-receipt")).not.toBeNull();
-      expect(document.getElementById("reset-receipt")).toBeNull();
-      expect(document.getElementById("reset-reason")).toBeNull();
-      expect(text()).not.toContain("Orijinal fişi sıfırla");
+      expect(text()).toContain("Orijinal fişi sıfırla (yönetici onayıyla)");
+      expect(text()).not.toContain("Orijinal fişi sıfırla (yönetici)");
+      expect(document.getElementById("reset-approver-secret").type).toBe("password");
       expect(resetCalls(fetchMock)).toHaveLength(0);
     },
   );
+
+  it("does not draw the sign-in fields for a session that holds the refund approval", async () => {
+    await open({ status: 200, body: {} });
+
+    expect(document.getElementById("reset-approver-name")).toBeNull();
+    expect(document.getElementById("reset-approver-secret")).toBeNull();
+  });
+
+  describe("a manager signing in at the till", () => {
+    const signIn = (name, secret) => {
+      const box = document.getElementById("reset-approver-name");
+      box.value = name;
+      box.dispatchEvent(new Event("input", { bubbles: true }));
+      document.getElementById("reset-approver-secret").value = secret;
+    };
+
+    it("sends the typed sign-in with the reason and keeps the password nowhere on the page", async () => {
+      const fetchMock = await open({ status: 200, body: { billId: BILL_ID, previousPrintedAt: "2026-11-10T10:00:00Z" } }, []);
+
+      type("Yazıcı kağıdı bitti");
+      signIn("mudur", "Gizli-Sifre-9");
+      document.getElementById("reset-receipt").click();
+      await vi.waitFor(() => expect(text()).toContain("Orijinal fiş hakkı geri verildi"));
+
+      expect(resetCalls(fetchMock)).toEqual([{
+        Reason: "Yazıcı kağıdı bitti", IdempotencyKey: expect.stringMatching(/^[0-9a-f-]{36}$/),
+        ManagerUsername: "mudur", ManagerPassword: "Gizli-Sifre-9",
+      }]);
+      expect(document.body.innerHTML).not.toContain("Gizli-Sifre-9");
+    });
+
+    it("says in Turkish when the sign-in is wrong, keeps the name and reason, and empties the password", async () => {
+      await open({ status: 403, body: { error: { code: "MANAGER_CREDENTIAL_INVALID", message: "RAW" } } }, []);
+
+      type("Deneme");
+      signIn("mudur", "yanlis");
+      document.getElementById("reset-receipt").click();
+      await vi.waitFor(() => expect(text()).toContain("Yönetici adı veya şifre hatalı."));
+
+      expect(text()).not.toContain("RAW");
+      expect(document.getElementById("reset-approver-name").value).toBe("mudur");
+      expect(document.getElementById("reset-reason").value).toBe("Deneme");
+      expect(document.getElementById("reset-approver-secret").value).toBe("");
+    });
+
+    it("sends nothing and asks for both fields when the password is empty", async () => {
+      const fetchMock = await open({ status: 200, body: {} }, []);
+
+      type("Deneme");
+      signIn("mudur", "");
+      document.getElementById("reset-receipt").click();
+
+      expect(text()).toContain("Yönetici adı ve şifresini girin.");
+      expect(resetCalls(fetchMock)).toHaveLength(0);
+    });
+  });
 
   it("draws the reset card for a session that holds the refund approval, and only on the settled page", async () => {
     await open({ status: 200, body: {} });

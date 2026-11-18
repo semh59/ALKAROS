@@ -1,0 +1,3 @@
+# V1-RMD-1176 qa
+1. qa-guvenlik-yetki: ciddi bulgu yok (arayan payments.take, yonetici refund.approve + arayandan farkli, 'basan sifirlayamaz' yoneticiye uygulanir, denetim aktoru yonetici, eski yol ayni, sifre saklanmaz). Dusuk: kismi alan testi aslinda var (Theory); kart basilmamis fis icin de gorunur (sunucu 409 doner, sizinti yok); denetimde talep eden kasiyer yazili degil (arayan yalniz basarisiz denemede kayitli).
+2. qa-test-kalitesi: sunucu ana yollar kilitli, eski istemci testi degisikligi mesru (gereksinim bilincli tersine cevrildi). Kalan eksikler (kabul edildi, risk): arayanda payments.take yok, Confirm ve reset_approval_failed denetimi, ayni anahtarla tekrar, kismi alanda hata kodu, istemcide bos ad/gerekce ayri ve basari sonrasi ad temizligi.

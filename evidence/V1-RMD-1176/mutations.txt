@@ -1,0 +1,6 @@
+C1-body-key:       Tests  1 failed | 20 passed (21)
+C2-empty-check:       Tests  1 failed | 20 passed (21)
+C3-fields-for-approver:       Tests  2 failed | 19 passed (21)
+S1-self-check-uses-caller: Başarısız! - Başarısız:     1, Başarılı:     0, Atl
+S2-audit-actor-is-caller: Başarısız! - Başarısız:     1, Başarılı:     0, Atl
+RESTORED

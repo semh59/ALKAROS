@@ -59,7 +59,8 @@ public sealed record BillPreReceiptV1(
 
 public sealed record BillPreReceiptRequestV1(Guid IdempotencyKey);
 
-public sealed record BillReceiptOriginalResetRequestV1(string? Reason, Guid IdempotencyKey);
+public sealed record BillReceiptOriginalResetRequestV1(
+    string? Reason, Guid IdempotencyKey, string? ManagerUsername = null, string? ManagerPassword = null);
 
 public sealed record BillReceiptOriginalResetResultV1(Guid BillId, DateTimeOffset PreviousPrintedAt);
 
@@ -166,11 +167,16 @@ public static partial class DualScreenApplication
                 NpgsqlDataSource dataSource,
                 DualScreenStore store,
                 IAuthorizationService authorization,
+                InPlaceManagerApproval approval,
                 HttpContext context,
                 CancellationToken cancellationToken) =>
             {
+                // With a typed manager sign-in the cashier at the till only needs the payment permission and the manager's own
+                // approval permission is checked; without one the caller's own approval permission decides, as before.
+                var inPlace = request?.ManagerUsername is not null || request?.ManagerPassword is not null;
                 var principal = await RequireCashierPermissionAsync(
-                    context, terminalId, store, authorization, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
+                    context, terminalId, store, authorization,
+                    inPlace ? ApplicationPermissions.PaymentsTake : ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
 
                 var reason = request?.Reason?.Trim();
                 if ((request?.IdempotencyKey ?? Guid.Empty) == Guid.Empty)
@@ -182,6 +188,12 @@ public static partial class DualScreenApplication
                 var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
                 if (bill is null)
                     return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
+
+                var actorId = principal.UserId;
+                if (inPlace)
+                    actorId = (await approval.VerifyAsync(
+                        request!.ManagerUsername, request.ManagerPassword, principal.UserId, ApplicationPermissions.PaymentsRefundApprove,
+                        "bill.receipt.original.reset_approval_failed", "Bill", billId, context.TraceIdentifier, cancellationToken)).UserId;
 
                 await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
                 await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
@@ -196,7 +208,7 @@ public static partial class DualScreenApplication
                         context, StatusCodes.Status409Conflict, "RECEIPT_NOT_PRINTED", "Bu hesabın fişi henüz basılmadı; sıfırlanacak orijinal yok.");
 
                 // Returning early leaves the transaction uncommitted, so the original stays used up.
-                if (claim.PreviousPrintedBy == principal.UserId)
+                if (claim.PreviousPrintedBy == actorId)
                     return ReceiptError(
                         context, StatusCodes.Status403Forbidden, "RECEIPT_RESET_SELF", "Orijinal fişi siz bastınız; hakkı başka bir yönetici sıfırlamalı.");
                 await using (var resets = new NpgsqlCommand(
@@ -212,7 +224,7 @@ public static partial class DualScreenApplication
 
                 await auditEvents.AppendAsync(
                     new AuditEvent(
-                        Guid.NewGuid(), "bill.receipt.original.reset", "Bill", billId, "User", context.TraceIdentifier, principal.UserId,
+                        Guid.NewGuid(), "bill.receipt.original.reset", "Bill", billId, "User", context.TraceIdentifier, actorId,
                         reason: reason,
                         afterStateJson: JsonSerializer.Serialize(new
                         {
@@ -220,6 +232,8 @@ public static partial class DualScreenApplication
                         })),
                     connection, transaction, cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
+                if (inPlace)
+                    approval.Confirm(principal.UserId, request.ManagerUsername!);
                 return Results.Ok(new BillReceiptOriginalResetResultV1(billId, claim.PreviousPrintedAt!.Value));
             })
             .WithTags("BillReceipt")
