@@ -1,7 +1,7 @@
 # V1-RMD-1174 - Yerinde yönetici onayı: kasiyer ekranında nakit çıkış talebini yöneticinin şifresiyle onaylama
 
 - Task ID: V1-RMD-1174
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
