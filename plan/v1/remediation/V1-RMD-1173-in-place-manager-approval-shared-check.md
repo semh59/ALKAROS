@@ -1,7 +1,7 @@
 # V1-RMD-1173 - Yerinde yönetici onayı: kullanıcı adı + şifre denetimi tek ortak bileşende (indirim/ikram ve kapanış farkı buna geçer)
 
 - Task ID: V1-RMD-1173
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
