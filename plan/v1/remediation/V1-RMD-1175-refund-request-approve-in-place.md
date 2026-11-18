@@ -1,7 +1,7 @@
 # V1-RMD-1175 - Yerinde yönetici onayı: kasiyer ekranında iade talebini yöneticinin şifresiyle onaylama (talep ve onay ayrı kişi kalır)
 
 - Task ID: V1-RMD-1175
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
