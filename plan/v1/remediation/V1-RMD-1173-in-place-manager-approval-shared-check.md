@@ -8,7 +8,7 @@
 
 ## Goal
 
-Yönetici kullanıcı adı ve şifresiyle yerinde onay denetimi (deneme sınırı, giriş doğrulaması, başarısız deneme denetim kaydı, yönetici yetkisi) iki yerde kopya: `BillingSplitApplication.cs` (indirim/ikram talebi) ve `DualScreenApplication.CashSession.cs` (kapanış farkı). Üç yeni akış (nakit çıkış talebi, iade onayı, fiş orijinal hakkı sıfırlama) aynı denetimi isteyecek; beş kopya yerine tek `InPlaceManagerApproval` bileşeni yazılır ve iki mevcut akış ona geçer. Davranış değişmez: aynı hatalar (403 MANAGER_CREDENTIAL_INVALID / MANAGER_LOCKED, 403 APPROVER_LACKS_PERMISSION, 429 TOO_MANY_ATTEMPTS), aynı sayaç anahtarları (kasiyer ve yönetici başına ortak), şifre hiçbir kayda yazılmaz. Tek fark: başarısız deneme denetim kaydında yazılan kullanıcı adı artık iki akışta da maskeli (ilk iki karakter + uzunluk; kapanış akışı zaten böyleydi; şifrenin kullanıcı adı kutusuna yazılması durumuna karşı).
+Yönetici kullanıcı adı ve şifresiyle yerinde onay denetimi (deneme sınırı, giriş doğrulaması, başarısız deneme denetim kaydı, yönetici yetkisi) iki yerde kopya: `BillingSplitApplication.cs` (indirim/ikram talebi) ve `DualScreenApplication.CashSession.cs` (kapanış farkı). Üç yeni akış (nakit çıkış talebi, iade onayı, fiş orijinal hakkı sıfırlama) aynı denetimi isteyecek; beş kopya yerine tek `InPlaceManagerApproval` bileşeni yazılır ve iki mevcut akış ona geçer. Davranış değişmez: aynı hatalar (403 MANAGER_CREDENTIAL_INVALID / MANAGER_LOCKED, 403 APPROVER_LACKS_PERMISSION, 429 TOO_MANY_ATTEMPTS), aynı sayaç anahtarları (kasiyer ve yönetici başına ortak), şifre hiçbir kayda yazılmaz. Tek fark: başarısız deneme denetim kaydında yazılan kullanıcı adı artık iki akışta da maskeli (ilk iki karakter + uzunluk; kapanış akışı zaten böyleydi; şifrenin kullanıcı adı kutusuna yazılması durumuna karşı). Kendini onaylama kuralı da ortak bileşene girer: onaylayan yönetici ile istek sahibi aynı kişiyse (ayardan bağımsız) `InPlaceSelfApprovalException` (403 SELF_APPROVAL_NOT_ALLOWED) atılır; kapanış akışındaki `CashCloseSelfApprovalException` bunun yerine geçer ve iki hata eşlemesi (ApiErrorCatalog ve billing yerel eşlemesi) buna göre güncellenir. Sayaç sıfırlama zamanı çağıranda kalır (indirim: onay kaydedildikten sonra, kapanış: yetki denetiminden sonra); `InPlaceManagerApproval` ayrı bir `Confirm` ile sayacı sıfırlar.
 
 ## Owned surface
 
@@ -20,6 +20,7 @@ Yönetici kullanıcı adı ve şifresiyle yerinde onay denetimi (deneme sınır�
   - tests/Host/Experience/Billing/InPlaceManagerApprovalTests.cs
   - tests/Host/Experience/Billing/BillingSplitHttpTests.cs
   - tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+  - src/Host/Composition/Errors/ApiErrorCatalog.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

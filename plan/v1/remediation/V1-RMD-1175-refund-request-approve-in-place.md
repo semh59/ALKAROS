@@ -8,7 +8,7 @@
 
 ## Goal
 
-İade talebi onayı bugün `payments.refund.approve` sahibi ayrı girişle yapılabiliyor; kasiyer (yalnız `payments.refund.request`) ekranda "başka bir yetkili onaylamalı" görüyor. `POST .../billing/refund-requests/{requestId}/approve` gövdeye isteğe bağlı `ManagerUsername` + `ManagerPassword` alır. Alanlar yoksa davranış aynıdır. Alanlar varsa çağıran `payments.refund.request` ister, yönetici `InPlaceManagerApproval` ile doğrulanır ve `payments.refund.approve` aranır; `PaymentRefundStore.ApproveAsync` onaylayan olarak yöneticiyi alır (denetim izi onaylayanı yazar). Bilinen karar korunur: iade talep eden ile onaylayan ayrı kişidir (talep eden = onaylayan ise "yönetici kendi talebini onaylayabilir" ayarı kapalıyken mevcut reddi aynen çalışır; bu görev o ayarı veya kuralı değiştirmez). İstemcide (split-payment.js) "Requested" iade satırında onaylama yetkisi olmayan kullanıcıya "Yönetici burada onaylasın" alanları gösterilir; yetkili için mevcut Onayla/Reddet aynen kalır; şifre alanda yaşar ve her denemeden sonra boşaltılır; 14 px / 48 px, Türkçe sabit hata cümleleri.
+İade talebi onayı bugün `payments.refund.approve` sahibi ayrı girişle yapılabiliyor; kasiyer (yalnız `payments.refund.request`) ekranda "başka bir yetkili onaylamalı" görüyor. `POST .../billing/refund-requests/{requestId}/approve` gövdeye isteğe bağlı `ManagerUsername` + `ManagerPassword` alır. Alanlar yoksa davranış aynıdır. Alanlar varsa çağıran `payments.refund.request` ister, yönetici `InPlaceManagerApproval` ile doğrulanır ve `payments.refund.approve` aranır; `PaymentRefundStore.ApproveAsync` onaylayan olarak yöneticiyi alır (denetim izi onaylayanı yazar). Bilinen karar korunur: iade talep eden ile onaylayan ayrı kişidir (talep eden = onaylayan ise "yönetici kendi talebini onaylayabilir" ayarı kapalıyken mevcut reddi aynen çalışır; bu görev o ayarı veya kuralı değiştirmez). İstemcide (split-payment.js) "Requested" iade satırında onaylama yetkisi olmayan kullanıcıya "Yönetici burada onaylasın" alanları gösterilir; yetkili için mevcut Onayla/Reddet aynen kalır; şifre alanda yaşar ve her denemeden sonra boşaltılır; 14 px / 48 px, Türkçe sabit hata cümleleri. Gövde parametresi boş olabilir (mevcut çağıranlar, PosTerminal dahil, gövdesiz POST eder). Çağıran talebi kendisi açmış olmalı ve yönetici çağırandan farklı olmalıdır (ayardan bağımsız).
 
 ## Owned surface
 
@@ -19,6 +19,10 @@
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Host/Experience/Billing/PaymentRefundHttpTests.cs
   - tests/Clients/StaticApps/split-payment-refund-approve-here.test.js
+  - src/Host/Experience/Billing/PaymentRefunds.cs
+  - tests/Host/Experience/Billing/RefundSelfApprovalHttpTests.cs
+  - tests/Host/Experience/Billing/RefundTerminalSessionHttpTests.cs
+  - tests/Clients/StaticApps/split-payment-refunds.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
