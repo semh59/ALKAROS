@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.no-sale-link.test.tsx (5 tests | 1 failed) 3214ms
+     × is in the menu when the own drawer is open and the server says it can be opened, and leads to the reason form on the drawer page 2793ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 45 passed (46)
+   Start at  03:14:56
+   Duration  4.88s (transform 3.60s, setup 0ms, import 432ms, tests 6.04s, environment 2.52s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is in the menu when the own drawer is open and the server says it can be opened, and leads to the reason form on the drawer page
+AssertionError: expected undefined to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+- Expected:
+"/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+
++ Received:
+undefined
+
+ ❯ src/routes/Cashier.no-sale-link.test.tsx:50:48
+     48|     await renderHome("own");
+     49|
+     50|     expect(noSaleLink()?.getAttribute("href")).toBe("/cashier/payments…
+       |                                                ^
+     51|   });
+     52|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

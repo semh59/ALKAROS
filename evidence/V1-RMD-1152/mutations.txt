@@ -1,0 +1,26 @@
+S1-wrong-param KILLED - the open parameter is never recognised
+S2-reopens-every-load KILLED - form opens again on every drawer read
+S3-form-without-check KILLED - form shown even when the drawer cannot be used
+S4-silent-refusal KILLED - unavailable form gives no message
+S5-catch-path-silent KILLED - unreadable drawer status gives no message
+S7-label-lost KILLED - sale screen named like a bill
+S8-address-kept KILLED - open parameter stays in the address
+S9-counting-silent KILLED - counting session gives no message
+S10-no-session-silent KILLED - closed drawer gives no message
+S11-one-reason-for-all KILLED - switched-off drawer given the wrong reason
+S12-no-permission-reason KILLED - missing permission given the wrong reason
+S6-every-path-is-sale KILLED - every page is called the sale screen
+P1-href-without-open KILLED - link does not ask for the form
+P2-link-always KILLED - link offered whatever the drawer says
+P4-plain-drawer-link KILLED - link goes to the drawer page without the form
+P5-wrong-text KILLED - English text on the link
+P6-not-on-sale-screen KILLED - link removed from the sale screen
+P7-ignores-switched-off KILLED - link offered for a switched-off drawer
+P8-ignores-permission KILLED - link offered without the kick permission
+P10-not-only-own KILLED - someone else's session also gets the link
+P9-asks-without-session KILLED - drawer status asked for without a session
+Q1-failed-read-drops-link KILLED - a failed drawer read removes the link
+Q2-header-waits-for-drawer KILLED - header state waits for the drawer status
+Q3-no-title KILLED - link without its hint
+Q4-link-stays-after-close KILLED - link stays after the drawer is closed
+Q5-unreadable-is-yes KILLED - unreadable drawer status offers the link

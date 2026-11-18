@@ -1,0 +1,114 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (38 tests | 32 failed) 4873ms
+     × reads the active session of this terminal and shows Kasa: Açık without a band 35ms
+     × a 404 means closed: the button says Kasa: Kapalı and a band offers the way to open it 5ms
+     × a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here 4ms
+     × offers Satış yok only for the user's own open drawer, and it leads to the reason form of the drawer page 4ms
+     × offers no Satış yok when the drawer is closed 4ms
+     × offers no Satış yok when the drawer is someone else's 4ms
+     × offers no Satış yok when the drawer is forbidden 3ms
+     × offers no Satış yok when the drawer is unknown 3ms
+     × an open drawer link carries the current page too, so the drawer page's way back leads here 3ms
+     × a 500 is a failed read, never 'closed' 2ms
+     × a 503 is a failed read, never 'closed' 2ms
+     × a 429 is a failed read, never 'closed' 2ms
+     × an open session of another user says so in the header and in a band that names who may close it 2ms
+     × names the owner of another user's session in the header, read from the owner endpoint 2ms
+     × keeps the plain header text when the owner's name cannot be read, and never asks for it on the own session 2ms
+     × keeps the plain header text for a failed request from the owner endpoint 2ms
+     × keeps the plain header text for a body that is not JSON from the owner endpoint 2ms
+     × keeps the plain header text for an empty name from the owner endpoint 1ms
+     × keeps the plain header text for a name that is not text from the owner endpoint 1ms
+     × shows the name of the newest read when an older read's owner answer arrives last 9ms
+     × drops a name read earlier when the next read cannot name the owner 3ms
+     × an answer whose body cannot be read is a failed read, not an open drawer 3ms
+     × reads again and judges ownership again when the signed-in user changes 4ms
+     × a 403 is said plainly (no permission), with no band and no retry 2ms
+     × shows Kasa: Kontrol… until the first answer arrives 2ms
+     × coming back to the tab (focus and visibilitychange together) reads once, and a manual retry is never dropped 2ms
+     × a network failure is a failed read too, and the retry button reads again 2ms
+     × reads again when the cashier comes back to this tab after opening the drawer elsewhere 2ms
+     × a 401 ends the session through the shared handler and is not reported as closed 2ms
+     × has no axe violations in the 404 state (200 is another user's session) 2ms
+     × has no axe violations in the 500 state (200 is another user's session) 2ms
+     × has no axe violations in the 200 state (200 is another user's session) 2ms
+ ❯ src/routes/Cashier.no-sale-link.test.tsx (5 tests | 1 failed) 5219ms
+     × is in the menu when the own drawer is open and the user may open it, and leads to the reason form on the drawer page 4827ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 33 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is in the menu when the own drawer is open and the user may open it, and leads to the reason form on the drawer page
+AssertionError: expected undefined to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+- Expected:
+"/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+
++ Received:
+undefined
+
+ ❯ src/routes/Cashier.no-sale-link.test.tsx:49:48
+     47|     await renderHome(["orders.create", "cash.drawer", "cash.drawer.kic…
+     48|
+     49|     expect(noSaleLink()?.getAttribute("href")).toBe("/cashier/payments…
+       |                                                ^
+     50|   });
+     51|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/33]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > reads the active session of this terminal and shows Kasa: Açık without a band
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a 404 means closed: the button says Kasa: Kapalı and a band offers the way to open it
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers Satış yok only for the user's own open drawer, and it leads to the reason form of the drawer page
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when the drawer is closed
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when the drawer is someone else's
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when the drawer is forbidden
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when the drawer is unknown
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an open drawer link carries the current page too, so the drawer page's way back leads here
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a 500 is a failed read, never 'closed'
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a 503 is a failed read, never 'closed'
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a 429 is a failed read, never 'closed'
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an open session of another user says so in the header and in a band that names who may close it
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > names the owner of another user's session in the header, read from the owner endpoint
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > keeps the plain header text when the owner's name cannot be read, and never asks for it on the own session
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > keeps the plain header text for a failed request from the owner endpoint
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > keeps the plain header text for a body that is not JSON from the owner endpoint
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > keeps the plain header text for an empty name from the owner endpoint
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > keeps the plain header text for a name that is not text from the owner endpoint
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > shows the name of the newest read when an older read's owner answer arrives last
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > drops a name read earlier when the next read cannot name the owner
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an answer whose body cannot be read is a failed read, not an open drawer
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > reads again and judges ownership again when the signed-in user changes
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a 403 is said plainly (no permission), with no band and no retry
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > shows Kasa: Kontrol… until the first answer arrives
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > coming back to the tab (focus and visibilitychange together) reads once, and a manual retry is never dropped
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a network failure is a failed read too, and the retry button reads again
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > reads again when the cashier comes back to this tab after opening the drawer elsewhere
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a 401 ends the session through the shared handler and is not reported as closed
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > has no axe violations in the 404 state (200 is another user's session)
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > has no axe violations in the 500 state (200 is another user's session)
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > has no axe violations in the 200 state (200 is another user's session)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `Probe`.
+ ❯ createFiberFromTypeAndProps node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:5021:28
+ ❯ createFiberFromElement node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:5035:14
+ ❯ createChild node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:6338:26
+ ❯ reconcileChildrenArray node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:6670:25
+ ❯ reconcileChildFibersImpl node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:6993:30
+ ❯ node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+ ❯ reconcileChildren node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:9701:13
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:10182:7
+ ❯ beginWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:11778:18
+ ❯ runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/33]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  33 failed | 10 passed (43)
+   Start at  03:00:05
+   Duration  6.71s (transform 4.19s, setup 0ms, import 394ms, tests 10.09s, environment 2.29s)
+

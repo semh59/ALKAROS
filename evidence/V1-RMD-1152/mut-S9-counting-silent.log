@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (11 tests | 1 failed) 1693ms
+     × says why in Turkish and shows no form when the count has started 136ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 26 passed (27)
+   Start at  03:14:12
+   Duration  4.17s (transform 1.17s, setup 40ms, import 80ms, tests 4.43s, environment 2.18s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the count has started
+AssertionError: expected '\n  ← Satış ekranına dön\n  SayımÇekm…' to contain 'Kasa sayımı sürerken bu ekrandan satı…'
+
+- Expected
++ Received
+
+- Kasa sayımı sürerken bu ekrandan satışsız çekmece açılamaz.
++
++   ← Satış ekranına dön
++   SayımÇekmecedeki Nakdi SayınHer kupürden kaç adet olduğunu girin, toplam otomatik hesaplanır.200 ₺₺0,00100 ₺₺0,0050 ₺₺0,0020 ₺₺0,0010 ₺₺0,005 ₺₺0,001 ₺₺0,0050 kr₺0,00Toplam₺0,00Not (isteğe bağlı)Kupürüm yok, tek tutar gireceğimSayımı Kaydet
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

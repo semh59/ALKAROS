@@ -1,0 +1,130 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (8 tests | 6 failed) 1161ms
+     × shows the reason form at once, sends nothing, and the back link names the sale screen 212ms
+     × opens the form only once: leaving it brings the normal page back 128ms
+     × says so in Turkish and shows no form when the drawer is switched off 133ms
+     × says so in Turkish and shows no form when the user may not open the drawer 153ms
+     × says so in Turkish and shows no form when the session belongs to someone else 127ms
+     × says so in Turkish and shows no form when the drawer status cannot be read 141ms
+ ❯ cash-session-return-to.test.js (16 tests | 3 failed) 2376ms
+     × names the sale screen when the cashier came from / 101ms
+     × names the sale screen when the cashier came from /?quick=1 105ms
+     × names the sale screen when the cashier came from /#top 94ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > shows the reason form at once, sends nothing, and the back link names the sale screen
+AssertionError: expected null not to be null
+ ❯ cash-session-no-sale-shortcut.test.js:49:36
+     47|     const calls = await openPage("?returnTo=%2F&open=no-sale");
+     48|
+     49|     expect($("#no-sale-form")).not.toBeNull();
+       |                                    ^
+     50|     expect([...document.querySelectorAll("[data-no-sale-reason]")].map…
+     51|     expect(calls.some((c) => c.includes("/no-sale"))).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > opens the form only once: leaving it brings the normal page back
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ cash-session-no-sale-shortcut.test.js:72:25
+     70|     await openPage("?returnTo=%2F&open=no-sale");
+     71|
+     72|     $("#no-sale-cancel").click();
+       |                         ^
+     73|
+     74|     await vi.waitFor(() => expect($("#no-sale")).not.toBeNull());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says so in Turkish and shows no form when the drawer is switched off
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says so in Turkish and shows no form when the user may not open the drawer
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says so in Turkish and shows no form when the drawer status cannot be read
+AssertionError: expected '\n  ← Hesaba dön\n  Kasa OturumuAyşeA…' to contain 'Satışsız çekmece açma şu an kullanıla…'
+
+- Expected
++ Received
+
+- Satışsız çekmece açma şu an kullanılamıyor: çekmece kapalı, yetkiniz yok ya da kasa oturumu başka kullanıcıda.
++
++   ← Hesaba dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:87:39
+     85|
+     86|     expect($("#no-sale-form")).toBeNull();
+     87|     expect(document.body.textContent).toContain(UNAVAILABLE);
+       |                                       ^
+     88|   });
+     89| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says so in Turkish and shows no form when the session belongs to someone else
+AssertionError: expected '\n  ← Hesaba dön\n  Kasa OturumuBaşka…' to contain 'Satışsız çekmece açma şu an kullanıla…'
+
+- Expected
++ Received
+
+- Satışsız çekmece açma şu an kullanılamıyor: çekmece kapalı, yetkiniz yok ya da kasa oturumu başka kullanıcıda.
++
++   ← Hesaba dön
++   Kasa OturumuBaşka KasiyerAçık!Bu kasa oturumu Başka Kasiyer adına açık. Sayma ve kapatma için oturumu açan kasiyer ya da bir yönetici gerekir; kendi oturumunuzu o kapanınca açabilirsiniz.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışNakit giriş ve çıkış yalnız kendi kasa oturumunuza yazılır; sahibi kapatınca kendi kasa oturumunuzu açın.Bu oturumda nakit giriş veya çıkış yok.Listeyi yenileBu düğme sizde pasif: sayımı Başka Kasiyer ya da bir yönetici yapabilir.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:87:39
+     85|
+     86|     expect($("#no-sale-form")).toBeNull();
+     87|     expect(document.body.textContent).toContain(UNAVAILABLE);
+       |                                       ^
+     88|   });
+     89| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > names the sale screen when the cashier came from /
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > names the sale screen when the cashier came from /#top
+AssertionError: expected '← Hesaba dön' to be '← Satış ekranına dön' // Object.is equality
+
+Expected: "← Satış ekranına dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-return-to.test.js:61:39
+     59|   it.each([["/"], ["/?quick=1"], ["/#top"]])("names the sale screen wh…
+     60|     const assign = await openPageWith(sale);
+     61|     expect($(".cs-back").textContent).toBe("← Satış ekranına dön");
+       |                                       ^
+     62|     expect($(".cs-back").getAttribute("href")).toBe(sale);
+     63|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > names the sale screen when the cashier came from /?quick=1
+AssertionError: expected '← Hesaba dön' to be '← Satış ekranına dön' // Object.is equality
+
+Expected: "← Satış ekranına dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-return-to.test.js:61:39
+     59|   it.each([["/"], ["/?quick=1"], ["/#top"]])("names the sale screen wh…
+     60|     const assign = await openPageWith(sale);
+     61|     expect($(".cs-back").textContent).toBe("← Satış ekranına dön");
+       |                                       ^
+     62|     expect($(".cs-back").getAttribute("href")).toBe(sale);
+     63|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  9 failed | 15 passed (24)
+   Start at  02:58:49
+   Duration  3.82s (transform 883ms, setup 50ms, import 94ms, tests 3.54s, environment 2.23s)
+

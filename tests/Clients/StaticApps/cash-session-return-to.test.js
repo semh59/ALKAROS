@@ -56,6 +56,19 @@ describe("cash-session.js returns to the bill the cashier came from", () => {
     await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(tables));
   });
 
+  it.each([["/"], ["/?quick=1"], ["/#top"]])("names the sale screen when the cashier came from %s", async (sale) => {
+    const assign = await openPageWith(sale);
+    expect($(".cs-back").textContent).toBe("← Satış ekranına dön");
+    expect($(".cs-back").getAttribute("href")).toBe(sale);
+    $("#open-btn").click();
+    await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(sale));
+  });
+
+  it("does not call another page the sale screen", async () => {
+    await openPageWith("/pending-checks");
+    expect($(".cs-back").textContent).toBe("← Hesaba dön");
+  });
+
   it("does not call another page the tables", async () => {
     await openPageWith("/tables-report");
     expect($(".cs-back").textContent).toBe("← Hesaba dön");

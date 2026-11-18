@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (11 tests | 1 failed) 1503ms
+     × says why in Turkish and shows no form when the user may not open the drawer 135ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 26 passed (27)
+   Start at  03:14:27
+   Duration  4.19s (transform 1.10s, setup 50ms, import 132ms, tests 4.23s, environment 2.19s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the user may not open the drawer
+AssertionError: expected '\n  ← Satış ekranına dön\n  Kasa Otur…' to contain 'Satışsız çekmece açma yetkiniz yok.'
+
+- Expected
++ Received
+
+- Satışsız çekmece açma yetkiniz yok.
++
++   ← Satış ekranına dön
++   Kasa OturumuAyşeAçık!HataKasa oturumu başka kullanıcıda; satışsız çekmeceyi yalnız oturum sahibi açabilir.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (45 tests | 1 failed) 2877ms
+     × offers Satış yok for the user's own open drawer when the server says it can be opened, and it leads to the reason form of the drawer page 14ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 49 passed (50)
+   Start at  03:20:09
+   Duration  4.75s (transform 3.54s, setup 0ms, import 433ms, tests 6.12s, environment 2.21s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers Satış yok for the user's own open drawer when the server says it can be opened, and it leads to the reason form of the drawer page
+AssertionError: expected '' to be 'Satış yapmadan çekmeceyi açar; gerekç…' // Object.is equality
+
+- Expected
++ Received
+
+- Satış yapmadan çekmeceyi açar; gerekçe sorulur.
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:86:24
+     84|     expect([link.textContent, link.getAttribute("href")]).toEqual(["Sa…
+     85|     expect(fetchMock.mock.calls.map(([url]) => url)).toContain("/api/v…
+     86|     expect(link.title).toBe("Satış yapmadan çekmeceyi açar; gerekçe so…
+       |                        ^
+     87|   });
+     88|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

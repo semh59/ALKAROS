@@ -1454,6 +1454,8 @@ export const cashSessionText = {
   openAction: "Kasayı aç",
   viewAction: "Kasa oturumunu gör",
   retry: "Kasa durumunu yeniden oku",
+  noSaleAction: "Satış yok",
+  noSaleHint: "Satış yapmadan çekmeceyi açar; gerekçe sorulur.",
 } as const;
 
 export const kitchenlessReasons = [

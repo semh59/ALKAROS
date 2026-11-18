@@ -1,0 +1,105 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (41 tests | 7 failed) 2888ms
+     × offers no Satış yok when the drawer is switched off 15ms
+     × offers no Satış yok when the user may not open it 6ms
+     × offers no Satış yok when its status cannot be read 5ms
+     × offers no Satış yok, and asks for no drawer status, when the drawer is closed 6ms
+     × offers no Satış yok, and asks for no drawer status, when the drawer is someone else's 6ms
+     × offers no Satış yok, and asks for no drawer status, when the drawer is forbidden 4ms
+     × offers no Satış yok, and asks for no drawer status, when the drawer is unknown 11ms
+ ❯ src/routes/Cashier.no-sale-link.test.tsx (5 tests | 4 failed) 3277ms
+     × is not offered when the user may not open the drawer 125ms
+     × is not offered when the drawer is switched off 116ms
+     × is not offered when the drawer is closed 112ms
+     × is not offered when the session is someone else's 80ms
+
+ Test Files  2 failed (2)
+      Tests  11 failed | 35 passed (46)
+   Start at  03:14:38
+   Duration  4.81s (transform 3.57s, setup 0ms, import 450ms, tests 6.17s, environment 2.27s)
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is not offered when the user may not open the drawer
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is not offered when the drawer is switched off
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is not offered when the drawer is closed
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is not offered when the session is someone else's
+AssertionError: expected <a …(2)></a> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/routes/Cashier.no-sale-link.test.tsx:61:26
+     59|     await renderHome(drawer, status);
+     60|
+     61|     expect(noSaleLink()).toBeUndefined();
+       |                          ^
+     62|   });
+     63| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when the drawer is switched off
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when the user may not open it
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when its status cannot be read
+AssertionError: expected <a …(2)></a> to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:96:54
+     94|     await show();
+     95|
+     96|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+       |                                                      ^
+     97|   });
+     98|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok, and asks for no drawer status, when the drawer is closed
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok, and asks for no drawer status, when the drawer is someone else's
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok, and asks for no drawer status, when the drawer is forbidden
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok, and asks for no drawer status, when the drawer is unknown
+AssertionError: expected <a …(2)></a> to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:108:54
+    106|     await show();
+    107|
+    108|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+       |                                                      ^
+    109|     expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith("…
+    110|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+

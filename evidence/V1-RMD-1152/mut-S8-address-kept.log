@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (11 tests | 1 failed) 1524ms
+     × takes the parameter out of the address once it was used, so a reload does not open the form again 133ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 26 passed (27)
+   Start at  03:14:07
+   Duration  4.14s (transform 1.07s, setup 51ms, import 92ms, tests 4.18s, environment 2.24s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > takes the parameter out of the address once it was used, so a reload does not open the form again
+AssertionError: expected '?returnTo=%2F&open=no-sale' to be '?returnTo=%2F' // Object.is equality
+
+Expected: "?returnTo=%2F"
+Received: "?returnTo=%2F&open=no-sale"
+
+ ❯ cash-session-no-sale-shortcut.test.js:99:36
+     97|     await openPage("?returnTo=%2F&open=no-sale");
+     98|
+     99|     expect(window.location.search).toBe("?returnTo=%2F");
+       |                                    ^
+    100|   });
+    101| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

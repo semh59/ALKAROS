@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (45 tests | 1 failed) 2845ms
+     × keeps the link when a later read of the drawer status fails, and drops it once the server says it cannot be used 12ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 49 passed (50)
+   Start at  03:19:57
+   Duration  4.72s (transform 3.53s, setup 0ms, import 428ms, tests 6.07s, environment 2.19s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > keeps the link when a later read of the drawer status fails, and drops it once the server says it cannot be used
+AssertionError: expected null not to be null
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:104:58
+    102|     withDrawer(answer(200, mine), answer(500));
+    103|     await act(async () => { window.dispatchEvent(new Event("focus")); …
+    104|     expect(document.querySelector("a.no-sale-link")).not.toBeNull();
+       |                                                          ^
+    105|
+    106|     withDrawer(answer(200, mine), answer(200, { enabled: false, canKic…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

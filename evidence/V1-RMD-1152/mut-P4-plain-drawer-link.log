@@ -1,0 +1,54 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (41 tests | 1 failed) 2827ms
+     × offers Satış yok for the user's own open drawer when the server says it can be opened, and it leads to the reason form of the drawer page 15ms
+ ❯ src/routes/Cashier.no-sale-link.test.tsx (5 tests | 1 failed) 3238ms
+     × is in the menu when the own drawer is open and the server says it can be opened, and leads to the reason form on the drawer page 2796ms
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 44 passed (46)
+   Start at  03:14:44
+   Duration  4.88s (transform 3.61s, setup 0ms, import 443ms, tests 6.07s, environment 2.43s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is in the menu when the own drawer is open and the server says it can be opened, and leads to the reason form on the drawer page
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+Received: "/cashier/payments/cash-session/index.html?returnTo=%2F"
+
+ ❯ src/routes/Cashier.no-sale-link.test.tsx:50:48
+     48|     await renderHome("own");
+     49|
+     50|     expect(noSaleLink()?.getAttribute("href")).toBe("/cashier/payments…
+       |                                                ^
+     51|   });
+     52|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers Satış yok for the user's own open drawer when the server says it can be opened, and it leads to the reason form of the drawer page
+AssertionError: expected [ 'Satış yok', …(1) ] to deeply equal [ 'Satış yok', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "Satış yok",
+-   "/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale",
++   "/cashier/payments/cash-session/index.html?returnTo=%2F",
+  ]
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:84:59
+     82|
+     83|     const link = document.querySelector<HTMLAnchorElement>("a.no-sale-…
+     84|     expect([link.textContent, link.getAttribute("href")]).toEqual(["Sa…
+       |                                                           ^
+     85|     expect(fetchMock.mock.calls.map(([url]) => url)).toContain("/api/v…
+     86|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

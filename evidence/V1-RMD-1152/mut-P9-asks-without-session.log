@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (42 tests | 1 failed) 2838ms
+     × offers no Satış yok, and asks for no drawer status, when the drawer is an answer without a session id 13ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 46 passed (47)
+   Start at  03:15:37
+   Duration  4.75s (transform 3.60s, setup 0ms, import 430ms, tests 6.07s, environment 2.20s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok, and asks for no drawer status, when the drawer is an answer without a session id
+AssertionError: expected <a …(2)></a> to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:109:54
+    107|     await show();
+    108|
+    109|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+       |                                                      ^
+    110|     expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith("…
+    111|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

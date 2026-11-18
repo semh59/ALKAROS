@@ -1,0 +1,64 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (41 tests | 1 failed) 2978ms
+     × offers no Satış yok, and asks for no drawer status, when the drawer is someone else's 16ms
+ ❯ src/routes/Cashier.no-sale-link.test.tsx (5 tests | 1 failed) 3390ms
+     × is not offered when the session is someone else's 106ms
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 44 passed (46)
+   Start at  03:15:19
+   Duration  4.87s (transform 3.66s, setup 0ms, import 444ms, tests 6.37s, environment 2.16s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is not offered when the session is someone else's
+AssertionError: expected <a …(2)></a> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/routes/Cashier.no-sale-link.test.tsx:61:26
+     59|     await renderHome(drawer, status);
+     60|
+     61|     expect(noSaleLink()).toBeUndefined();
+       |                          ^
+     62|   });
+     63| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok, and asks for no drawer status, when the drawer is someone else's
+AssertionError: expected <a …(2)></a> to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:108:54
+    106|     await show();
+    107|
+    108|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+       |                                                      ^
+    109|     expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith("…
+    110|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

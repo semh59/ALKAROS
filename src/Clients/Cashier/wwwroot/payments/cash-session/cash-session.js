@@ -16,8 +16,11 @@
   if (returnTo) {
     var backLink = document.querySelector('.cs-back');
     backLink.setAttribute('href', returnTo);
-    backLink.textContent = /^\/tables(?:[?#]|$)/.test(returnTo) ? '← Masalara dön' : '← Hesaba dön';
+    backLink.textContent = /^\/tables(?:[?#]|$)/.test(returnTo) ? '← Masalara dön' : /^\/(?:[?#]|$)/.test(returnTo) ? '← Satış ekranına dön' : '← Hesaba dön';
   }
+  // The sale screen's "Satış yok" link lands on the reason form here; the form itself stays on this page, where the
+  // server's reason and audit rules apply. It opens once, as soon as the drawer status says it can be used.
+  var openNoSaleForm = new URLSearchParams(window.location.search).get('open') === 'no-sale';
   var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
 
   var state = {
@@ -267,6 +270,7 @@
       if (result.status === 404) {
         state.session = null;
         state.phase = 'noSession';
+        applyOpenNoSaleForm();
         return api(cashSessionsBase() + '/suggested-opening-balance').then(function (suggestion) {
           state.suggestedOpeningBalance = suggestion.ok
             ? suggestion.body.suggestedOpeningBalance
@@ -287,6 +291,7 @@
       state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
       return (ownsSession() ? Promise.resolve() : loadOwnerName()).then(function () {
         if (state.phase === 'open') return Promise.all([loadMovements(), loadDrawer()]);
+        applyOpenNoSaleForm();
         render();
       });
     }).catch(function () {
@@ -327,10 +332,38 @@
   function loadDrawer() {
     return api(movementsBase() + '/cash-drawer').then(function (result) {
       state.drawer = result.ok && result.body ? result.body : null;
+      applyOpenNoSaleForm();
       render();
     }).catch(function () {
       state.drawer = null;
+      if (applyOpenNoSaleForm()) render();
     });
+  }
+
+  // The form is asked for once: the parameter leaves the address so a reload does not open it again, and whatever stops the
+  // form from opening is said in words, because the cashier tapped a link and expects it.
+  function applyOpenNoSaleForm() {
+    if (!openNoSaleForm) return false;
+    openNoSaleForm = false;
+    var address = new URL(window.location.href);
+    address.searchParams.delete('open');
+    window.history.replaceState(null, '', address.pathname + address.search + address.hash);
+    if (canOpenDrawerWithoutSale()) {
+      state.noSaleKey = null;
+      state.phase = 'nosale';
+    } else {
+      state.error = noSaleUnavailableText();
+    }
+    return true;
+  }
+
+  function noSaleUnavailableText() {
+    if (!state.session) return 'Satışsız çekmece açmak için önce kasa oturumu açın.';
+    if (state.phase === 'counting') return 'Kasa sayımı sürerken bu ekrandan satışsız çekmece açılamaz.';
+    if (!state.drawer) return 'Çekmece durumu okunamadı. Sayfayı yenileyip yeniden deneyin.';
+    if (!state.drawer.enabled) return 'Bu kasada satışsız çekmece açma kapalı.';
+    if (!state.drawer.canKick) return 'Satışsız çekmece açma yetkiniz yok.';
+    return 'Kasa oturumu başka kullanıcıda; satışsız çekmeceyi yalnız oturum sahibi açabilir.';
   }
 
   function canOpenDrawerWithoutSale() {

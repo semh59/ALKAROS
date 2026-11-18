@@ -1,0 +1,67 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (11 tests | 1 failed) 1610ms
+     × shows the reason form at once, sends nothing, and the back link names the sale screen 231ms
+ ❯ cash-session-return-to.test.js (16 tests | 3 failed) 2593ms
+     × names the sale screen when the cashier came from / 103ms
+     × names the sale screen when the cashier came from /?quick=1 104ms
+     × names the sale screen when the cashier came from /#top 140ms
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 23 passed (27)
+   Start at  03:14:02
+   Duration  4.04s (transform 1.21s, setup 48ms, import 111ms, tests 4.20s, environment 2.18s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > shows the reason form at once, sends nothing, and the back link names the sale screen
+AssertionError: expected '← Hesaba dön' to be '← Satış ekranına dön' // Object.is equality
+
+Expected: "← Satış ekranına dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-no-sale-shortcut.test.js:52:39
+     50|     expect([...document.querySelectorAll("[data-no-sale-reason]")].map…
+     51|     expect(calls.some((c) => c.includes("/no-sale"))).toBe(false);
+     52|     expect($(".cs-back").textContent).toBe("← Satış ekranına dön");
+       |                                       ^
+     53|     expect($(".cs-back").getAttribute("href")).toBe("/");
+     54|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > names the sale screen when the cashier came from /
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > names the sale screen when the cashier came from /#top
+AssertionError: expected '← Hesaba dön' to be '← Satış ekranına dön' // Object.is equality
+
+Expected: "← Satış ekranına dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-return-to.test.js:61:39
+     59|   it.each([["/"], ["/?quick=1"], ["/#top"]])("names the sale screen wh…
+     60|     const assign = await openPageWith(sale);
+     61|     expect($(".cs-back").textContent).toBe("← Satış ekranına dön");
+       |                                       ^
+     62|     expect($(".cs-back").getAttribute("href")).toBe(sale);
+     63|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > names the sale screen when the cashier came from /?quick=1
+AssertionError: expected '← Hesaba dön' to be '← Satış ekranına dön' // Object.is equality
+
+Expected: "← Satış ekranına dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-return-to.test.js:61:39
+     59|   it.each([["/"], ["/?quick=1"], ["/#top"]])("names the sale screen wh…
+     60|     const assign = await openPageWith(sale);
+     61|     expect($(".cs-back").textContent).toBe("← Satış ekranına dön");
+       |                                       ^
+     62|     expect($(".cs-back").getAttribute("href")).toBe(sale);
+     63|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+

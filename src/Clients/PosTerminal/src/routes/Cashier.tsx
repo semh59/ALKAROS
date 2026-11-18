@@ -22,7 +22,7 @@ import { useNewOrderChime } from "../features/online-operations/useNewOrderChime
 import { collectionHrefForOrder } from "../collectOrder";
 import { usePendingChecksAlert } from "../features/pending-checks";
 import { BillingSplitApiError } from "../features/billing";
-import { CashSessionBand, CashSessionLink, useCashSessionState } from "../features/cash-session-status";
+import { CashSessionBand, CashSessionLink, NoSaleLink, useCashSessionState } from "../features/cash-session-status";
 import { CashierModifierPicker } from "./CashierModifierPicker";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 import { foldSearch } from "../search";
@@ -852,6 +852,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           Rezervasyon istasyonu
         </button>
       )}
+      {cashSession && <NoSaleLink status={cashSession} />}
       {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
       <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
       {capabilities.includes("payments.refund.request") && <a className="header-action" href="/recent-sales" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/recent-sales"); } }}>{navLabels.recentSales}</a>}

@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (45 tests | 1 failed) 2889ms
+     × offers no Satış yok when its status cannot be read 12ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 49 passed (50)
+   Start at  03:20:20
+   Duration  4.91s (transform 3.61s, setup 0ms, import 421ms, tests 6.17s, environment 2.40s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when its status cannot be read
+AssertionError: expected <a …(3)></a> to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+  title="Satış yapmadan çekmeceyi açar; gerekçe sorulur."
+>
+  Satış yok
+</a>
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:129:54
+    127|     await show();
+    128|
+    129|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+       |                                                      ^
+    130|   });
+    131|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

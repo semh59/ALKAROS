@@ -1,0 +1,94 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (11 tests | 1 failed) 1594ms
+     × opens the form only once: leaving it brings the normal page back, and a refresh does not open it again 199ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 26 passed (27)
+   Start at  03:13:40
+   Duration  4.25s (transform 1.17s, setup 48ms, import 100ms, tests 4.32s, environment 2.34s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > opens the form only once: leaving it brings the normal page back, and a refresh does not open it again
+AssertionError: expected <form id="no-sale-form" …(1)>…(5)</form> to be null
+
+- Expected:
+null
+
++ Received:
+<form
+  id="no-sale-form"
+  novalidate=""
+>
+  <span
+    class="cs-field-label"
+    id="no-sale-reason-label"
+  >
+    Gerekçe
+  </span>
+  <div
+    aria-labelledby="no-sale-reason-label"
+    class="cs-chips"
+    role="group"
+  >
+    <button
+      aria-pressed="false"
+      class="cs-chip"
+      data-no-sale-reason="ChangeCoins"
+      type="button"
+    >
+      Bozuk para
+    </button>
+    <button
+      aria-pressed="false"
+      class="cs-chip"
+      data-no-sale-reason="Other"
+      type="button"
+    >
+      Diğer
+    </button>
+  </div>
+  <label
+    class="cs-field-label"
+    for="no-sale-note"
+  >
+    Not
+  </label>
+  <textarea
+    class="cs-textarea"
+    id="no-sale-note"
+    maxlength="200"
+  />
+  <div
+    class="cs-row"
+  >
+    <button
+      class="cs-btn cs-btn-secondary"
+      id="no-sale-cancel"
+      type="button"
+    >
+      Vazgeç
+    </button>
+    <button
+      class="cs-btn cs-btn-primary"
+      id="no-sale-submit"
+      type="submit"
+    >
+      Çekmeceyi aç
+    </button>
+  </div>
+</form>
+
+ ❯ cash-session-no-sale-shortcut.test.js:78:32
+     76|     await new Promise((done) => setTimeout(done, 30));
+     77|
+     78|     expect($("#no-sale-form")).toBeNull();
+       |                                ^
+     79|     expect($("#no-sale")).not.toBeNull();
+     80|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

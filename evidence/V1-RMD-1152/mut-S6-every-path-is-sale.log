@@ -1,0 +1,64 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-return-to.test.js (16 tests | 3 failed) 2670ms
+     × turns the back link into the bill and goes there once the drawer is open 199ms
+     × does not call another page the sale screen 112ms
+     × does not call another page the tables 111ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  3 failed | 24 passed (27)
+   Start at  03:15:43
+   Duration  4.26s (transform 1.19s, setup 51ms, import 112ms, tests 4.30s, environment 2.40s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > turns the back link into the bill and goes there once the drawer is open
+AssertionError: expected '← Satış ekranına dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Satış ekranına dön"
+
+ ❯ cash-session-return-to.test.js:45:39
+     43|   it("turns the back link into the bill and goes there once the drawer…
+     44|     const assign = await openPageWith(BILL);
+     45|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     46|     expect($(".cs-back").getAttribute("href")).toBe(BILL);
+     47|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > does not call another page the sale screen
+AssertionError: expected '← Satış ekranına dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Satış ekranına dön"
+
+ ❯ cash-session-return-to.test.js:69:39
+     67|   it("does not call another page the sale screen", async () => {
+     68|     await openPageWith("/pending-checks");
+     69|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     70|   });
+     71|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > does not call another page the tables
+AssertionError: expected '← Satış ekranına dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Satış ekranına dön"
+
+ ❯ cash-session-return-to.test.js:74:39
+     72|   it("does not call another page the tables", async () => {
+     73|     await openPageWith("/tables-report");
+     74|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     75|   });
+     76|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

@@ -1,0 +1,228 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (11 tests | 6 failed) 1606ms
+     × says why in Turkish and shows no form when the drawer is switched off 136ms
+     × says why in Turkish and shows no form when the user may not open the drawer 135ms
+     × says why in Turkish and shows no form when the session belongs to someone else 158ms
+     × says why in Turkish and shows no form when the drawer status cannot be read 158ms
+     × says why in Turkish and shows no form when the count has started 110ms
+     × says why in Turkish and shows no form when no session is open 96ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  6 failed | 21 passed (27)
+   Start at  03:13:46
+   Duration  4.27s (transform 1.15s, setup 49ms, import 99ms, tests 4.33s, environment 2.39s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the drawer is switched off
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the user may not open the drawer
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the session belongs to someone else
+AssertionError: expected <form id="no-sale-form" …(1)>…(5)</form> to be null
+
+- Expected:
+null
+
++ Received:
+<form
+  id="no-sale-form"
+  novalidate=""
+>
+  <span
+    class="cs-field-label"
+    id="no-sale-reason-label"
+  >
+    Gerekçe
+  </span>
+  <div
+    aria-labelledby="no-sale-reason-label"
+    class="cs-chips"
+    role="group"
+  >
+    <button
+      aria-pressed="false"
+      class="cs-chip"
+      data-no-sale-reason="ChangeCoins"
+      type="button"
+    >
+      Bozuk para
+    </button>
+    <button
+      aria-pressed="false"
+      class="cs-chip"
+      data-no-sale-reason="Other"
+      type="button"
+    >
+      Diğer
+    </button>
+  </div>
+  <label
+    class="cs-field-label"
+    for="no-sale-note"
+  >
+    Not
+  </label>
+  <textarea
+    class="cs-textarea"
+    id="no-sale-note"
+    maxlength="200"
+  />
+  <div
+    class="cs-row"
+  >
+    <button
+      class="cs-btn cs-btn-secondary"
+      id="no-sale-cancel"
+      type="button"
+    >
+      Vazgeç
+    </button>
+    <button
+      class="cs-btn cs-btn-primary"
+      id="no-sale-submit"
+      type="submit"
+    >
+      Çekmeceyi aç
+    </button>
+  </div>
+</form>
+
+ ❯ cash-session-no-sale-shortcut.test.js:92:32
+     90|     await openPage("?returnTo=%2F&open=no-sale", world);
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+       |                                ^
+     93|     expect(document.body.textContent).toContain(message);
+     94|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the drawer status cannot be read
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when no session is open
+AssertionError: expected <form id="no-sale-form" …(1)>…(5)</form> to be null
+
+- Expected:
+null
+
++ Received:
+<form
+  id="no-sale-form"
+  novalidate=""
+>
+  <span
+    class="cs-field-label"
+    id="no-sale-reason-label"
+  >
+    Gerekçe
+  </span>
+  <div
+    aria-labelledby="no-sale-reason-label"
+    class="cs-chips"
+    role="group"
+  />
+  <label
+    class="cs-field-label"
+    for="no-sale-note"
+  >
+    Not
+  </label>
+  <textarea
+    class="cs-textarea"
+    id="no-sale-note"
+    maxlength="200"
+  />
+  <div
+    class="cs-row"
+  >
+    <button
+      class="cs-btn cs-btn-secondary"
+      id="no-sale-cancel"
+      type="button"
+    >
+      Vazgeç
+    </button>
+    <button
+      class="cs-btn cs-btn-primary"
+      id="no-sale-submit"
+      type="submit"
+    >
+      Çekmeceyi aç
+    </button>
+  </div>
+</form>
+
+ ❯ cash-session-no-sale-shortcut.test.js:92:32
+     90|     await openPage("?returnTo=%2F&open=no-sale", world);
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+       |                                ^
+     93|     expect(document.body.textContent).toContain(message);
+     94|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the count has started
+AssertionError: expected <form id="no-sale-form" …(1)>…(5)</form> to be null
+
+- Expected:
+null
+
++ Received:
+<form
+  id="no-sale-form"
+  novalidate=""
+>
+  <span
+    class="cs-field-label"
+    id="no-sale-reason-label"
+  >
+    Gerekçe
+  </span>
+  <div
+    aria-labelledby="no-sale-reason-label"
+    class="cs-chips"
+    role="group"
+  />
+  <label
+    class="cs-field-label"
+    for="no-sale-note"
+  >
+    Not
+  </label>
+  <textarea
+    class="cs-textarea"
+    id="no-sale-note"
+    maxlength="200"
+  />
+  <div
+    class="cs-row"
+  >
+    <button
+      class="cs-btn cs-btn-secondary"
+      id="no-sale-cancel"
+      type="button"
+    >
+      Vazgeç
+    </button>
+    <button
+      class="cs-btn cs-btn-primary"
+      id="no-sale-submit"
+      type="submit"
+    >
+      Çekmeceyi aç
+    </button>
+  </div>
+</form>
+
+ ❯ cash-session-no-sale-shortcut.test.js:92:32
+     90|     await openPage("?returnTo=%2F&open=no-sale", world);
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+       |                                ^
+     93|     expect(document.body.textContent).toContain(message);
+     94|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+

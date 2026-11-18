@@ -1,0 +1,64 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (41 tests | 1 failed) 2933ms
+     × offers no Satış yok when the drawer is switched off 14ms
+ ❯ src/routes/Cashier.no-sale-link.test.tsx (5 tests | 1 failed) 3369ms
+     × is not offered when the drawer is switched off 139ms
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 44 passed (46)
+   Start at  03:15:01
+   Duration  4.91s (transform 3.70s, setup 0ms, import 431ms, tests 6.30s, environment 2.24s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.no-sale-link.test.tsx > the sale screen's Satış yok link > is not offered when the drawer is switched off
+AssertionError: expected <a …(2)></a> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/routes/Cashier.no-sale-link.test.tsx:61:26
+     59|     await renderHome(drawer, status);
+     60|
+     61|     expect(noSaleLink()).toBeUndefined();
+       |                          ^
+     62|   });
+     63| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > offers no Satış yok when the drawer is switched off
+AssertionError: expected <a …(2)></a> to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+>
+  Satış yok
+</a>
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:96:54
+     94|     await show();
+     95|
+     96|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+       |                                                      ^
+     97|   });
+     98|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

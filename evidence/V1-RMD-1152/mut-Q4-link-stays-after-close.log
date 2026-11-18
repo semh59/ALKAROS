@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (45 tests | 1 failed) 2902ms
+     × takes the link away when the drawer is closed meanwhile 16ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 49 passed (50)
+   Start at  03:20:14
+   Duration  4.86s (transform 3.64s, setup 0ms, import 450ms, tests 6.15s, environment 2.38s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > takes the link away when the drawer is closed meanwhile
+AssertionError: expected <a …(3)></a> to be null
+
+- Expected:
+null
+
++ Received:
+<a
+  class="header-action no-sale-link"
+  href="/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"
+  title="Satış yapmadan çekmeceyi açar; gerekçe sorulur."
+>
+  Satış yok
+</a>
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:118:54
+    116|     withDrawer(answer(404));
+    117|     await act(async () => { window.dispatchEvent(new Event("focus")); …
+    118|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+       |                                                      ^
+    119|   });
+    120|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

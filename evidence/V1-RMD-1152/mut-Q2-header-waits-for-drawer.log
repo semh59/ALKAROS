@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (45 tests | 1 failed) 3002ms
+     × shows the drawer state at once, without waiting for the drawer status 12ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 49 passed (50)
+   Start at  03:20:03
+   Duration  4.94s (transform 3.71s, setup 0ms, import 462ms, tests 6.42s, environment 2.21s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > shows the drawer state at once, without waiting for the drawer status
+AssertionError: expected 'Kasa: Kontrol…' to contain 'Kasa: Açık'
+
+Expected: "Kasa: Açık"
+Received: "Kasa: Kontrol…"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:93:20
+     91|     await show();
+     92|
+     93|     expect(text()).toContain("Kasa: Açık");
+       |                    ^
+     94|     expect(document.querySelector("a.no-sale-link")).toBeNull();
+     95|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

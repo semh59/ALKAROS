@@ -1,0 +1,163 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale-shortcut.test.js (11 tests | 6 failed) 1610ms
+     × says why in Turkish and shows no form when the drawer is switched off 135ms
+     × says why in Turkish and shows no form when the user may not open the drawer 166ms
+     × says why in Turkish and shows no form when the session belongs to someone else 159ms
+     × says why in Turkish and shows no form when the drawer status cannot be read 154ms
+     × says why in Turkish and shows no form when the count has started 94ms
+     × says why in Turkish and shows no form when no session is open 93ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  6 failed | 21 passed (27)
+   Start at  03:13:51
+   Duration  4.37s (transform 1.15s, setup 36ms, import 95ms, tests 4.42s, environment 2.23s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the drawer is switched off
+AssertionError: expected '\n  ← Satış ekranına dön\n  Kasa Otur…' to contain 'Bu kasada satışsız çekmece açma kapal…'
+
+- Expected
++ Received
+
+- Bu kasada satışsız çekmece açma kapalı.
++
++   ← Satış ekranına dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the user may not open the drawer
+AssertionError: expected '\n  ← Satış ekranına dön\n  Kasa Otur…' to contain 'Satışsız çekmece açma yetkiniz yok.'
+
+- Expected
++ Received
+
+- Satışsız çekmece açma yetkiniz yok.
++
++   ← Satış ekranına dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the session belongs to someone else
+AssertionError: expected '\n  ← Satış ekranına dön\n  Kasa Otur…' to contain 'Kasa oturumu başka kullanıcıda; satış…'
+
+- Expected
++ Received
+
+- Kasa oturumu başka kullanıcıda; satışsız çekmeceyi yalnız oturum sahibi açabilir.
++
++   ← Satış ekranına dön
++   Kasa OturumuBaşka KasiyerAçık!Bu kasa oturumu Başka Kasiyer adına açık. Sayma ve kapatma için oturumu açan kasiyer ya da bir yönetici gerekir; kendi oturumunuzu o kapanınca açabilirsiniz.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışNakit giriş ve çıkış yalnız kendi kasa oturumunuza yazılır; sahibi kapatınca kendi kasa oturumunuzu açın.Bu oturumda nakit giriş veya çıkış yok.Listeyi yenileBu düğme sizde pasif: sayımı Başka Kasiyer ya da bir yönetici yapabilir.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the drawer status cannot be read
+AssertionError: expected '\n  ← Satış ekranına dön\n  Kasa Otur…' to contain 'Çekmece durumu okunamadı. Sayfayı yen…'
+
+- Expected
++ Received
+
+- Çekmece durumu okunamadı. Sayfayı yenileyip yeniden deneyin.
++
++   ← Satış ekranına dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when the count has started
+AssertionError: expected '\n  ← Satış ekranına dön\n  SayımÇekm…' to contain 'Kasa sayımı sürerken bu ekrandan satı…'
+
+- Expected
++ Received
+
+- Kasa sayımı sürerken bu ekrandan satışsız çekmece açılamaz.
++
++   ← Satış ekranına dön
++   SayımÇekmecedeki Nakdi SayınHer kupürden kaç adet olduğunu girin, toplam otomatik hesaplanır.200 ₺₺0,00100 ₺₺0,0050 ₺₺0,0020 ₺₺0,0010 ₺₺0,005 ₺₺0,001 ₺₺0,0050 kr₺0,00Toplam₺0,00Not (isteğe bağlı)Kupürüm yok, tek tutar gireceğimSayımı Kaydet
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  cash-session-no-sale-shortcut.test.js > cash-session.js opens the no-sale form when the sale screen asks for it > says why in Turkish and shows no form when no session is open
+AssertionError: expected '\n  ← Satış ekranına dön\n  Kasa Açıl…' to contain 'Satışsız çekmece açmak için önce kasa…'
+
+- Expected
++ Received
+
+- Satışsız çekmece açmak için önce kasa oturumu açın.
++
++   ← Satış ekranına dön
++   Kasa AçılışıVardiyayı BaşlatÇekmecede bulunan başlangıç tutarını girin.Açılış Tutarı₺Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın.Kasayı Aç
++   
++   
++
+
+ ❯ cash-session-no-sale-shortcut.test.js:93:39
+     91|
+     92|     expect($("#no-sale-form")).toBeNull();
+     93|     expect(document.body.textContent).toContain(message);
+       |                                       ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+

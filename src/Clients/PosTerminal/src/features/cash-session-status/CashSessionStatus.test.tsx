@@ -6,7 +6,7 @@ import { join } from "node:path";
 import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerSessionExpiredHandler } from "../../api";
-import { CashSessionBand, CashSessionLink, useCashSessionState } from "./CashSessionStatus";
+import { CashSessionBand, CashSessionLink, NoSaleLink, useCashSessionState } from "./CashSessionStatus";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -15,7 +15,7 @@ const answer = (status: number, body: unknown = {}) => ({ ok: status >= 200 && s
 
 function Probe({ enabled, userId = "u-1" }: { enabled: boolean; userId?: string }) {
   const cashSession = useCashSessionState("t-1", userId, enabled);
-  return cashSession ? <><CashSessionLink status={cashSession} /><CashSessionBand status={cashSession} /></> : <p>kapalı özellik</p>;
+  return cashSession ? <><CashSessionLink status={cashSession} /><NoSaleLink status={cashSession} /><CashSessionBand status={cashSession} /></> : <p>kapalı özellik</p>;
 }
 
 describe("cash session status", () => {
@@ -27,6 +27,8 @@ describe("cash session status", () => {
     await act(async () => { root!.render(<Probe enabled={enabled} />); });
   };
   const text = () => document.body.textContent ?? "";
+  // The drawer status read for the no-sale link is not a session read; these tests count session reads.
+  const sessionReads = () => fetchMock.mock.calls.filter(([url]) => !String(url).endsWith("/cash-drawer")).length;
 
   beforeEach(() => {
     document.body.innerHTML = '<div id="root"></div>';
@@ -68,6 +70,77 @@ describe("cash session status", () => {
     const expected = "/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da";
     expect(document.querySelector(".cash-session-band a")!.getAttribute("href")).toBe(expected);
     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe(expected);
+  });
+
+  const withDrawer = (session: ReturnType<typeof answer>, drawer: ReturnType<typeof answer> = answer(200, { enabled: true, canKick: true })) =>
+    fetchMock.mockImplementation(async (url: string) => (String(url).endsWith("/cash-drawer") ? drawer : session));
+
+  it("offers Satış yok for the user's own open drawer when the server says it can be opened, and it leads to the reason form of the drawer page", async () => {
+    window.history.replaceState({}, "", "/");
+    withDrawer(answer(200, mine));
+    await show();
+
+    const link = document.querySelector<HTMLAnchorElement>("a.no-sale-link")!;
+    expect([link.textContent, link.getAttribute("href")]).toEqual(["Satış yok", "/cashier/payments/cash-session/index.html?returnTo=%2F&open=no-sale"]);
+    expect(fetchMock.mock.calls.map(([url]) => url)).toContain("/api/v1/terminals/t-1/cash-sessions/s-1/cash-drawer");
+    expect(link.title).toBe("Satış yapmadan çekmeceyi açar; gerekçe sorulur.");
+  });
+
+  it("shows the drawer state at once, without waiting for the drawer status", async () => {
+    fetchMock.mockImplementation(async (url: string) => (String(url).endsWith("/cash-drawer") ? new Promise(() => undefined) : answer(200, mine)));
+    await show();
+
+    expect(text()).toContain("Kasa: Açık");
+    expect(document.querySelector("a.no-sale-link")).toBeNull();
+  });
+
+  it("keeps the link when a later read of the drawer status fails, and drops it once the server says it cannot be used", async () => {
+    withDrawer(answer(200, mine));
+    await show();
+    expect(document.querySelector("a.no-sale-link")).not.toBeNull();
+
+    withDrawer(answer(200, mine), answer(500));
+    await act(async () => { window.dispatchEvent(new Event("focus")); });
+    expect(document.querySelector("a.no-sale-link")).not.toBeNull();
+
+    withDrawer(answer(200, mine), answer(200, { enabled: false, canKick: true }));
+    await act(async () => { window.dispatchEvent(new Event("focus")); });
+    expect(document.querySelector("a.no-sale-link")).toBeNull();
+  });
+
+  it("takes the link away when the drawer is closed meanwhile", async () => {
+    withDrawer(answer(200, mine));
+    await show();
+    expect(document.querySelector("a.no-sale-link")).not.toBeNull();
+
+    withDrawer(answer(404));
+    await act(async () => { window.dispatchEvent(new Event("focus")); });
+    expect(document.querySelector("a.no-sale-link")).toBeNull();
+  });
+
+  it.each([
+    ["the drawer is switched off", answer(200, { enabled: false, canKick: true })],
+    ["the user may not open it", answer(200, { enabled: true, canKick: false })],
+    ["its status cannot be read", answer(500)],
+  ])("offers no Satış yok when %s", async (_name, drawer) => {
+    withDrawer(answer(200, mine), drawer);
+    await show();
+
+    expect(document.querySelector("a.no-sale-link")).toBeNull();
+  });
+
+  it.each([
+    ["closed", answer(404)],
+    ["an answer without a session id", answer(200, { cashierUserId: "u-1" })],
+    ["someone else's", answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" })],
+    ["forbidden", answer(403)],
+    ["unknown", answer(500)],
+  ])("offers no Satış yok, and asks for no drawer status, when the drawer is %s", async (_name, session) => {
+    withDrawer(session);
+    await show();
+
+    expect(document.querySelector("a.no-sale-link")).toBeNull();
+    expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith("/cash-drawer"))).toBe(false);
   });
 
   it("an open drawer link carries the current page too, so the drawer page's way back leads here", async () => {
@@ -138,7 +211,7 @@ describe("cash session status", () => {
     fetchMock.mockResolvedValue(answer(200, mine));
     root = createRoot(document.getElementById("root")!);
     await act(async () => { root!.render(<Probe enabled />); });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(sessionReads()).toBe(1);
   });
 
   it.each([
@@ -193,7 +266,7 @@ describe("cash session status", () => {
 
     await act(async () => { root!.render(<Probe enabled userId="u-2" />); });
 
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(sessionReads()).toBe(3);
     expect(text()).toContain("Kasa: Başka kullanıcıda");
   });
 
@@ -225,7 +298,7 @@ describe("cash session status", () => {
       document.dispatchEvent(new Event("visibilitychange"));
     });
 
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(sessionReads()).toBe(1);
   });
 
   it("a network failure is a failed read too, and the retry button reads again", async () => {
@@ -237,7 +310,7 @@ describe("cash session status", () => {
     await act(async () => { retry.click(); });
 
     expect(text()).toContain("Kasa: Açık");
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(sessionReads()).toBe(2);
   });
 
   it("reads again when the cashier comes back to this tab after opening the drawer elsewhere", async () => {
