@@ -261,6 +261,19 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheExpectedCashPreviewNamesTheLatestRecordedCountOrNothing()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        await drawer.StartCountAsync();
+        Assert.Equal(JsonValueKind.Null, (await drawer.PreviewAsync()).GetProperty("lastCountedAmount").ValueKind);
+
+        await drawer.CountAsync(90m);
+        await drawer.CountAsync(95m);
+
+        Assert.Equal(95m, (await drawer.PreviewAsync()).GetProperty("lastCountedAmount").GetDecimal());
+    }
+
+    [Fact]
     public async Task ACloseWithNothingUnsettledNeedsNoAcknowledgementAndTheAuditSaysSo()
     {
         await using var drawer = await DrawerAsync(opening: 100m);

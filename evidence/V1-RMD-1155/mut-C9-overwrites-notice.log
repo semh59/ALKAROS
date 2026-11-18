@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (9 tests | 1 failed) 2173ms
+     × keeps the connection-lost sentence of a close that may not have landed instead of the resume sentence 1134ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  09:39:54
+   Duration  3.85s (transform 417ms, setup 43ms, import 42ms, tests 2.17s, environment 1.28s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > keeps the connection-lost sentence of a close that may not have landed instead of the resume sentence
+AssertionError: expected 'Kayıtlı sayımınızla devam ediyorsunuz…' to contain 'Kasa kapanmış olabilir'
+
+Expected: "Kasa kapanmış olabilir"
+Received: "Kayıtlı sayımınızla devam ediyorsunuz. Yeniden saymak için Sayımı düzelt düğmesini kullanın; her yeni sayım düzeltme olarak kaydedilir."
+
+ ❯ cash-session-count-restore.test.js:122:64
+    120|
+    121|     $("#submit-close").click();
+    122|     await vi.waitFor(() => expect($("#cs-notice").textContent).toConta…
+       |                                                                ^
+    123|
+    124|     expect($("#cs-notice").textContent).not.toContain("Kayıtlı sayımın…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

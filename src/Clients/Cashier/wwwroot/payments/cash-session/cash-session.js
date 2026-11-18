@@ -288,15 +288,42 @@
         return;
       }
       state.session = result.body;
-      state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
+      var counting = state.session.status === 'Counting';
+      if (!counting) state.phase = 'open';
       return (ownsSession() ? Promise.resolve() : loadOwnerName()).then(function () {
-        if (state.phase === 'open') return Promise.all([loadMovements(), loadDrawer()]);
-        applyOpenNoSaleForm();
-        render();
+        return counting ? resumeCounting() : Promise.all([loadMovements(), loadDrawer()]);
       });
     }).catch(function () {
       failActiveSessionRead('Bağlantı kesildi. Kasa durumu okunamadı; bağlantınızı kontrol edip yeniden deneyin.');
     });
+  }
+
+  // A reload while counting must not forget the count that was recorded: a blank form would ask for it again and the
+  // server would record the second entry as a correction. The expected cash is kept only with a recorded count, so the
+  // count screen of an uncounted session stays blind.
+  function resumeCounting() {
+    if (!mayActForOwner()) return showCounting();
+    return api(movementsBase() + '/expected-cash').then(function (expected) {
+      if (!expected.ok) {
+        failActiveSessionRead('Kayıtlı sayım okunamadı. Bağlantınızı kontrol edip Tekrar dene düğmesine basın; sürerse yöneticiye haber verin.');
+        return;
+      }
+      if (expected.body.lastCountedAmount == null) return showCounting();
+      state.lastCountedAmount = expected.body.lastCountedAmount;
+      applyExpected(expected);
+      // The no-sale link is answered on the count screen it landed on, as before.
+      state.phase = 'counting';
+      applyOpenNoSaleForm();
+      state.phase = 'closing';
+      state.notice = state.notice || 'Kayıtlı sayımınızla devam ediyorsunuz. Yeniden saymak için Sayımı düzelt düğmesini kullanın; her yeni sayım düzeltme olarak kaydedilir.';
+      render();
+    });
+  }
+
+  function showCounting() {
+    state.phase = 'counting';
+    applyOpenNoSaleForm();
+    render();
   }
 
   // On first load there is no screen to keep, so the failure gets its own screen with a retry; a re-read
@@ -1409,6 +1436,7 @@
       state.drafts.acknowledged = false;
       state.varianceExceeded = false;
       state.error = null;
+      state.notice = null;
       render();
     });
     document.querySelectorAll('[data-reason-preset]').forEach(function (button) {

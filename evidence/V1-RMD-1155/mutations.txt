@@ -1,0 +1,14 @@
+C1-never-resumes exit=1 restored=True
+C2-read-failure-blank-form exit=1 restored=True
+C3-non-owner-resumes exit=1 restored=True
+C4-no-notice exit=1 restored=True
+C5-no-sale-flag-kept exit=1 restored=True
+C6-resume-without-count exit=1 restored=True
+C7-count-not-restored exit=1 restored=True
+S1-always-null exit=1 (HTTP test killed, real assertion failure)
+S2-first-count-not-latest exit=1 (HTTP test killed, real assertion failure)
+Equivalent (not killed, not claimed): storing the expected cash before the lastCountedAmount check; the count screen never renders it, so no observable difference.
+C8-recount-keeps-notice exit=1 restored=True
+C9-overwrites-notice exit=1 restored=True
+C10-manager-not-resumed exit=1 restored=True
+C11-error-message-lost exit=1 restored=True

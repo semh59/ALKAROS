@@ -1,0 +1,143 @@
+diff --git a/docs/domain/cash-session-design.md b/docs/domain/cash-session-design.md
+index 39e5f8f30..a51c9df63 100644
+--- a/docs/domain/cash-session-design.md
++++ b/docs/domain/cash-session-design.md
+@@ -88,6 +88,11 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
+     the manager setting `cash.close_variance_tolerance` (default 50 TL) with a hard ceiling of 500 TL, enforced when the
+     value is written and again when it is read.
+ - **Counted amount**: a close needs at least one recorded count and the closing amount equals the latest count.
++- **Blind count and reload**: the count screen never shows the expected cash; it appears with the difference once a count is
++  recorded. `GET .../expected-cash` carries `lastCountedAmount` (the newest recorded count, `null` before the first). A
++  cashier who reloads a `Counting` session lands on the difference check with that count instead of a blank form, because
++  entering it again would be recorded as a correction. A session without a recorded count still opens the blind form, and
++  a user who may not act for the owner never reads the expected cash.
+ - **Unsettled business**: open bills (not `Paid`/`Cancelled`) and payments whose result is unknown (`Pending`,
+   `Unknown`, `ReconciliationRequired`) are counted business-wide (bills and payments are not bound to a terminal). They
+   never block: the cashier sees the counts and acknowledges them, and the audit event `cash.session.closed` records the
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 3879629e4..e6b8043da 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -288,17 +288,44 @@
+         return;
+       }
+       state.session = result.body;
+-      state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
++      var counting = state.session.status === 'Counting';
++      if (!counting) state.phase = 'open';
+       return (ownsSession() ? Promise.resolve() : loadOwnerName()).then(function () {
+-        if (state.phase === 'open') return Promise.all([loadMovements(), loadDrawer()]);
+-        applyOpenNoSaleForm();
+-        render();
++        return counting ? resumeCounting() : Promise.all([loadMovements(), loadDrawer()]);
+       });
+     }).catch(function () {
+       failActiveSessionRead('Bağlantı kesildi. Kasa durumu okunamadı; bağlantınızı kontrol edip yeniden deneyin.');
+     });
+   }
+ 
++  // A reload while counting must not forget the count that was recorded: a blank form would ask for it again and the
++  // server would record the second entry as a correction. The expected cash is kept only with a recorded count, so the
++  // count screen of an uncounted session stays blind.
++  function resumeCounting() {
++    if (!mayActForOwner()) return showCounting();
++    return api(movementsBase() + '/expected-cash').then(function (expected) {
++      if (!expected.ok) {
++        failActiveSessionRead('Kayıtlı sayım okunamadı. Bağlantınızı kontrol edip Tekrar dene düğmesine basın; sürerse yöneticiye haber verin.');
++        return;
++      }
++      if (expected.body.lastCountedAmount == null) return showCounting();
++      state.lastCountedAmount = expected.body.lastCountedAmount;
++      applyExpected(expected);
++      // The no-sale link is answered on the count screen it landed on, as before.
++      state.phase = 'counting';
++      applyOpenNoSaleForm();
++      state.phase = 'closing';
++      state.notice = state.notice || 'Kayıtlı sayımınızla devam ediyorsunuz. Yeniden saymak için Sayımı düzelt düğmesini kullanın; her yeni sayım düzeltme olarak kaydedilir.';
++      render();
++    });
++  }
++
++  function showCounting() {
++    state.phase = 'counting';
++    applyOpenNoSaleForm();
++    render();
++  }
++
+   // On first load there is no screen to keep, so the failure gets its own screen with a retry; a re-read
+   // after an action keeps the screen the cashier is on and shows the failure on it.
+   function failActiveSessionRead(message) {
+@@ -1409,6 +1436,7 @@
+       state.drafts.acknowledged = false;
+       state.varianceExceeded = false;
+       state.error = null;
++      state.notice = null;
+       render();
+     });
+     document.querySelectorAll('[data-reason-preset]').forEach(function (button) {
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashSession.cs b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+index d564da300..4152cc240 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashSession.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+@@ -158,9 +158,10 @@ public static partial class DualScreenApplication
+             await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+             var expectedCash = await ledger.ComputeExpectedCashAsync(cashSessionId, cancellationToken);
+             var unsettled = await closeStore.ReadUnsettledAsync(cancellationToken);
++            var counts = await sessionRepository.GetCountsAsync(cashSessionId, cancellationToken);
+             return Results.Ok(new ExpectedCashResponseV1(
+                 expectedCash, await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken),
+-                unsettled.OpenBills, unsettled.UnsettledPayments));
++                unsettled.OpenBills, unsettled.UnsettledPayments, counts.Count > 0 ? counts[^1].CountedAmount : null));
+         });
+ 
+         group.MapPost("/{cashSessionId:guid}/close", async (
+@@ -519,9 +520,12 @@ public sealed record CloseCashSessionResultV1(
+ /// close endpoint itself uses, so the confirmation screen can show the real
+ /// number before the cashier commits. It also carries what the close screen needs besides the number: the manager-set
+ /// difference tolerance and the business-wide counts of open bills and uncertain payments the close warns about.
++/// <paramref name="LastCountedAmount"/> is the newest recorded count (null before the first): a screen that reloads while the
++/// session is counting resumes at the difference check with it instead of asking for the count again, which would be recorded
++/// as a correction.
+ /// </summary>
+ public sealed record ExpectedCashResponseV1(
+-    decimal ExpectedCash, decimal VarianceTolerance, int OpenBillCount, int UnsettledPaymentCount);
++    decimal ExpectedCash, decimal VarianceTolerance, int OpenBillCount, int UnsettledPaymentCount, decimal? LastCountedAmount);
+ 
+ public sealed record ReconcileCashSessionRequestV1(string? Notes);
+ 
+diff --git a/tests/Clients/StaticApps/cash-session-no-sale-shortcut.test.js b/tests/Clients/StaticApps/cash-session-no-sale-shortcut.test.js
+index 98bf47636..5a4e7f8e1 100644
+--- a/tests/Clients/StaticApps/cash-session-no-sale-shortcut.test.js
++++ b/tests/Clients/StaticApps/cash-session-no-sale-shortcut.test.js
+@@ -26,6 +26,7 @@ async function openPage(query, world = {}) {
+     if (url.endsWith("/suggested-opening-balance")) return reply(200, { suggestedOpeningBalance: null });
+     if (url.endsWith("/cash-sessions/active/owner")) return reply(200, { displayName: "Başka Kasiyer" });
+     if (url.endsWith("/cash-movements")) return reply(200, emptyList);
++    if (url.endsWith("/expected-cash")) return reply(200, { expectedCash: 1000, varianceTolerance: 50, openBillCount: 0, unsettledPaymentCount: 0, lastCountedAmount: null });
+     if (url.endsWith("/cash-drawer") && method === "GET") {
+       if (world.drawerDown) throw new TypeError("network");
+       return reply(200, world.drawer ?? drawer());
+diff --git a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+index d8576206f..c065f70e8 100644
+--- a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+@@ -260,6 +260,19 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+         Assert.Equal((first, corrections), ((double)answer.GetProperty("firstCountedAmount").GetDecimal(), answer.GetProperty("correctionCount").GetInt32()));
+     }
+ 
++    [Fact]
++    public async Task TheExpectedCashPreviewNamesTheLatestRecordedCountOrNothing()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        await drawer.StartCountAsync();
++        Assert.Equal(JsonValueKind.Null, (await drawer.PreviewAsync()).GetProperty("lastCountedAmount").ValueKind);
++
++        await drawer.CountAsync(90m);
++        await drawer.CountAsync(95m);
++
++        Assert.Equal(95m, (await drawer.PreviewAsync()).GetProperty("lastCountedAmount").GetDecimal());
++    }
++
+     [Fact]
+     public async Task ACloseWithNothingUnsettledNeedsNoAcknowledgementAndTheAuditSaysSo()
+     {

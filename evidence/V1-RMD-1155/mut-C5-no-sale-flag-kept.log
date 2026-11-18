@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (6 tests | 1 failed) 742ms
+     × answers the no-sale link with the counting sentence and does not open the form later 121ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 16 passed (17)
+   Start at  08:52:03
+   Duration  3.02s (transform 722ms, setup 62ms, import 83ms, tests 2.27s, environment 2.26s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > answers the no-sale link with the counting sentence and does not open the form later
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'Kasa sayımı sürerken bu ekrandan satı…'
+
+- Expected
++ Received
+
+- Kasa sayımı sürerken bu ekrandan satışsız çekmece açılamaz.
++
++   ← Kasaya dön
++   KapatmaFark Teyidi✓Kayıtlı sayımınızla devam ediyorsunuz. Yeniden saymak için Sayımı düzelt düğmesini kullanın; her yeni sayım düzeltme olarak kaydedilir.Beklenen₺1.234,56Sayılan₺1.100,00Fark-₺134,56Kapanışta kabul edilen fark: en çok ₺50,00 (yönetici ayarı); fazlası yönetici onayı ister.Fark Açıklaması (zorunlu)Para üstü yanlış verildiSayım hatasıKasadan çıkış kaydedilmediBahşiş ayrıldıKasayı KapatSayımı düzelt
++   
++   
++
+
+ ❯ cash-session-count-restore.test.js:98:20
+     96|     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
+     97|
+     98|     expect(text()).toContain("Kasa sayımı sürerken bu ekrandan satışsı…
+       |                    ^
+     99|     expect($("#no-sale-form")).toBeNull();
+    100|     expect(window.location.search).toBe("");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

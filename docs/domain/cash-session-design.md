@@ -88,6 +88,11 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
     the manager setting `cash.close_variance_tolerance` (default 50 TL) with a hard ceiling of 500 TL, enforced when the
     value is written and again when it is read.
 - **Counted amount**: a close needs at least one recorded count and the closing amount equals the latest count.
+- **Blind count and reload**: the count screen never shows the expected cash; it appears with the difference once a count is
+  recorded. `GET .../expected-cash` carries `lastCountedAmount` (the newest recorded count, `null` before the first). A
+  cashier who reloads a `Counting` session lands on the difference check with that count instead of a blank form, because
+  entering it again would be recorded as a correction. A session without a recorded count still opens the blind form, and
+  a user who may not act for the owner never reads the expected cash.
 - **Unsettled business**: open bills (not `Paid`/`Cancelled`) and payments whose result is unknown (`Pending`,
   `Unknown`, `ReconciliationRequired`) are counted business-wide (bills and payments are not bound to a terminal). They
   never block: the cashier sees the counts and acknowledges them, and the audit event `cash.session.closed` records the

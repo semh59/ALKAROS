@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (6 tests | 4 failed) 4543ms
+     × resumes at the difference check with the recorded count and says so, without asking for the count again 1128ms
+     × closes with the recorded count and sends no new count 1063ms
+     × says the saved count could not be read instead of opening a blank form that would record a correction 1054ms
+     × answers the no-sale link with the counting sentence and does not open the form later 1072ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 13 passed (17)
+   Start at  08:51:39
+   Duration  6.15s (transform 765ms, setup 65ms, import 73ms, tests 6.09s, environment 2.45s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > resumes at the difference check with the recorded count and says so, without asking for the count again
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:54:59
+     52|     const calls = install({ lastCountedAmount: 1100 });
+     53|     await loadApp(htmlPath, scriptPath);
+     54|     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
+       |                                                           ^
+     55|
+     56|     expect(text()).toMatch(EXPECTED_TEXT);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > closes with the recorded count and sends no new count
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:66:59
+     64|     const calls = install({ lastCountedAmount: 1234.56 });
+     65|     await loadApp(htmlPath, scriptPath);
+     66|     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
+       |                                                           ^
+     67|
+     68|     $("#submit-close").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > says the saved count could not be read instead of opening a blank form that would record a correction
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:87:55
+     85|     install({ expectedFails: true });
+     86|     await loadApp(htmlPath, scriptPath);
+     87|     await vi.waitFor(() => expect($(".cs-alert")).not.toBeNull());
+       |                                                       ^
+     88|
+     89|     expect($("#submit-count")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > answers the no-sale link with the counting sentence and does not open the form later
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:96:59
+     94|     install({ lastCountedAmount: 1100 });
+     95|     await loadApp(htmlPath, scriptPath);
+     96|     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
+       |                                                           ^
+     97|
+     98|     expect(text()).toContain("Kasa sayımı sürerken bu ekrandan satışsı…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

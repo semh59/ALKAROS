@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (9 tests | 1 failed) 1210ms
+     × says the saved count could not be read instead of opening a blank form that would record a correction 132ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  09:40:07
+   Duration  2.71s (transform 414ms, setup 39ms, import 43ms, tests 1.21s, environment 1.12s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > says the saved count could not be read instead of opening a blank form that would record a correction
+AssertionError: expected 'Okunamadı. Bağlantınızı kontrol edip …' to contain 'Kayıtlı sayım okunamadı'
+
+Expected: "Kayıtlı sayım okunamadı"
+Received: "Okunamadı. Bağlantınızı kontrol edip Tekrar dene düğmesine basın; sürerse yöneticiye haber verin."
+
+ ❯ cash-session-count-restore.test.js:91:45
+     89|     await vi.waitFor(() => expect($("#cs-reload")).not.toBeNull());
+     90|
+     91|     expect($(".cs-alert-body").textContent).toContain("Kayıtlı sayım o…
+       |                                             ^
+     92|     expect($("#submit-count")).toBeNull();
+     93|     expect($("#submit-close")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

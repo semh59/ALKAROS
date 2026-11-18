@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (6 tests | 1 failed) 1717ms
+     × says the saved count could not be read instead of opening a blank form that would record a correction 1049ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 16 passed (17)
+   Start at  08:51:47
+   Duration  3.18s (transform 707ms, setup 55ms, import 64ms, tests 3.24s, environment 2.23s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > says the saved count could not be read instead of opening a blank form that would record a correction
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:87:55
+     85|     install({ expectedFails: true });
+     86|     await loadApp(htmlPath, scriptPath);
+     87|     await vi.waitFor(() => expect($(".cs-alert")).not.toBeNull());
+       |                                                       ^
+     88|
+     89|     expect($("#submit-count")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

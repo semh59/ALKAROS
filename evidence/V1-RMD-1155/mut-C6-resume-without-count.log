@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (6 tests | 1 failed) 1777ms
+     × opens the blind count form when no count was recorded, and the expected cash is nowhere on the page 1069ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 16 passed (17)
+   Start at  08:52:08
+   Duration  3.26s (transform 852ms, setup 64ms, import 84ms, tests 3.41s, environment 2.25s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > opens the blind count form when no count was recorded, and the expected cash is nowhere on the page
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:78:59
+     76|     install({ lastCountedAmount: null });
+     77|     await loadApp(htmlPath, scriptPath);
+     78|     await vi.waitFor(() => expect($("#submit-count")).not.toBeNull());
+       |                                                           ^
+     79|
+     80|     expect(text()).not.toMatch(EXPECTED_TEXT);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

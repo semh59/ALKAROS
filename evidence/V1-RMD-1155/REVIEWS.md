@@ -1,0 +1,3 @@
+# V1-RMD-1155 qa
+1. qa-ux-tasarim: kor sayim ve yenileme duzeltmesi dogru; 2 orta bulgu uygulandi (Sayimi duzelt bildirimi silmiyordu; hata mesaji "yeniden girmek duzeltme" diyordu ama yol yoktu -> "Tekrar dene, surerse yoneticiye haber verin"). Onceki tutari forma on doldurma onerisi reddedildi (kor sayim). Yesil bildirim stili dusuk, birakildi.
+2. qa-test-kalitesi: eksik testler eklendi (baglanti kopmasi bildirimi ezmez, yonetici dali, recount sonrasi bildirim/sizinti, hata ekrani metni+yeniden dene, ham sayi sizintisi) ve 4 yeni mutant (C8-C11) killed; counted_at esitligi riski RESULT'a yazildi.

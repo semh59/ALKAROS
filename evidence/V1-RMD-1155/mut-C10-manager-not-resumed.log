@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (9 tests | 1 failed) 2239ms
+     × lets a manager who may act for the owner resume at the difference check 1057ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  09:40:01
+   Duration  3.85s (transform 437ms, setup 39ms, import 36ms, tests 2.24s, environment 1.23s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > lets a manager who may act for the owner resume at the difference check
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:99:59
+     97|     install({ lastCountedAmount: 1100, ownerId: "u2", capabilities: ["…
+     98|     await loadApp(htmlPath, scriptPath);
+     99|     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
+       |                                                           ^
+    100|
+    101|     expect(text()).toMatch(EXPECTED_TEXT);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

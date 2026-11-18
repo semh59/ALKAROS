@@ -26,6 +26,7 @@ async function openPage(query, world = {}) {
     if (url.endsWith("/suggested-opening-balance")) return reply(200, { suggestedOpeningBalance: null });
     if (url.endsWith("/cash-sessions/active/owner")) return reply(200, { displayName: "Başka Kasiyer" });
     if (url.endsWith("/cash-movements")) return reply(200, emptyList);
+    if (url.endsWith("/expected-cash")) return reply(200, { expectedCash: 1000, varianceTolerance: 50, openBillCount: 0, unsettledPaymentCount: 0, lastCountedAmount: null });
     if (url.endsWith("/cash-drawer") && method === "GET") {
       if (world.drawerDown) throw new TypeError("network");
       return reply(200, world.drawer ?? drawer());

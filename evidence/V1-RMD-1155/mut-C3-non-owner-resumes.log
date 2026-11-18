@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (6 tests | 1 failed) 1752ms
+     × leaves another cashier's counting session on the blocked count view and does not read the expected cash 1051ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 16 passed (17)
+   Start at  08:51:52
+   Duration  3.21s (transform 740ms, setup 61ms, import 72ms, tests 3.32s, environment 2.17s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > leaves another cashier's counting session on the blocked count view and does not read the expected cash
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:106:59
+    104|     const calls = install({ lastCountedAmount: 1100, ownerId: "u2" });
+    105|     await loadApp(htmlPath, scriptPath);
+    106|     await vi.waitFor(() => expect($("#submit-count")).not.toBeNull());
+       |                                                           ^
+    107|
+    108|     expect($("#submit-close")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

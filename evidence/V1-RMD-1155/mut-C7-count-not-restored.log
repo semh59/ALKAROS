@@ -1,0 +1,51 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (6 tests | 2 failed) 1797ms
+     × resumes at the difference check with the recorded count and says so, without asking for the count again 196ms
+     × closes with the recorded count and sends no new count 1117ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 15 passed (17)
+   Start at  08:52:14
+   Duration  3.28s (transform 808ms, setup 74ms, import 86ms, tests 3.31s, environment 2.21s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > resumes at the difference check with the recorded count and says so, without asking for the count again
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain '1.100,00'
+
+- Expected
++ Received
+
+- 1.100,00
++
++   ← Kasaya dön
++   KapatmaFark Teyidi✓Kayıtlı sayımınızla devam ediyorsunuz. Yeniden saymak için Sayımı düzelt düğmesini kullanın; her yeni sayım düzeltme olarak kaydedilir.Beklenen₺1.234,56Sayılan₺0,00Fark-₺1.234,56Kapanışta kabul edilen fark: en çok ₺50,00 (yönetici ayarı); fazlası yönetici onayı ister.Fark Açıklaması (zorunlu)Para üstü yanlış verildiSayım hatasıKasadan çıkış kaydedilmediBahşiş ayrıldıKasayı KapatSayımı düzelt
++   
++   
++
+
+ ❯ cash-session-count-restore.test.js:57:20
+     55|
+     56|     expect(text()).toMatch(EXPECTED_TEXT);
+     57|     expect(text()).toContain("1.100,00");
+       |                    ^
+     58|     expect($("#cs-notice").textContent).toContain("Kayıtlı sayımınızla…
+     59|     expect($("#submit-count")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > closes with the recorded count and sends no new count
+AssertionError: expected null not to be null
+ ❯ cash-session-count-restore.test.js:69:54
+     67|
+     68|     $("#submit-close").click();
+     69|     await vi.waitFor(() => expect($("#cs-exit")).not.toBeNull());
+       |                                                      ^
+     70|
+     71|     expect(calls.filter((call) => call.url.endsWith("/close")).map((ca…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

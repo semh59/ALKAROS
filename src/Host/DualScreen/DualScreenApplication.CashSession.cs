@@ -158,9 +158,10 @@ public static partial class DualScreenApplication
             await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
             var expectedCash = await ledger.ComputeExpectedCashAsync(cashSessionId, cancellationToken);
             var unsettled = await closeStore.ReadUnsettledAsync(cancellationToken);
+            var counts = await sessionRepository.GetCountsAsync(cashSessionId, cancellationToken);
             return Results.Ok(new ExpectedCashResponseV1(
                 expectedCash, await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken),
-                unsettled.OpenBills, unsettled.UnsettledPayments));
+                unsettled.OpenBills, unsettled.UnsettledPayments, counts.Count > 0 ? counts[^1].CountedAmount : null));
         });
 
         group.MapPost("/{cashSessionId:guid}/close", async (
@@ -519,9 +520,12 @@ public sealed record CloseCashSessionResultV1(
 /// close endpoint itself uses, so the confirmation screen can show the real
 /// number before the cashier commits. It also carries what the close screen needs besides the number: the manager-set
 /// difference tolerance and the business-wide counts of open bills and uncertain payments the close warns about.
+/// <paramref name="LastCountedAmount"/> is the newest recorded count (null before the first): a screen that reloads while the
+/// session is counting resumes at the difference check with it instead of asking for the count again, which would be recorded
+/// as a correction.
 /// </summary>
 public sealed record ExpectedCashResponseV1(
-    decimal ExpectedCash, decimal VarianceTolerance, int OpenBillCount, int UnsettledPaymentCount);
+    decimal ExpectedCash, decimal VarianceTolerance, int OpenBillCount, int UnsettledPaymentCount, decimal? LastCountedAmount);
 
 public sealed record ReconcileCashSessionRequestV1(string? Notes);
 

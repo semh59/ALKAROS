@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-count-restore.test.js (6 tests | 1 failed) 880ms
+     × resumes at the difference check with the recorded count and says so, without asking for the count again 219ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 16 passed (17)
+   Start at  08:51:58
+   Duration  3.09s (transform 893ms, setup 55ms, import 73ms, tests 2.54s, environment 2.16s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-count-restore.test.js > cash-session.js reloaded while the session is counting > resumes at the difference check with the recorded count and says so, without asking for the count again
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ cash-session-count-restore.test.js:58:27
+     56|     expect(text()).toMatch(EXPECTED_TEXT);
+     57|     expect(text()).toContain("1.100,00");
+     58|     expect($("#cs-notice").textContent).toContain("Kayıtlı sayımınızla…
+       |                           ^
+     59|     expect($("#submit-count")).toBeNull();
+     60|     expect(calls.filter((call) => call.url.endsWith("/counts"))).toEqu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
