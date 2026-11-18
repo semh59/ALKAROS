@@ -19,8 +19,8 @@ Seçim (kodla gerekçeli): kayıtlı sayım varsa sayfa doğrudan "Fark Teyidi" 
 ## Owned surface
 
 - `evidence/V1-RMD-1155/**`
-- tests/Clients/StaticApps/cash-session-count-restore.test.js
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
+  - tests/Clients/StaticApps/cash-session-count-restore.test.js
   - src/Host/DualScreen/DualScreenApplication.CashSession.cs
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
   - tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
