@@ -91,20 +91,21 @@ def test_compose_core_has_web_and_api_and_no_published_datastore() -> None:
     assert '["CMD", "wget", "-q", "--spider", "https://localhost/health/ready"]' in compose
     assert "5432:" not in compose and "5080:" not in compose
     assert "ALKAROS_DB_PASSWORD:" not in compose
-    assert compose.count("export ALKAROS_DB_PASSWORD=\"$$(tr -d '\\r\\n' < /run/secrets/db_password)\"") == 4
+    # Owner password: only the one-shot migrate/provision jobs. Long-running api/connector use the
+    # least-privilege alkaros_app role (V1-RMD-700).
+    assert compose.count("export ALKAROS_DB_PASSWORD=\"$$(tr -d '\\r\\n' < /run/secrets/db_password)\"") == 2
+    assert compose.count("export ALKAROS_DB_PASSWORD=\"$$(tr -d '\\r\\n' < /run/secrets/app_db_password)\"") == 2
     assert "${ALKAROS_KITCHEN_STATION_ID:-kitchen-main}" in compose
     assert "--api-only --customer-display-origin-header X-Alkaros-Origin" in compose
 
-    dockerignore = (ROOT / ".dockerignore").read_text(encoding="utf-8")
-    assert "deploy/docker/db_password" in dockerignore
-    assert "deploy/docker/admin_password" in dockerignore
-    deployment_gitignore = (ROOT / "deploy" / "docker" / ".gitignore").read_text(encoding="utf-8")
-    assert deployment_gitignore.splitlines() == [
-        "db_password",
-        "!db_password.example",
-        "admin_password",
-        "!admin_password.example",
+    # Every secret git ignores must also stay out of the build context, or `COPY . .` leaves it in a build layer.
+    dockerignore = (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()
+    ignored_secrets = [
+        line for line in (ROOT / "deploy" / "docker" / ".gitignore").read_text(encoding="utf-8").splitlines()
+        if line and not line.startswith("!")
     ]
+    assert {"db_password", "admin_password", "app_db_password", "restore_db_password", "db_tls.key"} <= set(ignored_secrets)
+    assert [secret for secret in ignored_secrets if f"deploy/docker/{secret}" not in dockerignore] == []
 
 
 def test_connector_receives_the_envelope_master_key_that_api_uses() -> None:
@@ -121,9 +122,10 @@ def test_operator_tools_are_split_into_an_ops_overlay() -> None:
     core = (ROOT / "compose.yaml").read_text(encoding="utf-8")
     ops = (ROOT / "compose.ops.yaml").read_text(encoding="utf-8")
 
-    for service in ("backup:", "basebackup:", "housekeeping:", "audit-disposal:"):
-        assert service not in core, f"{service} must not be in the core `up` stack"
-        assert service in ops
+    for service in ("backup", "basebackup", "housekeeping", "audit-disposal"):
+        definition = re.compile(rf"^  {service}:$", re.MULTILINE)
+        assert not definition.search(core), f"{service} must not be in the core `up` stack"
+        assert definition.search(ops)
     assert ops.startswith("name: alkaros\n")
     assert ops.count('profiles: ["ops"]') == 4
     assert "exec dotnet ALKAROS.Host.dll housekeeping --db-url" in ops
@@ -138,11 +140,11 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     caddy_dev = (ROOT / "deploy" / "docker" / "Caddyfile.dev").read_text(encoding="utf-8")
 
     assert dev.startswith("name: alkaros\n")
-    assert '"5433:5432"' in dev          # 5432 is often taken by a standalone test db
-    assert '"5080:5080"' in dev
-    assert '"8090:80"' in dev            # main origin
-    assert '"8091:81"' in dev            # customer-display origin (B-4, no *.localhost DNS)
-    assert '"8092:82"' in dev            # NFC/QR customer origin (V1-RMD-142)
+    assert '"127.0.0.1:5433:5432"' in dev  # 5432 is often taken by a standalone test db; loopback only
+    assert '"127.0.0.1:5080:5080"' in dev
+    assert '"127.0.0.1:8090:80"' in dev    # main origin
+    assert '"127.0.0.1:8091:81"' in dev    # customer-display origin (B-4, no *.localhost DNS)
+    assert '"127.0.0.1:8092:82"' in dev    # NFC/QR customer origin (V1-RMD-142)
     assert "ports: !override" in dev      # replace, not append to, the core 8443 mapping
     assert "deploy/docker/Caddyfile.dev:/etc/caddy/Caddyfile" in dev
     assert 'profiles: ["seed"]' in dev
@@ -170,7 +172,7 @@ def test_services_load_the_password_from_the_mounted_secret() -> None:
     compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
 
     assert compose.count('entrypoint: ["/bin/sh", "-eu", "-c"]') == 4
-    assert "exec dotnet ALKAROS.Host.dll --order-manifest" in compose
+    assert "dotnet ALKAROS.Host.dll --order-manifest /app/database/MigrationComposition/order.json" in compose
     assert "exec dotnet ALKAROS.Host.dll serve" in compose
 
 

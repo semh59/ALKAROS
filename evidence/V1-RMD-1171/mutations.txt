@@ -1,0 +1,6 @@
+M1-dockerignore-app-secret: 1 failed, 10 passed, 2 warnings in 0.16s
+M2-dockerignore-tls-key: 1 failed, 10 passed, 2 warnings in 0.17s
+M3-dev-port-lan: 1 failed, 10 passed, 2 warnings in 0.17s
+M5-backup-in-core: 1 failed, 10 passed, 2 warnings in 0.17s
+M6-manifest-flag: 1 failed, 10 passed, 2 warnings in 0.17s
+M4-api-uses-owner-password: 1 failed, 10 passed, 2 warnings in 0.19s

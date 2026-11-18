@@ -32,3 +32,9 @@ pytest.ini
 !.env.example
 deploy/docker/db_password
 deploy/docker/admin_password
+deploy/docker/app_db_password
+deploy/docker/restore_db_password
+deploy/docker/db_tls_ca.crt
+deploy/docker/db_tls.crt
+deploy/docker/db_tls.key
+deploy/docker/.tls.*
