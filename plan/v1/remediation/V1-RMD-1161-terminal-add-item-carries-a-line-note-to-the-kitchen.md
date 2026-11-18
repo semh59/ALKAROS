@@ -20,6 +20,7 @@ Sipariş sunucuda taslak iken not eklenir; sonradan not değiştirme (`PATCH`) v
 ## Owned surface
 
 - `evidence/V1-RMD-1161/**`
+- `tests/Host/MigrationComposition/DualScreen/ItemNoteKitchenPathHttpTests.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/DualScreen/DualScreenContracts.cs
   - src/Host/DualScreen/DualScreenStore.Orders.cs
@@ -27,7 +28,6 @@ Sipariş sunucuda taslak iken not eklenir; sonradan not değiştirme (`PATCH`) v
   - src/Host/Composition/Errors/ApiErrorCatalog.cs
   - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
   - tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
-  - tests/Host/MigrationComposition/DualScreen/ItemNoteKitchenPathHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
