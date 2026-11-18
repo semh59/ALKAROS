@@ -16,7 +16,8 @@
 ## Owned surface
 
 - `evidence/V1-RMD-1159/**`
-- tests/Host/Experience/CashSession/ClientLimitLockTests.cs
+- Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
+  - tests/Host/Experience/CashSession/ClientLimitLockTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
