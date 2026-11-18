@@ -8,6 +8,7 @@ The stack is a **frontend / backend split** (deep-analysis A1):
 | `api` | `deploy/docker/Dockerfile` target `api` (aspnet 8) | `ALKAROS.Host serve --api-only`: JSON API + SignalR hubs on plain HTTP `:5080`. No static assets, no TLS. |
 | `postgres` | `postgres:18` (digest pinned) | Datastore, named `alkaros-postgres` volume, tuned config. |
 | `migrate`, `provision` | `api` image, one-shot | Ordered schema migration then idempotent manager provisioning; both exit before `api` starts. |
+| `backup-scheduler` | `postgres:18` (digest pinned) | Hourly logical dump + daily base backup, verified, recorded in `operations.backups`, pruned (2 base backups, WAL back to the oldest kept one), optional off-machine copy to `ALKAROS_OFFSITE_COPY_TARGET`. Knobs: header of `backup-scheduler.sh`. |
 
 Operator maintenance tools (`backup`, `basebackup`, `housekeeping`) live in
 `compose.ops.yaml` and are **never** started by `up` — see

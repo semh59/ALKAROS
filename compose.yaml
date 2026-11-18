@@ -248,6 +248,48 @@ services:
           cpus: "0.5"
           memory: 192m
 
+  # Automatic backups (V1-RMD-1167): hourly logical dump, daily physical base backup, each verified and recorded in
+  # operations.backups (the alarms read it), old backups and WAL pruned, and - only when ALKAROS_OFFSITE_COPY_TARGET is
+  # set in the local .env to a drive-letter path such as E:/yedek (a UNC path does not work with Docker Desktop) - a copy
+  # of everything there. Frequency and retention knobs: see the header of deploy/docker/backup-scheduler.sh.
+  backup-scheduler:
+    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+    environment:
+      ALKAROS_DB_HOST: postgres
+      ALKAROS_DB_PORT: "5432"
+      ALKAROS_DB_USER: alkaros
+      ALKAROS_DB_NAME: alkaros
+      ALKAROS_BACKUP_DIR: /backups
+      ALKAROS_WAL_ARCHIVE_DIR: /wal-archive
+      ALKAROS_OFFSITE_COPY_DIR: /offsite-copy
+      ALKAROS_OFFSITE_COPY_ENABLED: ${ALKAROS_OFFSITE_COPY_TARGET:+yes}
+      ALKAROS_LOGICAL_BACKUP_MINUTES: ${ALKAROS_LOGICAL_BACKUP_MINUTES:-}
+      ALKAROS_BASE_BACKUP_HOURS: ${ALKAROS_BASE_BACKUP_HOURS:-}
+      ALKAROS_BASE_BACKUP_KEEP: ${ALKAROS_BASE_BACKUP_KEEP:-}
+      ALKAROS_WAL_ARCHIVE_MAX_GB: ${ALKAROS_WAL_ARCHIVE_MAX_GB:-}
+      ALKAROS_BACKUP_TICK_SECONDS: ${ALKAROS_BACKUP_TICK_SECONDS:-}
+      ALKAROS_BACKUP_RETRY_MINUTES: ${ALKAROS_BACKUP_RETRY_MINUTES:-}
+      ALKAROS_DUMP_KEEP_HOURS: ${ALKAROS_DUMP_KEEP_HOURS:-}
+      ALKAROS_DUMP_KEEP_DAILY_DAYS: ${ALKAROS_DUMP_KEEP_DAILY_DAYS:-}
+      <<: *db-tls-environment
+    secrets: [db_password, db_tls_ca]
+    volumes:
+      - ./deploy/docker:/repo/deploy/docker:ro
+      - alkaros-backups:/backups
+      - alkaros-wal-archive:/wal-archive
+      - ${ALKAROS_OFFSITE_COPY_TARGET:-alkaros-offsite-copy}:/offsite-copy
+    entrypoint: ["/bin/sh"]
+    command: ["/repo/deploy/docker/backup-scheduler.sh"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: unless-stopped
+    security_opt: ["no-new-privileges:true"]
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512m
+
   connector:
     build:
       context: .
@@ -357,6 +399,7 @@ volumes:
   alkaros-wal-archive:
   alkaros-backups:
   alkaros-offsite-backup:
+  alkaros-offsite-copy:
   caddy-data:
   caddy-config:
 

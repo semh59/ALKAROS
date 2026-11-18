@@ -1,0 +1,19 @@
+K1 KILLED keeps 3 base backups instead of 2 :: sched-selfcheck: FAIL - expected 2 base backups in /tmp/alkaros-sched/backups/base, found 3
+K2 KILLED pg_archivecleanup without -b leaves old history files :: sched-selfcheck: FAIL - first remaining WAL is 000000010000000000000003.00000028.backup, expected the oldest kept base S
+K3 KILLED WAL cutoff from newest kept base instead of oldest :: sched-selfcheck: FAIL - first remaining WAL is 000000010000000000000007, expected the oldest kept base START WAL 0000000
+K4 KILLED dump verification always passes :: sched-selfcheck: FAIL - broken pg_restore must make the run fail
+K5 KILLED base verification always passes :: sched-selfcheck: FAIL - an unverified base must be removed and must not push out a kept base
+K6 KILLED daily dump rule inverted :: sched-selfcheck: FAIL - alkaros_alkaros_20261108T130000Z.dump should have been pruned
+K7 KILLED unwritable target reported as copied :: sched-selfcheck: FAIL - unwritable target must record offsite=failed
+K8 KILLED keep floor lowered to 1 :: sched-selfcheck: FAIL - keeping fewer than 2 base backups must be refused
+K9 KILLED WAL size not recorded :: sched-selfcheck: FAIL - base rows must carry walArchiveBytes
+K10 KILLED unreadable backup_label guard removed :: sched-selfcheck: FAIL - prune must say why it removed nothing
+K11 KILLED off-machine target never pruned :: sched-selfcheck: FAIL - expected 2 base backups in /tmp/alkaros-sched/offsite/base, found 3
+K12 KILLED failed dump not removed :: sched-selfcheck: FAIL - an unverified dump must be removed
+K13 KILLED failed attempt retried on every tick :: sched-selfcheck: FAIL - a failed attempt must wait before it is retried (the second run must not fail)
+K14 KILLED newest dump can be pruned :: sched-selfcheck: FAIL - the newest dump must never be pruned
+K15 SURVIVED-then-KILLED bad stamp not skipped (first run survived: the test name sorted as newest; moved it older) :: sched-selfcheck: FAIL - a name without a valid stamp must be left alone
+K16 KILLED young partial dump swept :: sched-selfcheck: FAIL - a young partial dump may be a manual backup still running and must stay
+K18 KILLED base sweep looks at the directory time only :: sched-selfcheck: FAIL - a base backup whose files are still being written must stay
+K17 KILLED corrupt failure marker (12abc) accepted (first run used an empty marker, which dash evaluates as 0; test now writes a non-numeric marker) :: sched-selfcheck: FAIL - an unreadable failure marker must not stop the scheduler
+DONE

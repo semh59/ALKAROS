@@ -1,0 +1,1 @@
+sched-selfcheck: FAIL - first remaining WAL is 000000010000000000000003.00000028.backup, expected the oldest kept base START WAL 000000010000000000000005

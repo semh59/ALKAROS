@@ -1,0 +1,3 @@
+sched-selfcheck: kept 2 base backups; oldest=alkaros_base_20261118T181532Z start_wal=000000010000000000000005; wal files=6
+sched-selfcheck: recovery from oldest kept base replayed 400 of 400 rows
+sched-selfcheck: FAIL - a name without a valid stamp must be left alone

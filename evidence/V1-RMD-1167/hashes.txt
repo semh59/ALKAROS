@@ -1,0 +1,2 @@
+3dee90b5a60e38782add0dfd92c1e4e84fd200fcb939cfd650ab15d3d5823dd1 *deploy/docker/backup-scheduler.sh
+e07b8e61ec0d8cd273411a17cefd65277f49e74d88bdf6ec6b7b056d7911252e *deploy/docker/backup-scheduler-selfcheck.sh

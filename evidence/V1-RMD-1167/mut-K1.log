@@ -1,0 +1,1 @@
+sched-selfcheck: FAIL - expected 2 base backups in /tmp/alkaros-sched/backups/base, found 3

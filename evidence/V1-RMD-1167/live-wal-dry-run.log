@@ -1,0 +1,4 @@
+total=2556
+after first cycle (keep new base + 20260901T174716Z, cutoff 0000000100000002000000CA): would remove 713 files
+after second daily cycle (cutoff = first base of the new day, about 0000000100000009000000FD): would remove 2556 files
+segment size bytes: 16777216

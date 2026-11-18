@@ -1,0 +1,1 @@
+Taban cizgisi (compose.yaml/DeployFilesTests degisikligi olmadan git stash ile): tests/Deployment/test_container_contract.py 4 failed, 7 passed. Degisiklikle: ayni 4 failed, 7 passed (test_compose_core..., test_operator_tools..., test_dev_overlay..., test_services_load...): onceden var olan eskimis testler, bu gorevin regresyonu degil.

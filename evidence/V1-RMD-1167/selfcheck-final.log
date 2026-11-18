@@ -1,0 +1,8 @@
+sched-selfcheck: kept 2 base backups; oldest=alkaros_base_20261118T182313Z start_wal=000000010000000000000005; wal files=6
+sched-selfcheck: recovery from oldest kept base replayed 400 of 400 rows
+
+=== PASS ===
+base backups kept: 2 local + 2 off-machine; recovery from oldest kept base: 400 rows
+failure paths: verification, unwritable target, no target, unreadable backup_label
+dump retention: 48 h all + first dump per UTC day up to 30 days
+exit=0

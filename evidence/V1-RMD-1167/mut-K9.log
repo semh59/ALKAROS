@@ -1,0 +1,2 @@
+sched-selfcheck: kept 2 base backups; oldest=alkaros_base_20261118T181128Z start_wal=000000010000000000000005; wal files=6
+sched-selfcheck: FAIL - base rows must carry walArchiveBytes

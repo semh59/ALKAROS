@@ -87,6 +87,36 @@ public sealed class DeployFilesTests
     }
 
     [Fact]
+    public void TheBackupSchedulerStartsWithTheStackAndCopiesOffMachineOnlyWhenATargetIsSet()
+    {
+        var compose = File.ReadAllText(Path.Combine(Root, "compose.yaml"));
+        var block = ServiceBlock(compose, "backup-scheduler");
+
+        Assert.Contains("restart: unless-stopped", block, StringComparison.Ordinal);
+        Assert.DoesNotContain("profiles:", block, StringComparison.Ordinal);
+        Assert.Contains("no-new-privileges:true", block, StringComparison.Ordinal);
+        Assert.Contains("/repo/deploy/docker/backup-scheduler.sh", block, StringComparison.Ordinal);
+        Assert.Contains("secrets: [db_password, db_tls_ca]", block, StringComparison.Ordinal);
+        Assert.DoesNotContain("ALKAROS_DB_PASSWORD", block, StringComparison.Ordinal);
+        Assert.Contains("ALKAROS_OFFSITE_COPY_ENABLED: ${ALKAROS_OFFSITE_COPY_TARGET:+yes}", block, StringComparison.Ordinal);
+        Assert.Contains("${ALKAROS_OFFSITE_COPY_TARGET:-alkaros-offsite-copy}:/offsite-copy", block, StringComparison.Ordinal);
+        Assert.Contains("alkaros-backups:/backups", block, StringComparison.Ordinal);
+        Assert.Contains("alkaros-wal-archive:/wal-archive", block, StringComparison.Ordinal);
+        Assert.Contains("\n  alkaros-offsite-copy:", compose, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("backup-scheduler.sh")]
+    [InlineData("backup-scheduler-selfcheck.sh")]
+    public void TheSchedulerScriptsUseUnixLineEndings(string script)
+    {
+        var text = File.ReadAllText(Path.Combine(Root, "deploy", "docker", script));
+
+        Assert.StartsWith("#!/bin/sh\n", text, StringComparison.Ordinal);
+        Assert.DoesNotContain('\r', text);
+    }
+
+    [Fact]
     public void TheDevelopmentOverlayPublishesNothingBeyondLoopback()
     {
         var ports = File.ReadAllLines(Path.Combine(Root, "compose.dev.yaml"))
@@ -166,6 +196,7 @@ public sealed class DeployFilesTests
     [InlineData("compose.yaml", "provision")]
     [InlineData("compose.yaml", "api")]
     [InlineData("compose.yaml", "connector")]
+    [InlineData("compose.yaml", "backup-scheduler")]
     [InlineData("compose.ops.yaml", "backup")]
     [InlineData("compose.ops.yaml", "basebackup")]
     [InlineData("compose.ops.yaml", "housekeeping")]
