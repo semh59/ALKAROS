@@ -1,5 +1,5 @@
 import { notifySessionExpired } from "../../api";
-import { formatMoney, formatQuantity, formatShortDateTime } from "../../format";
+import { formatClockMinutes, formatDate, formatMoney, formatQuantity } from "../../format";
 import { preReceiptText } from "../../strings";
 import "./pre-receipt.css";
 
@@ -40,7 +40,9 @@ function drawSheet(sheet: PreReceiptSheet): void {
     preReceiptText.number(sheet.printNumber),
     ...(sheet.tableNumber ? [document.createElement("br"), preReceiptText.table(sheet.tableNumber)] : []),
     document.createElement("br"),
-    formatShortDateTime(sheet.printedAt),
+    preReceiptText.date(formatDate(sheet.printedAt)),
+    document.createElement("br"),
+    preReceiptText.time(formatClockMinutes(sheet.printedAt)),
   );
   const lines = document.createElement("table");
   for (const line of sheet.lines) lines.appendChild(row(`${formatQuantity(line.quantity)} × ${line.name}`, money(line.amount)));

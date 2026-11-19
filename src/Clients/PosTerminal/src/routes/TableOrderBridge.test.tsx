@@ -79,7 +79,7 @@ describe("TableOrderBridge", () => {
 
       expect(otherCalls(fetchMock).map(([url, init]) => `${init?.method} ${url}`)).toEqual(["POST /api/v1/terminals/t-1/orders/o-1/pre-receipt"]);
       expect(print).toHaveBeenCalledTimes(1);
-      expect(document.getElementById("pre-receipt-print")?.textContent).toContain("Bu belge mali fiş değildir.");
+      expect(document.getElementById("pre-receipt-print")?.textContent).toContain("MALİ DEĞERİ YOKTUR");
       expect(navigateTo).not.toHaveBeenCalled();
     });
 

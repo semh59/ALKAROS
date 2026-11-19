@@ -1,0 +1,83 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (45 tests | 1 failed) 1254ms
+       × prints the slip of a check, billed or not, with one tap and without opening a bill 188ms
+ ❯ src/routes/TableOrderBridge.test.tsx (67 tests | 1 failed) 568ms
+       × prints the slip of the table's order with one tap and opens no bill 30ms
+ ❯ src/features/pending-checks/preReceipt.test.ts (12 tests | 2 failed) 106ms
+     × reads as an information slip with no fiscal value, numbered as a check, never as a cash register receipt 16ms
+     × states the date and the time of the print in the venue's clock 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > prints the slip of the table's order with one tap and opens no bill
+AssertionError: expected 'HesapBu belge mali fiş değildir.Hesap…' to contain 'MALİ DEĞERİ YOKTUR'
+
+Expected: "MALİ DEĞERİ YOKTUR"
+Received: "HesapBu belge mali fiş değildir.Hesap fişi no: 3Masa: T-418.11.2026 13:002 × Çay₺50,00Toplam₺50,00"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:82:73
+     80|       expect(otherCalls(fetchMock).map(([url, init]) => `${init?.metho…
+     81|       expect(print).toHaveBeenCalledTimes(1);
+     82|       expect(document.getElementById("pre-receipt-print")?.textContent…
+       |                                                                         ^
+     83|       expect(navigateTo).not.toHaveBeenCalled();
+     84|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > Hesap fişi > prints the slip of a check, billed or not, with one tap and without opening a bill
+AssertionError: expected 'HesapBu belge mali fiş değildir.Hesap…' to contain 'HESAP NO: 1'
+
+Expected: "HESAP NO: 1"
+Received: "HesapBu belge mali fiş değildir.Hesap fişi no: 1Masa: 518.11.2026 13:003 × Köfte₺540,00Toplam₺540,00"
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:91:73
+     89|       expect(posts).toEqual(["/api/v1/terminals/t-1/orders/o-1/pre-rec…
+     90|       expect(print).toHaveBeenCalledTimes(2);
+     91|       expect(document.getElementById("pre-receipt-print")?.textContent…
+       |                                                                         ^
+     92|     });
+     93|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > reads as an information slip with no fiscal value, numbered as a check, never as a cash register receipt
+AssertionError: expected 'Hesap' to be 'BİLGİ FİŞİ' // Object.is equality
+
+Expected: "BİLGİ FİŞİ"
+Received: "Hesap"
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:37:74
+     35|     await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)…
+     36|
+     37|     expect(document.querySelector("#pre-receipt-print h1")!.textConten…
+       |                                                                          ^
+     38|     expect(text()).toContain("MALİ DEĞERİ YOKTUR");
+     39|     expect(text()).toContain("HESAP NO: 2");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > states the date and the time of the print in the venue's clock
+AssertionError: expected 'HesapBu belge mali fiş değildir.Hesap…' to contain 'Tarih: 18.11.2026'
+
+Expected: "Tarih: 18.11.2026"
+Received: "HesapBu belge mali fiş değildir.Hesap fişi no: 2Masa: 518.11.2026 13:002 × Köfte <b>₺200,001 × Ayran₺30,00Bahşiş₺10,00İndirim-₺5,00Düzeltme₺1,00Toplam₺235,00Ödenen₺100,00Kalan₺135,00"
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:46:20
+     44|     await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)…
+     45|
+     46|     expect(text()).toContain("Tarih: 18.11.2026");
+       |                    ^
+     47|     expect(text()).toContain("Saat: 13:00");
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  4 failed | 120 passed (124)
+   Start at  08:01:31
+   Duration  8.43s (transform 544ms, setup 0ms, import 1.04s, tests 1.93s, environment 4.22s)
+

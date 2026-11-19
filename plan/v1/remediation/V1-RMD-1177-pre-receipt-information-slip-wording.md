@@ -1,7 +1,7 @@
 # V1-RMD-1177 - Ödeme öncesi Hesap ön fişi: "BİLGİ FİŞİ" başlığı, "MALİ DEĞERİ YOKTUR" ibaresi, tarih ve saat, ÖKC fişi gibi görünmeme
 
 - Task ID: V1-RMD-1177
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

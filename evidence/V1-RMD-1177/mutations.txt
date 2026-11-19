@@ -1,0 +1,8 @@
+M1-title:       Tests  1 failed | 123 passed (124)
+M2-number-label:       Tests  2 failed | 122 passed (124)
+M3-no-time:       Tests  1 failed | 123 passed (124)
+M4-notice:       Tests  2 failed | 122 passed (124)
+RESTORED
+M5-date-by-utc:       Tests  2 failed | 123 passed (125)
+M6-no-date-label:       Tests  2 failed | 123 passed (125)
+RESTORED-2

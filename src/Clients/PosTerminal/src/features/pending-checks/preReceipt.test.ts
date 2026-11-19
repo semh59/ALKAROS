@@ -28,9 +28,30 @@ describe("printPreReceipt", () => {
     const [url, init] = fetcher.mock.calls[0] as unknown as [string, RequestInit];
     expect([url, init.method, JSON.parse(String(init.body)).idempotencyKey]).toEqual(["/api/v1/terminals/t-1/orders/o-1/pre-receipt", "POST", expect.stringMatching(/^[0-9a-f-]{36}$/)]);
     expect(print).toHaveBeenCalledTimes(1);
-    expect(text()).toContain("Bu belge mali fiş değildir.");
-    expect(text()).toContain("Hesap fişi no: 2");
     expect(text()).toContain("Masa: 5");
+  });
+
+  it("reads as an information slip with no fiscal value, numbered as a check, never as a cash register receipt", async () => {
+    await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)) as typeof fetch, vi.fn());
+
+    expect(document.querySelector("#pre-receipt-print h1")!.textContent).toBe("BİLGİ FİŞİ");
+    expect(text()).toContain("MALİ DEĞERİ YOKTUR");
+    expect(text()).toContain("HESAP NO: 2");
+    expect(text()).not.toMatch(/FİŞ NO|Hesap fişi no|mali fiş değildir/i);
+  });
+
+  it("states the date and the time of the print in the venue's clock", async () => {
+    await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)) as typeof fetch, vi.fn());
+
+    expect(text()).toContain("Tarih: 18.11.2026");
+    expect(text()).toContain("Saat: 13:00");
+  });
+
+  it("dates a print after local midnight by the venue's day, not by UTC", async () => {
+    await printPreReceipt("t-1", "o-1", (async () => reply(200, { ...sheet, printedAt: "2026-11-18T21:30:00Z" })) as typeof fetch, vi.fn());
+
+    expect(text()).toContain("Tarih: 19.11.2026");
+    expect(text()).toContain("Saat: 00:30");
   });
 
   it("draws lines as text, adjustments in Turkish, and the paid and remaining amounts", async () => {

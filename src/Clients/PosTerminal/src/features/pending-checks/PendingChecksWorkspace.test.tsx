@@ -88,7 +88,7 @@ describe("PendingChecksWorkspace", () => {
       const posts = fetchMock.mock.calls.filter(([, init]) => init?.method === "POST").map(([url]) => url);
       expect(posts).toEqual(["/api/v1/terminals/t-1/orders/o-1/pre-receipt", "/api/v1/terminals/t-1/orders/o-2/pre-receipt"]);
       expect(print).toHaveBeenCalledTimes(2);
-      expect(document.getElementById("pre-receipt-print")?.textContent).toContain("Hesap fişi no: 1");
+      expect(document.getElementById("pre-receipt-print")?.textContent).toContain("HESAP NO: 1");
     });
 
     it("offers no slip to a cashier who may not work with bills", async () => {
