@@ -1,7 +1,7 @@
 # V1-RMD-1178 - Pilot belgeleri: kasiyer hızlı başlangıç, elle satış defteri, pilot günü kontrol listesi, geri bildirim formu
 
 - Task ID: V1-RMD-1178
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: documentation
 - Surface state: Existing

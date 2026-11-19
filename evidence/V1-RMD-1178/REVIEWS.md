@@ -1,0 +1,3 @@
+- qa-dokuman-bagimlilik: KABUL (6 orta/dusuk bulgu: 10 gun ifadesi, e-belge/OKC notu, sutun adlari, kisi adi, madde listesi) -> duzeltildi
+- qa-ux-tasarim: RED (yazdirma yolu, defter satiri, Takilirsan kutusu, sahip listesinde komut, form uzunlugu) -> duzeltildi; PDF uretimi kapsam disi acik risk
+- qa-ux-tasarim ikinci bakis: RED (sahip listesinde dosya yolu/servis adi) -> sadelestirildi, tek "Teknik destek notu" satiri kaldi

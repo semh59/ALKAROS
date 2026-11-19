@@ -265,6 +265,10 @@ nasıl yürüyeceği burada ele alınmaz.)
    satırı işaretle.
 6. Toplamı kasa ekranıyla karşılaştır; fark varsa yöneticiye göster.
 
+Yazdırılabilir defter şablonu, kasiyer rehberi ve pilot günü belgeleri:
+`docs/operations/pilot/` (`elle-satis-defteri.md`, `kasiyer-hizli-baslangic.md`,
+`pilot-gunu-kontrol-listesi.md`, `pilot-geri-bildirim-formu.md`).
+
 ---
 
 ## Go / no-go summary
