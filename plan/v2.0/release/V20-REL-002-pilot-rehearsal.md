@@ -24,6 +24,7 @@ data ile pilot rehearsal olarak çalıştırmak.
 
 - Kurulum, temsili vardiya workflow, onaylı sanal alanlara/cihazlara yönelik entegrasyonlar, izleme, hata
   tetikleyicileri, geri alma karar zamanlaması ve kusur yakalama.
+- Kasiyer ve sahip için pilot belgeleri (hızlı başlangıç, elle satış defteri, gün kontrol listesi, geri bildirim formu) V1-RMD-1178 ile hazırlanır; bu görev onları prova sırasında kullanır ve değiştirmez.
 
 ## Out of scope
 
