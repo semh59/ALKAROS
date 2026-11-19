@@ -39,6 +39,7 @@ open/update/close command mapping'ini uygulamak.
 - Applicability kararı, QNB/e-Adisyon adapter, Token payment request ve final Bill closure.
 - Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
 - GİB belgeleri (VUK 509 güncel metni IV.12; YN ÖKC SSS soru 37; GMP-3 v5.0 §6.1, 2026-10-16/17 okundu): e-Adisyon cihaz değil, özel entegratör veya doğrudan entegrasyonla düzenlenen bir e-Belge'dir (kağıt adisyonla aynı hukuki nitelik); Token/Beko cihazı e-Adisyon cihazı olarak tanımlanamaz. Restoranda harici sistemdeki her satış ve tahsilat YN ÖKC'de mali değeri olan fişe dönüşmek zorundadır; fiş numarası ve benzersiz numarayı ÖKC üretir. Ödeme sonrası akışta adisyon açılışında ve mutfağa gönderimde ÖKC'ye kayıt gerekir (GMP-3 §6.1 madde 2, 4); ödeme anında tek sepet açan taslak akışla uyuşmuyor. Bulut yolu (madde 17) TSM'de 5 yıl saklama ve ödeme öncesi "Hesap Özeti Bilgi Fişi" şartı koşar.
+- Ödeme öncesi Hesap ön fişi (V1-RMD-1151, V1-RMD-1177) "BİLGİ FİŞİ" / "MALİ DEĞERİ YOKTUR" ibareli mali olmayan bir istemci çıktısıdır; bulut yolundaki "Hesap Özeti Bilgi Fişi" yerine geçtiği doğrulanmamıştır ve bu görev ön fişi değiştirmez.
 - Karar bekliyor: hedef cihaz ifadesinin ve akış zamanlamasının Token'ın yazılı yanıtına göre düzeltilmesi.
 
 ## Dependencies
