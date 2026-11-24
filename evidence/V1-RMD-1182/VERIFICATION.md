@@ -1,0 +1,11 @@
+# Doğrulama listesi (belge metni -> kaynak)
+- "Harici POS kartı" düğmesi: split-payment.js METHOD_LABELS.ExternalCard; yalnız cardTerminalConfigured === false iken (renderMethodChips); terminal varken "Kredi/Banka Kartı" (METHOD_LABELS.BankCard).
+- "POS fiş numarası" kutusu, 4-32 karakter, harf/rakam/-/ : split-payment.js (#external-slip, SLIP_PATTERN, SLIP_RULE_TEXT); sunucu ExternalCardTenderStore.MinSlipLength=4, MaxSlipLength=32.
+- "Kart numarasını değil, yalnız POS fişindeki fiş numarasını yazın.": split-payment.js CARD_NUMBER_WARNING.
+- "Ödemeyi Ekle" pasif ve neden yazılı: submitTenderDisabled/submitTenderHint.
+- "Bu fiş numarası bu hesapta zaten kayıtlı. Aynı fişi iki kez girmeyin.": ERROR_TEXTS.EXTERNAL_CARD_SLIP_REUSED = ExternalCardTender.cs.
+- Çift basma tek kayıt: idempotency anahtarı (split-payment-external-card.test.js, ExternalCardTenderHttpTests).
+- Çekmece açmaz, kasa sayımına girmez: ExternalCardTenderHttpTests (nakit/çekmece olayı yok).
+- İade ipucu "Kart iadesi banka POS cihazında yapılır; çıkan iade fişinin numarasını yazın.", "İade fiş numarası", "İadeyi tamamla": split-payment.js (renderRefund bölümü).
+- Gün kapanışı: strings.ts "Gün sonu ve mutabakat", "Ödeme yöntemleri", etiket "Harici POS kartı" (management-closing/models.ts); adet ve tutar sütunu.
+- Mevzuat bulguları: kasa-review/36-mali-mevzuat-arastirmasi.md Soru 1 madde 2-3, Soru 2; "doğrulanamadı" noktaları aynen korundu. Hukuki görüş yok.

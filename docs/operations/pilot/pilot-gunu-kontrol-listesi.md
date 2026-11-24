@@ -27,9 +27,14 @@ Tırnak içindeki yazılar ekranda aynen böyle yazar. "Yönetim" bölümüne y�
 1. [ ] **Masalar** ekranında dolu ya da "Ödeme bekliyor" masa kalmadı. Kalmışsa kapanışta "İşletmede açık işlem var" uyarısı çıkar; önce onları çözün.
 2. [ ] Kasiyer kasayı kapattı: **Kasayı Kapat: Sayıma Başla**, parayı saydı, **Kasayı Kapat**. "Kasa Kapatıldı" yazdı.
 3. [ ] Fark: Yönetim > **Gün sonu ve mutabakat** > **Kasa oturumları** tablosunda **Beklenen nakit**, **Sayılan nakit**, **Fark**. Fark büyükse kasiyer sizden yanında kullanıcı adı ve şifrenizi girmenizi ister; nedenini sorup yazdırın.
-4. [ ] Yedek alındı: Yönetim > **Güvenlik** > **Yedekleme**'de **Durum** hâlâ **Hedefe uygun**. Yedek sistem açıkken saatte bir alınır; bilgisayarı gece kapatırsanız o saatlerde yedek alınmaz.
-5. [ ] Yedek diski takılı kalsın. Çıkarırsanız "Makine dışı kopya kullanılamıyor" uyarısı çıkar.
-6. [ ] Yönetim > **Hatalar**'da yeni kayıt varsa ekran görüntüsünü alıp forma ekleyin.
+4. [ ] Satışta **Harici POS kartı** kullanıldıysa (kart terminali sisteme bağlı değilse):
+   - [ ] Kasiyerden o günkü POS fişlerini alın; sayısını ve toplamını yazın.
+   - [ ] Yönetim > **Gün sonu ve mutabakat** > **Ödeme yöntemleri** tablosunda **Harici POS kartı** satırının adedi ve tutarı fişlerle aynı mı?
+   - [ ] Fişlerin toplamı banka POS gün sonu (kapanış) raporuyla aynı mı?
+   - [ ] Fark varsa fişlerden nedenini bulup forma yazın. **Harici POS kartı** çekmece sayımına girmez.
+5. [ ] Yedek alındı: Yönetim > **Güvenlik** > **Yedekleme**'de **Durum** hâlâ **Hedefe uygun**. Yedek sistem açıkken saatte bir alınır; bilgisayarı gece kapatırsanız o saatlerde yedek alınmaz.
+6. [ ] Yedek diski takılı kalsın. Çıkarırsanız "Makine dışı kopya kullanılamıyor" uyarısı çıkar.
+7. [ ] Yönetim > **Hatalar**'da yeni kayıt varsa ekran görüntüsünü alıp forma ekleyin.
 
 ## Bir şey ters giderse
 - Yedek uyarısı çıktı ya da veri yanlışlıkla silindi: kasiyere işlem almayı bırakmasını söyleyin, açık hesapları kâğıda yazın, teknik desteği arayın. Geri yüklemeyi teknik destek yapar. Teknik destek tel: ................

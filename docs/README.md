@@ -7,6 +7,7 @@ Not: belgeler Markdown (.md) dosyasıdır; kâğıda basmak için teknik destekt
 - [Elle satış defteri](operations/pilot/elle-satis-defteri.md)
 - [Pilot günü kontrol listesi](operations/pilot/pilot-gunu-kontrol-listesi.md)
 - [Pilot geri bildirim formu](operations/pilot/pilot-geri-bildirim-formu.md)
+- [Harici POS kartı: ÖKC ve mali müşavir notu](operations/pilot/harici-pos-karti-okc-notu.md)
 
 ## İşletme ve kurtarma
 - [Yayına alma kontrol listesi](operations/production-go-live-checklist.md)

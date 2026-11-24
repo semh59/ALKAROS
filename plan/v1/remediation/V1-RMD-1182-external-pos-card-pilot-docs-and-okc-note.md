@@ -1,7 +1,7 @@
 # V1-RMD-1182 - Harici POS kartı: pilot belgeleri (hızlı başlangıç, gün kontrol listesi, geri bildirim formu) ve ÖKC/mali müşavir notu
 
 - Task ID: V1-RMD-1182
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: documentation
 - Surface state: Planned

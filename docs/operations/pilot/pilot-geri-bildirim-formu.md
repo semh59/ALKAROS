@@ -65,6 +65,7 @@ Her satıra 1 (çok kötü) ile 5 (çok iyi) arasında bir puan yaz.
 | Kasa sayımı ve kapatma | | | |
 | Yazıcı ve çekmece | | | |
 | Genel olarak sistem | | | |
+| Kartla ödeme (Harici POS kartı) | | | |
 
 Tekrar bu sistemle çalışmak ister misin? Evet / Hayır. Neden: ....................................
 

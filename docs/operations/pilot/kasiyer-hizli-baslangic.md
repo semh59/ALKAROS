@@ -22,7 +22,24 @@ Bu sayfa kasiyer içindir. Tırnak içindeki yazılar ekranda aynen böyle yazar
 6. **Ödemeyi Ekle**'ye bas. "Hesap Ödendi" yazar. Çekmece bağlıysa kendiliğinden açılır; "Çekmece açılamadı, elle açın." yazarsa elle aç.
 7. Müşteri hesap kâğıdı isterse ödemeden önce masada **Hesap fişi**'ne bir kez bas (yazdırma penceresi açılır). İki kez basarsan numara iki kez artar.
 
-Kart: **Ödeme yöntemi** satırında **Kredi/Banka Kartı** yoksa kartla ödemeyi bu sistemden alamazsın; yöneticiye sor. **EFT/Havale** için "Tutarı işletmenin banka hesap hareketinde gördüm" kutusunu işaretlemeden ödeme eklenmez.
+Kart: **Ödeme yöntemi** satırında **Kredi/Banka Kartı** varsa kart terminali sisteme bağlıdır; onu seç. **Kredi/Banka Kartı** yerine **Harici POS kartı** görüyorsan kart ayrı banka POS cihazında okutulur:
+1. Önce müşteri kartını **banka POS cihazında** okut, ödeme onaylansın.
+2. **Ödeme yöntemi** olarak **Harici POS kartı**'nı seç. **Tutar** POS'ta çekilen tutarla aynı olmalı.
+3. **POS fiş numarası** kutusuna POS fişindeki kısa fiş numarasını yaz (harf, rakam, - ve /). **16 haneli kart numarasını değil, yalnız POS fişindeki fiş numarasını yaz.** Kutu boşsa ya da geçersizse **Ödemeyi Ekle** pasif kalır ve nedeni yazar.
+4. **Ödemeyi Ekle**'ye bas. Aynı fişi aynı hesapta iki kez giremezsin; "Bu fiş numarası bu hesapta zaten kayıtlı. Aynı fişi iki kez girmeyin." yazarsa fişi kontrol et.
+
+Unutma:
+- POS fişini sakla; akşam kart fişleri toplamı banka POS gün sonu ile karşılaştırılır.
+- **Harici POS kartı** çekmeceyi açmaz ve kasa sayımına girmez.
+- Bu ödeme mali fişin (ÖKC fişi) yerine geçmez. Satış belgesini nasıl düzenleyeceğini yöneticiye sor.
+
+Harici POS kartı iadesi:
+1. **İade** bölümünde iade iste (yukarıdaki 6. bölüm).
+2. Onaylanınca "Kart iadesi banka POS cihazında yapılır; çıkan iade fişinin numarasını yazın." yazar. İadeyi **POS cihazında** yap.
+3. **İade fiş numarası** kutusuna POS iade fişinin numarasını yaz, **İadeyi tamamla**'ya bas.
+**Parayı çekmeceden verme.**
+
+**EFT/Havale** için "Tutarı işletmenin banka hesap hareketinde gördüm" kutusunu işaretlemeden ödeme eklenmez.
 
 ## 3. Hızlı satış (masasız)
 1. **Hızlı satış**'a bas (üstte).

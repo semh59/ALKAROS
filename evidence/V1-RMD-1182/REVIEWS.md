@@ -1,0 +1,3 @@
+# qa
+1. qa-dokuman-bagimlilik: dugme/ekran metinleri ve sayilar kodla uyumlu. Yuksek: kasa-review/36 repoda yok (not belgesi kaynagi "depoda degil, aktarilmistir, burada dogrulanmamistir" diye yazildi); hukuki hukum cumleleri "belirtilmistir" diye yumusatildi; sorumluluk devri cumlesi kaldirildi. Orta: kasiyer 7. madde mali musavire yonlendirildi. Dusuk: kart numarasi kurali "uzun rakam dizisi" diye duzeltildi.
+2. qa-ux-tasarim: kasiyer adimlari 1-4 + Unutma kutusu + ayri iade adimlari olarak yeniden yazildi; dosya adi atfi yalniz yonlendirme olarak kaldi (ek bilgi icin); aksam maddesi alt kutulara bolundu; form satiri kisaltildi; nota tek cumlelik ozet eklendi.
