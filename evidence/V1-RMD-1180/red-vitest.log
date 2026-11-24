@@ -1,0 +1,74 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (27 tests | 1 failed) 1492ms
+     × shows a card payment taken on a bank POS as its own line, apart from the connected card and the transfer 48ms
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+ ❯ src/features/billing/RefundPanel.test.tsx (39 tests | 1 failed) 689ms
+     × asks for the refund slip of a bank POS card payment and says the refund is made on that POS 14ms
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (15 tests | 1 failed) 155ms
+     × lists each sale with its place, closing time, amount and every payment method in Turkish 82ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/RefundPanel.test.tsx > refund panel > asks for the refund slip of a bank POS card payment and says the refund is made on that POS
+AssertionError: expected 'İptal ve iadeİade istekleri₺100,00 · …' to contain '₺100,00 · Harici POS kartı'
+
+Expected: "₺100,00 · Harici POS kartı"
+Received: "İptal ve iadeİade istekleri₺100,00 · BilinmiyorElle iade bekliyorYanlış tutarİade fiş numarasıİadeyi tamamlaFiş ya da havale gerçekten yapılmadıysa iptal edin; yapıldıysa iadeyi tamamlayın.İade iptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerOnaylı iadeyi iptal et"
+
+ ❯ src/features/billing/RefundPanel.test.tsx:407:39
+    405|     });
+    406|     await render({ client });
+    407|     expect(document.body.textContent).toContain("₺100,00 · Harici POS …
+       |                                       ^
+    408|     expect(document.body.textContent).toContain("Kart iadesi banka POS…
+    409|     expect(document.body.textContent).not.toContain("Havale gönderildi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > shows a card payment taken on a bank POS as its own line, apart from the connected card and the transfer
+TypeError: .toMatch() expects to receive a string, but got undefined
+ ❯ src/features/management-closing/ClosingSection.test.tsx:131:66
+    129|
+    130|     expect(rows).toHaveLength(3);
+    131|     expect(rows.find((row) => row.includes("Harici POS kartı"))).toMat…
+       |                                                                  ^
+    132|     expect(rows.find((row) => row.includes("Banka kartı"))).toMatch(/3…
+    133|     expect(rows.find((row) => row.includes("EFT / Havale"))).toMatch(/…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > lists each sale with its place, closing time, amount and every payment method in Turkish
+AssertionError: expected 'Hızlı satış · 14:32Kart, Bilinmiyor, …' to contain 'Kart, Harici POS kartı, Havale, Müşte…'
+
+Expected: "Kart, Harici POS kartı, Havale, Müşteri hesabı, Bilinmiyor"
+Received: "Hızlı satış · 14:32Kart, Bilinmiyor, Havale, Müşteri hesabı, Bilinmiyor₺540,00İade sayfasını aç ›"
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:51:21
+     49|     expect(rows[0]).toMatch(/540,00/);
+     50|     expect(rows[1]).toContain("Hızlı satış · 14:32");
+     51|     expect(rows[1]).toContain("Kart, Harici POS kartı, Havale, Müşteri…
+       |                     ^
+     52|     expect(text()).not.toMatch(/Card|Eft|Cash|Account|Voucher/);
+     53|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  3 failed | 78 passed (81)
+   Start at  08:19:17
+   Duration  8.84s (transform 524ms, setup 0ms, import 986ms, tests 2.34s, environment 4.41s)
+
+exit=1

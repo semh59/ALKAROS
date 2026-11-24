@@ -1,0 +1,16 @@
+R1 KILLED
+R1 restored
+R2 KILLED
+R2 restored
+R3 KILLED
+R3 restored
+C1 KILLED
+C1 restored
+C2 KILLED
+C2 restored
+C3 KILLED
+C3 restored
+C4 KILLED
+C4 restored
+C5 KILLED
+C5 restored

@@ -399,6 +399,22 @@ describe("refund panel", () => {
     expect(document.body.textContent).not.toMatch(/409|raw/);
   });
 
+  it("asks for the refund slip of a bank POS card payment and says the refund is made on that POS", async () => {
+    const client = makeClient({
+      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "ExternalCard" })]),
+    });
+    await render({ client });
+    expect(document.body.textContent).toContain("₺100,00 · Harici POS kartı");
+    expect(document.body.textContent).toContain("Kart iadesi banka POS cihazında yapılır");
+    expect(document.body.textContent).not.toContain("Havale gönderildi");
+    expect(document.body.textContent).not.toContain("ExternalCard");
+
+    await type("İade fiş numarası", "IADE-77");
+    await click("İadeyi tamamla");
+
+    expect(client.complete).toHaveBeenCalledWith("r1", "IADE-77");
+  });
+
   it("completes a transfer refund without asking for a slip number", async () => {
     const client = makeClient({
       listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Eft" })]),

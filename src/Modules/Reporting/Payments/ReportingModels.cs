@@ -44,10 +44,11 @@ public sealed record PaymentSettlementReportFilter(
 /// method is not a stored column on <c>payments.payments</c>; it is read from
 /// the records each way leaves behind: <c>CustomerAccount</c> (an account
 /// charge), <c>Cash</c> (a cash sale), <c>BankCard</c> (an approved card
-/// attempt or an approved manual card confirmation) and <c>Eft</c> (what is
+/// attempt or an approved manual card confirmation), <c>ExternalCard</c> (a card
+/// payment taken on a bank POS that is not connected: its slip receipt) and <c>Eft</c> (what is
 /// left, because the producers of approved payments are a closed set; see
 /// <c>PostgresPaymentSettlementReportRepository.MethodSql</c>). A meal card
-/// has no handler today; registering one needs a fifth real discriminator,
+/// has no handler today; registering one needs a sixth real discriminator,
 /// not another "by elimination" guess.
 /// </summary>
 public sealed record PaymentMixEntry(

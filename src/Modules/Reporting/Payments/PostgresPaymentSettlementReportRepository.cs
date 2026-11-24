@@ -12,12 +12,12 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
     // than silently truncate.
     private const int MaxScanRows = 20_000;
 
-    // MethodSql has exactly four possible results, so a method grouping can never return more rows than this.
-    private const int MethodCount = 4;
+    // MethodSql has exactly five possible results, so a method grouping can never return more rows than this.
+    private const int MethodCount = 5;
 
     // The payments table stores no method, so it is read from the records each way leaves behind. Same rule as
     // Host PaymentMethodLookup (modules cannot reference the Host): an account charge, a cash sale, an approved card
-    // attempt or an approved manual card confirmation; transfer is what is left because the producers of approved
+    // attempt or an approved manual card confirmation, a card payment taken on a bank POS (its slip receipt); transfer is what is left because the producers of approved
     // payments are a closed set. EXISTS keeps one row per payment however many attempts it has, and a declined or
     // pending attempt does not make a card payment.
     private const string MethodSql = """
@@ -31,6 +31,8 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
                          WHERE s.payment_id = p.payment_id AND s.outcome = 'Approved')
               OR EXISTS (SELECT 1 FROM payments.manual_card_confirmations m
                          WHERE m.payment_id = p.payment_id AND m.status = 'Approved') THEN 'BankCard'
+            WHEN EXISTS (SELECT 1 FROM payments.external_card_receipts x
+                         WHERE x.payment_id = p.payment_id) THEN 'ExternalCard'
             ELSE 'Eft' END
         """;
 

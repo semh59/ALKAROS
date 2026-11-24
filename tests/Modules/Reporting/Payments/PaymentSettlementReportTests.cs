@@ -46,6 +46,47 @@ public sealed class PaymentSettlementReportTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACardPaymentTakenOnABankPosIsItsOwnLineAndNeverMixesWithTransferOrTheConnectedCard()
+    {
+        var bill = await _database.SeedBillAsync(500m);
+        var external = await _database.SeedPaymentAsync(bill, "Approved", 120m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(external, bill, 120m);
+        var externalToo = await _database.SeedPaymentAsync(bill, "Approved", 30m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(externalToo, bill, 30m);
+        var connectedCard = await _database.SeedPaymentAsync(bill, "Approved", 75m, InWindow);
+        await _database.SeedCardSettlementAttemptAsync(connectedCard, bill, 75m);
+        await _database.SeedPaymentAsync(bill, "Approved", 40m, InWindow);
+        var account = await _database.SeedPaymentAsync(bill, "Approved", 60m, InWindow);
+        await _database.SeedAccountChargeAsync(account, 60m);
+        var cash = await _database.SeedPaymentAsync(bill, "Approved", 50m, InWindow);
+        await _database.SeedCashSaleTransactionAsync(await _database.SeedCashSessionAsync(Guid.NewGuid(), "Open", 0, 0, InWindow), cash, 50m);
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().HaveCount(5);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 150m && e.ApprovedCount == 2);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "BankCard" && e.ApprovedAmount == 75m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 40m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "CustomerAccount" && e.ApprovedAmount == 60m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "Cash" && e.ApprovedAmount == 50m && e.ApprovedCount == 1);
+    }
+
+    [Fact]
+    public async Task ARefundOfABankPosCardPaymentLowersTheExternalCardLineOnly()
+    {
+        var bill = await _database.SeedBillAsync(500m);
+        var external = await _database.SeedPaymentAsync(bill, "Approved", 120m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(external, bill, 120m);
+        await _database.SeedPaymentAsync(bill, "Approved", 40m, InWindow);
+        await _database.SeedReversalAsync(external, 20m, InWindow.AddHours(1));
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 100m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 40m && e.ApprovedCount == 1);
+    }
+
+    [Fact]
     public async Task APaymentWithSeveralCardAttemptsIsCountedOnceAndADeclinedAttemptAloneDoesNotMakeItACardPayment()
     {
         var bill = await _database.SeedBillAsync(300m);

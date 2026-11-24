@@ -220,6 +220,33 @@ public sealed class PaymentReportTestDatabase : PgTestDatabase
             ("requested_by", requestedBy));
     }
 
+    public async Task SeedExternalCardReceiptAsync(Guid paymentId, Guid billId, decimal amount)
+    {
+        await ExecuteAsync(
+            """
+            INSERT INTO payments.external_card_receipts (payment_id, bill_id, terminal_id, slip_number, amount, recorded_by)
+            VALUES (@payment, @bill, gen_random_uuid(), @slip, @amount, gen_random_uuid());
+            """,
+            ("payment", paymentId),
+            ("bill", billId),
+            ("slip", $"POS-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}"),
+            ("amount", amount));
+    }
+
+    public async Task SeedReversalAsync(Guid paymentId, decimal amount, DateTimeOffset at)
+    {
+        await ExecuteAsync(
+            """
+            INSERT INTO payments.payment_reversals
+                (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            VALUES (gen_random_uuid(), @payment, 'PartialRefund', @amount, 'test', gen_random_uuid(), @key, @at);
+            """,
+            ("payment", paymentId),
+            ("amount", amount),
+            ("key", Guid.NewGuid().ToString("N")),
+            ("at", at.UtcDateTime));
+    }
+
     public async Task SeedReconciliationCaseAsync(
         string caseType, string status, decimal discrepancyAmount, DateTimeOffset openedAt)
     {

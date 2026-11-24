@@ -113,6 +113,27 @@ describe("closing and reconciliation section", () => {
     for (const forbidden of ["İş gününü kapat", "İş gününü aç", "Ödeme taraması yap", "İncelemeye al"]) expect(buttons()).not.toContain(forbidden);
   });
 
+  it("shows a card payment taken on a bank POS as its own line, apart from the connected card and the transfer", async () => {
+    const settlement = {
+      paymentMix: [
+        { method: "BankCard", approvedCount: 3, approvedAmount: 900 },
+        { method: "ExternalCard", approvedCount: 2, approvedAmount: 150 },
+        { method: "Eft", approvedCount: 1, approvedAmount: 40 },
+      ],
+      unsettledPayments: { unknownCount: 0, unknownAmount: 0, reconciliationRequiredCount: 0, reconciliationRequiredAmount: 0 },
+      reconciliationTotals: [], cashSessions: [],
+    };
+    await render(<ClosingSection client={fakeClient({ getSettlement: vi.fn().mockResolvedValue(settlement) })} capabilities={new Set(["reports.view"])} />);
+    const heading = [...document.querySelectorAll("h4")].find((h) => h.textContent === "Ödeme yöntemleri")!;
+    const rows = [...heading.parentElement!.querySelectorAll("tbody tr")].map((row) => row.textContent ?? "");
+
+    expect(rows).toHaveLength(3);
+    expect(rows.find((row) => row.includes("Harici POS kartı"))).toMatch(/2.*150,00/);
+    expect(rows.find((row) => row.includes("Banka kartı"))).toMatch(/3.*900,00/);
+    expect(rows.find((row) => row.includes("EFT / Havale"))).toMatch(/1.*40,00/);
+    expect(document.body.textContent).not.toContain("ExternalCard");
+  });
+
   it("shows Turkish labels and never a raw enum value", async () => {
     await render(<ClosingSection client={fakeClient()} capabilities={new Set(["reports.view"])} />);
     const text = document.body.textContent ?? "";

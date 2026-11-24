@@ -131,6 +131,7 @@ export const severityLabel = label({ Low: "Düşük", Medium: "Orta", High: "Yü
 export const tenderLabel = label({
   Cash: "Nakit",
   BankCard: "Banka kartı",
+  ExternalCard: "Harici POS kartı",
   MealCard: "Yemek kartı",
   Eft: "EFT / Havale",
   CustomerAccount: "Cari hesap",

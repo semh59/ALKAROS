@@ -267,6 +267,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
           </Button>
         </>}
         {row.status === "AwaitingManualRefund" && row.method !== "Eft" && <>
+          {row.method === "ExternalCard" && <span>{refundText.externalCardHint}</span>}
           <TextField
             label={refundText.slipLabel}
             maxLength={50}

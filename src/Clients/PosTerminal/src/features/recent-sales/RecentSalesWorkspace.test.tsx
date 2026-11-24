@@ -37,7 +37,7 @@ describe("RecentSalesWorkspace", () => {
   it("lists each sale with its place, closing time, amount and every payment method in Turkish", async () => {
     fetchMock.mockResolvedValue(answer({ hasOpenSession: true, sales: [
       sale(),
-      sale({ billId: "b-2", tableNumber: null, methods: ["Card", "Eft", "Account", "Voucher"] }),
+      sale({ billId: "b-2", tableNumber: null, methods: ["Card", "ExternalCard", "Eft", "Account", "Voucher"] }),
     ] }));
     await render();
 
@@ -48,7 +48,7 @@ describe("RecentSalesWorkspace", () => {
     expect(rows[0]).toContain("Nakit");
     expect(rows[0]).toMatch(/540,00/);
     expect(rows[1]).toContain("Hızlı satış · 14:32");
-    expect(rows[1]).toContain("Kart, Havale, Müşteri hesabı, Bilinmiyor");
+    expect(rows[1]).toContain("Kart, Harici POS kartı, Havale, Müşteri hesabı, Bilinmiyor");
     expect(text()).not.toMatch(/Card|Eft|Cash|Account|Voucher/);
   });
 

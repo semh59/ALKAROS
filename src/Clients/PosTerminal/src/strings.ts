@@ -1335,6 +1335,7 @@ export const refundText = {
   selfApproved: "Kendi onayı",
   mustBeDecidedByAnother: "Başka bir yetkili onaylamalı.",
   transferHint: "Havale / EFT iadesi için fiş numarası gerekmez; parayı gönderince onaylayın.",
+  externalCardHint: "Kart iadesi banka POS cihazında yapılır; çıkan iade fişinin numarasını yazın.",
   requested: "İade isteği gönderildi; onay bekliyor.",
   approved: "İade isteği onaylandı.",
   rejected: "İade isteği reddedildi.",
@@ -1418,6 +1419,7 @@ export const refundStatusLabels: Record<string, string> = {
 export const refundMethodLabels: Record<string, string> = {
   Cash: "Nakit",
   Card: "Kart",
+  ExternalCard: "Harici POS kartı",
   Eft: "Havale / EFT",
   Account: "Cari hesap",
 };
@@ -1541,7 +1543,7 @@ export const recentSalesText = {
   failed: "Son satışlar okunamadı.",
   unreachable: "Sunucuya ulaşılamadı. Son satışlar okunamadı.",
   forbidden: "Bu listeyi görmek için yetkiniz yok.",
-  methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
+  methods: { Cash: "Nakit", Card: "Kart", ExternalCard: "Harici POS kartı", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
   unknownMethod: "Bilinmiyor",
 } as const;
 
