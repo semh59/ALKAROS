@@ -1,7 +1,7 @@
 # V1-RMD-1197 - Pilot belgesine seçenekli ürün ekleme ve indirim onayı adımları
 
 - Task ID: V1-RMD-1197
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: documentation
 - Surface state: Existing

@@ -55,6 +55,24 @@ Satış ekranında **Not ekle**'ye bas, "Sıradaki ürüne not" kutusuna yaz (ö
 
 **Mutfağa giden ürünü iptal etme.** Masanın hesap listesinde ürünün yanındaki **Mutfaktaki ürünü iptal et**'e bas, gerekçeyi seç, **iptal et**'e bas. Yetkin yoksa "Bu iptal için yönetici onayı gerekir" yazar ve iki alan açılır: yönetici o anda kendi **Yönetici kullanıcı adı** ve **Yönetici parolası**nı yazıp **Onayla ve iptal et**'e basar; ürün iptal edilir. Kendi iptalini kendin onaylayamazsın; onay yönetici adıyla kayda geçer.
 
+## 5a. Seçenekli ürün ekle
+Bazı ürünlere (örnek: hamburger, kahve) dokununca **SEÇENEKLER** penceresi açılır; başlıkta ürünün adı yazar.
+1. Grubun adının yanında "(zorunlu)" ya da "(isteğe bağlı)" yazar. Zorunlu gruptan seçmeden **Siparişe ekle** pasif kalır.
+2. "en fazla 2" yazıyorsa 2'den fazlasını işaretleme; yoksa **Siparişe ekle** pasif kalır.
+3. Ek ücretli seçeneğin yanında fiyatı yazar (örnek: "Ekstra peynir +₺15,00"); ürün fiyatına eklenir.
+4. **Siparişe ekle**'ye bas. Vazgeçmek için **Vazgeç**'e ya da × (kapat) düğmesine bas.
+5. Seçtiklerin ürünün altında adıyla görünür (sepet, masa detayı, hesap fişi). Seçenekli ürün her eklemede ayrı satır olur.
+6. Yanlış seçtiysen ürünü **Kaldır**'la, yeniden ekle.
+
+## 5b. İndirim yap (yönetici onayı)
+1. Ödeme ekranında **İndirim ve bahşiş** bölümünü aç, **İndirim gerekçesi**ni seç.
+2. **Yüzde (%)** ya da **Tutar (₺)** seç, **Değer**'i yaz.
+3. **İndirim uygula**'ya bas. Hesabın kalanını kapatan indirimde uyarı çıkar; doğruysa **Evet, indirimi uygula**'ya bas.
+4. Yönetici onayı gerekiyorsa "İndirim talebiniz yönetici onayına gönderildi..." yazar; hesap değişmez. **İndirim onayı · Yönetici burada onaylasın** kutusu açılır.
+5. Yönetici o anda kendi **Yönetici kullanıcı adı** ve **Yönetici şifresi**ni yazıp **Yönetici onayı ver**'e basar. Onaylanınca "... onayıyla uygulandı." yazar.
+6. Yönetici başka ekrandan onaylarsa **Onay durumunu kontrol et**'e bas.
+7. Kendi talebini kendin onaylayamazsın; yönetici kendi hesabıyla onaylamalı.
+
 ## 6. İade iste
 1. **Son satışlar**'a bas (Diğer ▾ menüsünde de var), satışa dokun.
 2. **İade** bölümünde gerekçeyi seç, **İade iste**'ye bas. "İade isteği gönderildi; onay bekliyor." yazar.

@@ -1,0 +1,24 @@
+1 | SEÇENEKLER | CashierModifierPicker.tsx
+1 | (zorunlu) | CashierModifierPicker.tsx
+1 | (isteğe bağlı) | CashierModifierPicker.tsx
+1 | en fazla | CashierModifierPicker.tsx
+1 | Siparişe ekle | CashierModifierPicker.tsx
+1 | Vazgeç | CashierModifierPicker.tsx
+1 | Seçenek penceresini kapat | CashierModifierPicker.tsx
+1 | İndirim ve bahşiş | split-payment.js
+1 | İndirim gerekçesi | split-payment.js
+1 | Yüzde (%) | split-payment.js
+1 | Tutar (₺) | split-payment.js
+2 | İndirim uygula | split-payment.js
+1 | İndirim talebiniz yönetici onayına gönderildi | split-payment.js
+2 | Yönetici onayı ver | split-payment.js
+1 | onayıyla uygulandı | split-payment.js
+4 | Onay durumunu kontrol et | split-payment.js
+3 | Yönetici şifresi | split-payment.js
+3 | Yönetici kullanıcı adı | split-payment.js
+1 | Orijinal fişi sıfırla (yönetici onayıyla) | split-payment.js
+1 | İade onayı | split-payment.js
+0 | İndirim onayı | split-payment.js
+2 | Yönetici burada onaylasın | split-payment.js
+2 | Kaldır | Cashier.tsx
+indirim onayı (kucuk harf, kodda dinamik buyutulur) 1 eslesme
