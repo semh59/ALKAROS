@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (75 tests | 1 failed) 1991ms
+       × falls back to splitting the joined string when the server sends no list 41ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > falls back to splitting the joined string when the server sends no list
+AssertionError: expected '2×Mercimek çorbası1×Az acılı, Ekstra …' to be '2×Mercimek çorbasıAz acılı, Ekstra pe…' // Object.is equality
+
+Expected: "2×Mercimek çorbasıAz acılı, Ekstra peynir"
+Received: "2×Mercimek çorbası1×Az acılı, Ekstra peynir1×Ekstra peynir, Az acılı"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:252:28
+    250|       const rows = await allDay([{ quantity: 1, modifiers: "Ekstra pey…
+    251|       expect(rows.length).toBe(1);
+    252|       expect(rows[0].text).toBe("2×Mercimek çorbasıAz acılı, Ekstra pe…
+       |                            ^
+    253|     });
+    254|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 74 passed (75)
+   Start at  17:44:18
+   Duration  3.60s (transform 257ms, setup 0ms, import 425ms, tests 1.99s, environment 917ms)
+

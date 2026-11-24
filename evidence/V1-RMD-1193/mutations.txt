@@ -1,0 +1,7 @@
+K1-names-never-filled killed (restored)
+K2-board-list-without-names killed (restored)
+K3-single-ticket-without-names killed (restored)
+K4-null-names-written killed (restored)
+K5-client-ignores-list killed (restored)
+K6-client-no-trim killed (restored)
+K7-client-no-sort killed (restored)

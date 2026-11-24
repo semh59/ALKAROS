@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+
+ Test Files  8 passed (8)
+      Tests  127 passed (127)
+   Start at  17:11:32
+   Duration  6.09s (transform 949ms, setup 0ms, import 1.60s, tests 3.47s, environment 3.61s)
+

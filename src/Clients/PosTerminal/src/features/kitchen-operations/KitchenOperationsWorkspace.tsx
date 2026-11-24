@@ -114,6 +114,11 @@ function compactId(value: string) {
 // order (takeaway/bar tab, V1-KDS-005) has nothing to merge on, so it
 // keeps grouping by its own orderId — the same behavior this replaces
 // had for every ticket, before V1-KIT-012 gave real orders a table at all.
+/** The options of a ticket item one by one; the joined string is split at its commas only when the server sent no list. */
+function optionsOf(item: KitchenTicketItem): string[] {
+  return (item.modifierNames ?? (item.modifiers ?? "").split(",")).map((option) => option.trim()).filter(Boolean);
+}
+
 function groupByTable(tickets: readonly KitchenTicket[]): { groupKey: string; tickets: KitchenTicket[] }[] {
   const order: string[] = [];
   const byKey = new Map<string, KitchenTicket[]>();
@@ -257,7 +262,7 @@ export function KitchenOperationsWorkspace({
     for (const ticket of activeTickets) {
       for (const item of ticket.items) {
         if (item.status === "Cancelled" || item.status === "Served") continue;
-        const options = (item.modifiers ?? "").split(",").map((option) => option.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
+        const options = optionsOf(item).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
         const note = (item.notes ?? "").trim().replace(/\s+/g, " ");
         const product = products.get(item.productId) ?? { productName: item.productName, quantity: 0, combos: new Map<string, Combo>() };
         products.set(item.productId, product);

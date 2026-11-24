@@ -1,0 +1,54 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (75 tests | 2 failed) 2153ms
+       × treats empty options and note like none, collapses inner spaces and ignores cancelled items 36ms
+       × falls back to splitting the joined string when the server sends no list 38ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > treats empty options and note like none, collapses inner spaces and ignores cancelled items
+AssertionError: expected [ '4×Sade', '2×Not: az tuz', '1× ,  ' ] to deeply equal [ '5×Sade', '2×Not: az tuz' ]
+
+- Expected
++ Received
+
+  [
+-   "5×Sade",
++   "4×Sade",
+    "2×Not: az tuz",
++   "1× ,  ",
+  ]
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:238:30
+    236|       ]);
+    237|       expect(rows[0].head).toBe("7×Mercimek çorbası");
+    238|       expect(rows[0].combos).toEqual(["5×Sade", "2×Not: az tuz"]);
+       |                              ^
+    239|     });
+    240|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > falls back to splitting the joined string when the server sends no list
+AssertionError: expected '2×Mercimek çorbası1× Az acılı, Ekstra…' to be '2×Mercimek çorbasıAz acılı, Ekstra pe…' // Object.is equality
+
+Expected: "2×Mercimek çorbasıAz acılı, Ekstra peynir"
+Received: "2×Mercimek çorbası1× Az acılı, Ekstra peynir1× Ekstra peynir, Az acılı"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:252:28
+    250|       const rows = await allDay([{ quantity: 1, modifiers: "Ekstra pey…
+    251|       expect(rows.length).toBe(1);
+    252|       expect(rows[0].text).toBe("2×Mercimek çorbasıAz acılı, Ekstra pe…
+       |                            ^
+    253|     });
+    254|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 73 passed (75)
+   Start at  17:44:12
+   Duration  3.85s (transform 252ms, setup 0ms, import 424ms, tests 2.15s, environment 1.01s)
+

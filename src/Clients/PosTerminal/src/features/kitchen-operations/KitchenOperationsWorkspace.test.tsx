@@ -194,7 +194,7 @@ describe("kitchen operations workspace", () => {
   });
 
   describe("Tüm Gün Görünümü groups by product with a total header over option/note combinations", () => {
-    type Line = { productId?: string; productName?: string; quantity: number; modifiers: string | null; notes: string | null; status?: "Cancelled" };
+    type Line = { productId?: string; productName?: string; quantity: number; modifiers: string | null; modifierNames?: string[]; notes: string | null; status?: "Cancelled" };
     async function allDay(items: Line[]) {
       const base = data.tickets[0].items[0];
       const ticket = { ...data.tickets[0], items: items.map((item, index) => ({ ...base, status: "Queued" as const, ...item, id: `item-${index}` })) };
@@ -236,6 +236,20 @@ describe("kitchen operations workspace", () => {
       ]);
       expect(rows[0].head).toBe("7×Mercimek çorbası");
       expect(rows[0].combos).toEqual(["5×Sade", "2×Not: az tuz"]);
+    });
+
+    it("keeps an option whose name holds a comma as one option when the server sends the options as a list", async () => {
+      const rows = await allDay([
+        { quantity: 1, modifiers: "Peynir, çift, Az acılı", modifierNames: ["Az acılı", "Peynir, çift"], notes: null },
+        { quantity: 2, modifiers: "Az acılı", modifierNames: ["Az acılı"], notes: null },
+      ]);
+      expect(rows[0].combos).toEqual(["2×Az acılı", "1×Az acılı, Peynir, çift"]);
+    });
+
+    it("falls back to splitting the joined string when the server sends no list", async () => {
+      const rows = await allDay([{ quantity: 1, modifiers: "Ekstra peynir, Az acılı", notes: null }, { quantity: 1, modifiers: "Az acılı, Ekstra peynir", notes: null }]);
+      expect(rows.length).toBe(1);
+      expect(rows[0].text).toBe("2×Mercimek çorbasıAz acılı, Ekstra peynir");
     });
 
     it("sums identical options whatever order they arrive in", async () => {

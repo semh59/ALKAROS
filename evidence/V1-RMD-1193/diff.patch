@@ -1,0 +1,320 @@
+diff --git a/plan/v1/remediation/V1-RMD-1193-kitchen-ticket-options-as-separate-list.md b/plan/v1/remediation/V1-RMD-1193-kitchen-ticket-options-as-separate-list.md
+index 8cd6b50ea..f7fd802b0 100644
+--- a/plan/v1/remediation/V1-RMD-1193-kitchen-ticket-options-as-separate-list.md
++++ b/plan/v1/remediation/V1-RMD-1193-kitchen-ticket-options-as-separate-list.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1193 - Mutfak fişi kalemi seçenekleri ayrı dizi olarak taşır
+ 
+ - Task ID: V1-RMD-1193
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+index de8392936..20618381e 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+@@ -194,7 +194,7 @@ describe("kitchen operations workspace", () => {
+   });
+ 
+   describe("Tüm Gün Görünümü groups by product with a total header over option/note combinations", () => {
+-    type Line = { productId?: string; productName?: string; quantity: number; modifiers: string | null; notes: string | null; status?: "Cancelled" };
++    type Line = { productId?: string; productName?: string; quantity: number; modifiers: string | null; modifierNames?: string[]; notes: string | null; status?: "Cancelled" };
+     async function allDay(items: Line[]) {
+       const base = data.tickets[0].items[0];
+       const ticket = { ...data.tickets[0], items: items.map((item, index) => ({ ...base, status: "Queued" as const, ...item, id: `item-${index}` })) };
+@@ -238,6 +238,20 @@ describe("kitchen operations workspace", () => {
+       expect(rows[0].combos).toEqual(["5×Sade", "2×Not: az tuz"]);
+     });
+ 
++    it("keeps an option whose name holds a comma as one option when the server sends the options as a list", async () => {
++      const rows = await allDay([
++        { quantity: 1, modifiers: "Peynir, çift, Az acılı", modifierNames: ["Az acılı", "Peynir, çift"], notes: null },
++        { quantity: 2, modifiers: "Az acılı", modifierNames: ["Az acılı"], notes: null },
++      ]);
++      expect(rows[0].combos).toEqual(["2×Az acılı", "1×Az acılı, Peynir, çift"]);
++    });
++
++    it("falls back to splitting the joined string when the server sends no list", async () => {
++      const rows = await allDay([{ quantity: 1, modifiers: "Ekstra peynir, Az acılı", notes: null }, { quantity: 1, modifiers: "Az acılı, Ekstra peynir", notes: null }]);
++      expect(rows.length).toBe(1);
++      expect(rows[0].text).toBe("2×Mercimek çorbasıAz acılı, Ekstra peynir");
++    });
++
+     it("sums identical options whatever order they arrive in", async () => {
+       const rows = await allDay([
+         { quantity: 1, modifiers: "Ekstra peynir, Az acılı", notes: null },
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+index fd62aa252..e5f940bea 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+@@ -114,6 +114,11 @@ function compactId(value: string) {
+ // order (takeaway/bar tab, V1-KDS-005) has nothing to merge on, so it
+ // keeps grouping by its own orderId — the same behavior this replaces
+ // had for every ticket, before V1-KIT-012 gave real orders a table at all.
++/** The options of a ticket item one by one; the joined string is split at its commas only when the server sent no list. */
++function optionsOf(item: KitchenTicketItem): string[] {
++  return (item.modifierNames ?? (item.modifiers ?? "").split(",")).map((option) => option.trim()).filter(Boolean);
++}
++
+ function groupByTable(tickets: readonly KitchenTicket[]): { groupKey: string; tickets: KitchenTicket[] }[] {
+   const order: string[] = [];
+   const byKey = new Map<string, KitchenTicket[]>();
+@@ -257,7 +262,7 @@ export function KitchenOperationsWorkspace({
+     for (const ticket of activeTickets) {
+       for (const item of ticket.items) {
+         if (item.status === "Cancelled" || item.status === "Served") continue;
+-        const options = (item.modifiers ?? "").split(",").map((option) => option.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
++        const options = optionsOf(item).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
+         const note = (item.notes ?? "").trim().replace(/\s+/g, " ");
+         const product = products.get(item.productId) ?? { productName: item.productName, quantity: 0, combos: new Map<string, Combo>() };
+         products.set(item.productId, product);
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/models.ts b/src/Clients/PosTerminal/src/features/kitchen-operations/models.ts
+index e1376dd30..798e0eb1d 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/models.ts
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/models.ts
+@@ -29,6 +29,8 @@ export interface KitchenTicketItem {
+   productName: string;
+   quantity: number;
+   modifiers: string | null;
++  /** The options one by one; present when the server knows them, so a name holding a comma stays one option. */
++  modifierNames?: readonly string[];
+   notes: string | null;
+   status: "Queued" | "Preparing" | "Ready" | "Served" | "Cancelled";
+   rowVersion: number;
+diff --git a/src/Host/Experience/KitchenOperations/KitchenOperationsContracts.cs b/src/Host/Experience/KitchenOperations/KitchenOperationsContracts.cs
+index 4ec3da766..fda18322a 100644
+--- a/src/Host/Experience/KitchenOperations/KitchenOperationsContracts.cs
++++ b/src/Host/Experience/KitchenOperations/KitchenOperationsContracts.cs
+@@ -27,7 +27,10 @@ public sealed record KitchenTicketItemV1(
+     // the course system shipped, but it was never copied into this DTO, so
+     // the KDS screen could never tell a deliberately-held course item
+     // apart from a normal Queued one and staff could start it early.
+-    bool IsHeld = false);
++    bool IsHeld = false,
++    // The options as a list, one entry per option ("2× name" when taken more than once), so a name that holds a comma is not
++    // cut in two by a client that splits the joined <see cref="Modifiers"/> string. Absent on an item without options.
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<string>? ModifierNames = null);
+ 
+ public sealed record KitchenTicketV1(
+     Guid Id,
+diff --git a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+index 77406a383..995a4ac5a 100644
+--- a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
++++ b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+@@ -1,6 +1,7 @@
+ using System.Net;
+ using System.Net.Sockets;
+ using ALKAROS.Audit.EventStore;
++using ALKAROS.Host.DualScreen;
+ using ALKAROS.Host.Experience.Catalog;
+ using ALKAROS.Host.Experience.WaiterNotifications;
+ using ALKAROS.Host.Experience.WebPush;
+@@ -112,7 +113,8 @@ public sealed class KitchenOperationsStore
+         // (different stations) can share the same orderId.
+         var labels = await ResolveTableLabelsAsync(
+             tickets.Select(ticket => ticket.OrderId).ToArray(), cancellationToken);
+-        return tickets.Select(ticket => ToDto(ticket, ResolveLabel(labels, ticket.OrderId))).ToArray();
++        var optionNames = await ResolveOptionNamesAsync(tickets, cancellationToken);
++        return tickets.Select(ticket => ToDto(ticket, ResolveLabel(labels, ticket.OrderId), optionNames)).ToArray();
+     }
+ 
+     public async Task<KitchenTicketV1> GetTicketAsync(Guid ticketId, CancellationToken cancellationToken)
+@@ -120,7 +122,7 @@ public sealed class KitchenOperationsStore
+         EnsureId(ticketId, nameof(ticketId));
+         var ticket = await _tickets.GetByIdAsync(ticketId, cancellationToken)
+             ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found.");
+-        return ToDto(ticket, await ResolveTableLabelAsync(ticket.OrderId, cancellationToken));
++        return await ToTicketDtoAsync(ticket, cancellationToken);
+     }
+ 
+     public async Task<KitchenTicketV1> TransitionTicketAsync(
+@@ -138,7 +140,7 @@ public sealed class KitchenOperationsStore
+ 
+         if (ticket.Status == target)
+         {
+-            return ToDto(ticket, await ResolveTableLabelAsync(ticket.OrderId, cancellationToken));
++            return await ToTicketDtoAsync(ticket, cancellationToken);
+         }
+ 
+         // V1-RMD-158: InvalidKitchenTransitionException comes from
+@@ -166,7 +168,7 @@ public sealed class KitchenOperationsStore
+ 
+         var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
+             ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
+-        return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
++        return await ToTicketDtoAsync(canonical, cancellationToken);
+     }
+ 
+     public async Task<KitchenTicketV1> TransitionItemAsync(
+@@ -198,7 +200,7 @@ public sealed class KitchenOperationsStore
+                 await NotifyWaitersItemIsReadyAsync(transitioned.OrderId, transitionedItem, cancellationToken);
+             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
+                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
+-            return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
++            return await ToTicketDtoAsync(canonical, cancellationToken);
+         }
+         catch (InvalidOperationException exception)
+         {
+@@ -245,7 +247,7 @@ public sealed class KitchenOperationsStore
+                 await NotifyWaitersItemIsReadyAsync(undone.OrderId, undoneItem, cancellationToken);
+             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
+                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after undo.");
+-            return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
++            return await ToTicketDtoAsync(canonical, cancellationToken);
+         }
+         catch (InvalidOperationException exception)
+         {
+@@ -970,7 +972,27 @@ public sealed class KitchenOperationsStore
+         IReadOnlyDictionary<Guid, (Guid? TableId, string? TableNumber)> labels, Guid orderId)
+         => labels.TryGetValue(orderId, out var label) ? label : (null, null);
+ 
+-    private static KitchenTicketV1 ToDto(KitchenTicket value, (Guid? TableId, string? TableNumber) tableLabel = default)
++    private async Task<KitchenTicketV1> ToTicketDtoAsync(KitchenTicket ticket, CancellationToken cancellationToken)
++        => ToDto(
++            ticket,
++            await ResolveTableLabelAsync(ticket.OrderId, cancellationToken),
++            await ResolveOptionNamesAsync([ticket], cancellationToken));
++
++    /// <summary>The options of every item on the given tickets as a list per order line, read from the order's own recorded options.</summary>
++    private async Task<IReadOnlyDictionary<Guid, IReadOnlyList<LineOptionV1>>> ResolveOptionNamesAsync(
++        IEnumerable<KitchenTicket> tickets, CancellationToken cancellationToken)
++    {
++        var orderItemIds = tickets.SelectMany(ticket => ticket.Items.Select(item => item.OrderItemId)).Distinct().ToArray();
++        if (orderItemIds.Length == 0)
++            return new Dictionary<Guid, IReadOnlyList<LineOptionV1>>();
++        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
++        return await DualScreenStore.LoadLineOptionsAsync(connection, null, orderItemIds, cancellationToken);
++    }
++
++    private static KitchenTicketV1 ToDto(
++        KitchenTicket value,
++        (Guid? TableId, string? TableNumber) tableLabel = default,
++        IReadOnlyDictionary<Guid, IReadOnlyList<LineOptionV1>>? optionNames = null)
+         => new(
+             value.Id,
+             value.OrderId,
+@@ -984,11 +1006,11 @@ public sealed class KitchenOperationsStore
+             value.ReadyAt,
+             value.CancelledAt,
+             value.TargetPrepMinutes,
+-            value.Items.Select(ToDto).ToArray(),
++            value.Items.Select(item => ToDto(item, optionNames)).ToArray(),
+             tableLabel.TableId,
+             tableLabel.TableNumber);
+ 
+-    private static KitchenTicketItemV1 ToDto(KitchenTicketItem value)
++    private static KitchenTicketItemV1 ToDto(KitchenTicketItem value, IReadOnlyDictionary<Guid, IReadOnlyList<LineOptionV1>>? optionNames = null)
+         => new(
+             value.Id,
+             value.OrderItemId,
+@@ -1005,7 +1027,8 @@ public sealed class KitchenOperationsStore
+             value.ServedAt,
+             value.CancelledAt,
+             value.IsAgeRestricted,
+-            value.IsHeld);
++            value.IsHeld,
++            optionNames is not null && optionNames.TryGetValue(value.OrderItemId, out var options) ? options.Select(option => option.Name).ToArray() : null);
+ 
+     private static PrinterV1 ToDto(Printer value)
+         => new(value.Id, value.Name, value.StationId, value.IsActive, value.CreatedAt, value.UpdatedAt,
+diff --git a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+index d82684422..d5380fe2b 100644
+--- a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
++++ b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+@@ -2,6 +2,7 @@ using System.Linq;
+ using System.Net;
+ using System.Net.Http.Json;
+ using System.Net.Sockets;
++using System.Text.Json;
+ using System.Text;
+ using ALKAROS.Host.Experience.KitchenOperations;
+ using ALKAROS.Identity.Authorization.Catalog;
+@@ -1205,6 +1206,86 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
+         Assert.Equal("Masa 7", ticket.TableNumber);
+     }
+ 
++    [Fact]
++    public async Task TicketItemsCarryTheirOptionsAsAListThatKeepsACommaInsideOneName()
++    {
++        var terminalId = Guid.NewGuid();
++        var (ticketId, _, stationId) = await _database.SeedTicketAwaitingPrintJobAsync();
++        var orderItemId = await _database.ScalarAsync<Guid>(
++            $"SELECT order_item_id FROM kitchen.kitchen_ticket_items WHERE ticket_id = '{ticketId:D}' LIMIT 1;");
++        var groupId = Guid.NewGuid();
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES ('{groupId:D}', 'MOD{groupId.ToString("N")[..10]}', 'Ekstra', 2) RETURNING code;
++            """);
++        var cheese = Guid.NewGuid();
++        var spicy = Guid.NewGuid();
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES
++                ('{cheese:D}', '{groupId:D}', 'C{cheese.ToString("N")[..10]}', 'Peynir, çift', 5), ('{spicy:D}', '{groupId:D}', 'S{spicy.ToString("N")[..10]}', 'Az acılı', 0) RETURNING 'x';
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity) VALUES
++                (gen_random_uuid(), '{orderItemId:D}', '{cheese:D}', 'Peynir, çift', 5, 2), (gen_random_uuid(), '{orderItemId:D}', '{spicy:D}', 'Az acılı', 0, 1) RETURNING 'x';
++            """);
++        await _database.ScalarAsync<string>(
++            $"UPDATE kitchen.kitchen_ticket_items SET modifiers_summary = '2× Peynir, çift, Az acılı' WHERE ticket_id = '{ticketId:D}' RETURNING 'x';");
++        var secondOrderItem = Guid.NewGuid();
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO orders.order_items (
++                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price,
++                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, created_at, updated_at)
++            SELECT '{secondOrderItem:D}', order_id, product_id, product_name_snapshot, quantity, unit_price,
++                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, now(), now()
++            FROM orders.order_items WHERE order_item_id = '{orderItemId:D}' RETURNING 'x';
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO kitchen.kitchen_ticket_items (id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity, status, row_version, created_at)
++            SELECT gen_random_uuid(), ticket_id, '{secondOrderItem:D}', product_id, product_name_snapshot, quantity, 'Queued', 1, now()
++            FROM kitchen.kitchen_ticket_items WHERE order_item_id = '{orderItemId:D}' RETURNING 'x';
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
++            VALUES (gen_random_uuid(), '{secondOrderItem:D}', '{spicy:D}', 'Az acılı', 0, 1) RETURNING 'x';
++            """);
++        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        var board = await GetAsync<KitchenTicketV1[]>(client, Prefix(terminalId) + $"/tickets?stationId={Uri.EscapeDataString(stationId)}", cookie);
++        var single = await GetAsync<KitchenTicketV1>(client, Prefix(terminalId) + $"/tickets/{ticketId:D}", cookie);
++        var rowVersion = single!.RowVersion;
++        var transitioned = await PostAsync<KitchenTicketV1>(
++            client, Prefix(terminalId) + $"/tickets/{ticketId:D}/transition", cookie, new TransitionKitchenTicketV1("Accepted", rowVersion));
++
++        foreach (var items in new[] { Assert.Single(board!, t => t.Id == ticketId).Items, single.Items, transitioned!.Items })
++        {
++            Assert.Equal(["Az acılı", "2× Peynir, çift"], Assert.Single(items, i => i.OrderItemId == orderItemId).ModifierNames);
++            Assert.Equal(["Az acılı"], Assert.Single(items, i => i.OrderItemId == secondOrderItem).ModifierNames);
++        }
++        Assert.Equal("2× Peynir, çift, Az acılı", Assert.Single(single.Items, i => i.OrderItemId == orderItemId).Modifiers);
++    }
++
++    [Fact]
++    public async Task ATicketItemWithoutOptionsHasNoOptionList()
++    {
++        var terminalId = Guid.NewGuid();
++        var (ticketId, _, stationId) = await _database.SeedTicketAwaitingPrintJobAsync();
++        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        var board = await GetAsync<JsonElement>(client, Prefix(terminalId) + $"/tickets?stationId={Uri.EscapeDataString(stationId)}", cookie);
++
++        var ticket = Assert.Single(board.EnumerateArray(), t => t.GetProperty("id").GetGuid() == ticketId);
++        Assert.False(Assert.Single(ticket.GetProperty("items").EnumerateArray()).TryGetProperty("modifierNames", out _));
++    }
++
+     /// <summary>
+     /// V1-RMD-1054: one station-wide read returns only Failed/DeadLetter jobs of the station's open tickets;
+     /// pending jobs and another station's failures stay out, and a session is still required.

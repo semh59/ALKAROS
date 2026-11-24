@@ -27,7 +27,10 @@ public sealed record KitchenTicketItemV1(
     // the course system shipped, but it was never copied into this DTO, so
     // the KDS screen could never tell a deliberately-held course item
     // apart from a normal Queued one and staff could start it early.
-    bool IsHeld = false);
+    bool IsHeld = false,
+    // The options as a list, one entry per option ("2× name" when taken more than once), so a name that holds a comma is not
+    // cut in two by a client that splits the joined <see cref="Modifiers"/> string. Absent on an item without options.
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<string>? ModifierNames = null);
 
 public sealed record KitchenTicketV1(
     Guid Id,

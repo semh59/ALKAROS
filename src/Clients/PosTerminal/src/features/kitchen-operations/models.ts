@@ -29,6 +29,8 @@ export interface KitchenTicketItem {
   productName: string;
   quantity: number;
   modifiers: string | null;
+  /** The options one by one; present when the server knows them, so a name holding a comma stays one option. */
+  modifierNames?: readonly string[];
   notes: string | null;
   status: "Queued" | "Preparing" | "Ready" | "Served" | "Cancelled";
   rowVersion: number;

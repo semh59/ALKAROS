@@ -2,6 +2,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Net.Sockets;
+using System.Text.Json;
 using System.Text;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Identity.Authorization.Catalog;
@@ -1203,6 +1204,86 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         var ticket = Assert.Single(tickets!, t => t.Id == ticketId);
         Assert.Equal(tableId, ticket.TableId);
         Assert.Equal("Masa 7", ticket.TableNumber);
+    }
+
+    [Fact]
+    public async Task TicketItemsCarryTheirOptionsAsAListThatKeepsACommaInsideOneName()
+    {
+        var terminalId = Guid.NewGuid();
+        var (ticketId, _, stationId) = await _database.SeedTicketAwaitingPrintJobAsync();
+        var orderItemId = await _database.ScalarAsync<Guid>(
+            $"SELECT order_item_id FROM kitchen.kitchen_ticket_items WHERE ticket_id = '{ticketId:D}' LIMIT 1;");
+        var groupId = Guid.NewGuid();
+        await _database.ScalarAsync<string>(
+            $"""
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES ('{groupId:D}', 'MOD{groupId.ToString("N")[..10]}', 'Ekstra', 2) RETURNING code;
+            """);
+        var cheese = Guid.NewGuid();
+        var spicy = Guid.NewGuid();
+        await _database.ScalarAsync<string>(
+            $"""
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES
+                ('{cheese:D}', '{groupId:D}', 'C{cheese.ToString("N")[..10]}', 'Peynir, çift', 5), ('{spicy:D}', '{groupId:D}', 'S{spicy.ToString("N")[..10]}', 'Az acılı', 0) RETURNING 'x';
+            """);
+        await _database.ScalarAsync<string>(
+            $"""
+            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity) VALUES
+                (gen_random_uuid(), '{orderItemId:D}', '{cheese:D}', 'Peynir, çift', 5, 2), (gen_random_uuid(), '{orderItemId:D}', '{spicy:D}', 'Az acılı', 0, 1) RETURNING 'x';
+            """);
+        await _database.ScalarAsync<string>(
+            $"UPDATE kitchen.kitchen_ticket_items SET modifiers_summary = '2× Peynir, çift, Az acılı' WHERE ticket_id = '{ticketId:D}' RETURNING 'x';");
+        var secondOrderItem = Guid.NewGuid();
+        await _database.ScalarAsync<string>(
+            $"""
+            INSERT INTO orders.order_items (
+                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price,
+                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, created_at, updated_at)
+            SELECT '{secondOrderItem:D}', order_id, product_id, product_name_snapshot, quantity, unit_price,
+                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, now(), now()
+            FROM orders.order_items WHERE order_item_id = '{orderItemId:D}' RETURNING 'x';
+            """);
+        await _database.ScalarAsync<string>(
+            $"""
+            INSERT INTO kitchen.kitchen_ticket_items (id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity, status, row_version, created_at)
+            SELECT gen_random_uuid(), ticket_id, '{secondOrderItem:D}', product_id, product_name_snapshot, quantity, 'Queued', 1, now()
+            FROM kitchen.kitchen_ticket_items WHERE order_item_id = '{orderItemId:D}' RETURNING 'x';
+            """);
+        await _database.ScalarAsync<string>(
+            $"""
+            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
+            VALUES (gen_random_uuid(), '{secondOrderItem:D}', '{spicy:D}', 'Az acılı', 0, 1) RETURNING 'x';
+            """);
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var board = await GetAsync<KitchenTicketV1[]>(client, Prefix(terminalId) + $"/tickets?stationId={Uri.EscapeDataString(stationId)}", cookie);
+        var single = await GetAsync<KitchenTicketV1>(client, Prefix(terminalId) + $"/tickets/{ticketId:D}", cookie);
+        var rowVersion = single!.RowVersion;
+        var transitioned = await PostAsync<KitchenTicketV1>(
+            client, Prefix(terminalId) + $"/tickets/{ticketId:D}/transition", cookie, new TransitionKitchenTicketV1("Accepted", rowVersion));
+
+        foreach (var items in new[] { Assert.Single(board!, t => t.Id == ticketId).Items, single.Items, transitioned!.Items })
+        {
+            Assert.Equal(["Az acılı", "2× Peynir, çift"], Assert.Single(items, i => i.OrderItemId == orderItemId).ModifierNames);
+            Assert.Equal(["Az acılı"], Assert.Single(items, i => i.OrderItemId == secondOrderItem).ModifierNames);
+        }
+        Assert.Equal("2× Peynir, çift, Az acılı", Assert.Single(single.Items, i => i.OrderItemId == orderItemId).Modifiers);
+    }
+
+    [Fact]
+    public async Task ATicketItemWithoutOptionsHasNoOptionList()
+    {
+        var terminalId = Guid.NewGuid();
+        var (ticketId, _, stationId) = await _database.SeedTicketAwaitingPrintJobAsync();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var board = await GetAsync<JsonElement>(client, Prefix(terminalId) + $"/tickets?stationId={Uri.EscapeDataString(stationId)}", cookie);
+
+        var ticket = Assert.Single(board.EnumerateArray(), t => t.GetProperty("id").GetGuid() == ticketId);
+        Assert.False(Assert.Single(ticket.GetProperty("items").EnumerateArray()).TryGetProperty("modifierNames", out _));
     }
 
     /// <summary>

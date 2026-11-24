@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Host.Experience.WebPush;
@@ -112,7 +113,8 @@ public sealed class KitchenOperationsStore
         // (different stations) can share the same orderId.
         var labels = await ResolveTableLabelsAsync(
             tickets.Select(ticket => ticket.OrderId).ToArray(), cancellationToken);
-        return tickets.Select(ticket => ToDto(ticket, ResolveLabel(labels, ticket.OrderId))).ToArray();
+        var optionNames = await ResolveOptionNamesAsync(tickets, cancellationToken);
+        return tickets.Select(ticket => ToDto(ticket, ResolveLabel(labels, ticket.OrderId), optionNames)).ToArray();
     }
 
     public async Task<KitchenTicketV1> GetTicketAsync(Guid ticketId, CancellationToken cancellationToken)
@@ -120,7 +122,7 @@ public sealed class KitchenOperationsStore
         EnsureId(ticketId, nameof(ticketId));
         var ticket = await _tickets.GetByIdAsync(ticketId, cancellationToken)
             ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found.");
-        return ToDto(ticket, await ResolveTableLabelAsync(ticket.OrderId, cancellationToken));
+        return await ToTicketDtoAsync(ticket, cancellationToken);
     }
 
     public async Task<KitchenTicketV1> TransitionTicketAsync(
@@ -138,7 +140,7 @@ public sealed class KitchenOperationsStore
 
         if (ticket.Status == target)
         {
-            return ToDto(ticket, await ResolveTableLabelAsync(ticket.OrderId, cancellationToken));
+            return await ToTicketDtoAsync(ticket, cancellationToken);
         }
 
         // V1-RMD-158: InvalidKitchenTransitionException comes from
@@ -166,7 +168,7 @@ public sealed class KitchenOperationsStore
 
         var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
             ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
-        return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
+        return await ToTicketDtoAsync(canonical, cancellationToken);
     }
 
     public async Task<KitchenTicketV1> TransitionItemAsync(
@@ -198,7 +200,7 @@ public sealed class KitchenOperationsStore
                 await NotifyWaitersItemIsReadyAsync(transitioned.OrderId, transitionedItem, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
-            return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
+            return await ToTicketDtoAsync(canonical, cancellationToken);
         }
         catch (InvalidOperationException exception)
         {
@@ -245,7 +247,7 @@ public sealed class KitchenOperationsStore
                 await NotifyWaitersItemIsReadyAsync(undone.OrderId, undoneItem, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after undo.");
-            return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
+            return await ToTicketDtoAsync(canonical, cancellationToken);
         }
         catch (InvalidOperationException exception)
         {
@@ -970,7 +972,27 @@ public sealed class KitchenOperationsStore
         IReadOnlyDictionary<Guid, (Guid? TableId, string? TableNumber)> labels, Guid orderId)
         => labels.TryGetValue(orderId, out var label) ? label : (null, null);
 
-    private static KitchenTicketV1 ToDto(KitchenTicket value, (Guid? TableId, string? TableNumber) tableLabel = default)
+    private async Task<KitchenTicketV1> ToTicketDtoAsync(KitchenTicket ticket, CancellationToken cancellationToken)
+        => ToDto(
+            ticket,
+            await ResolveTableLabelAsync(ticket.OrderId, cancellationToken),
+            await ResolveOptionNamesAsync([ticket], cancellationToken));
+
+    /// <summary>The options of every item on the given tickets as a list per order line, read from the order's own recorded options.</summary>
+    private async Task<IReadOnlyDictionary<Guid, IReadOnlyList<LineOptionV1>>> ResolveOptionNamesAsync(
+        IEnumerable<KitchenTicket> tickets, CancellationToken cancellationToken)
+    {
+        var orderItemIds = tickets.SelectMany(ticket => ticket.Items.Select(item => item.OrderItemId)).Distinct().ToArray();
+        if (orderItemIds.Length == 0)
+            return new Dictionary<Guid, IReadOnlyList<LineOptionV1>>();
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        return await DualScreenStore.LoadLineOptionsAsync(connection, null, orderItemIds, cancellationToken);
+    }
+
+    private static KitchenTicketV1 ToDto(
+        KitchenTicket value,
+        (Guid? TableId, string? TableNumber) tableLabel = default,
+        IReadOnlyDictionary<Guid, IReadOnlyList<LineOptionV1>>? optionNames = null)
         => new(
             value.Id,
             value.OrderId,
@@ -984,11 +1006,11 @@ public sealed class KitchenOperationsStore
             value.ReadyAt,
             value.CancelledAt,
             value.TargetPrepMinutes,
-            value.Items.Select(ToDto).ToArray(),
+            value.Items.Select(item => ToDto(item, optionNames)).ToArray(),
             tableLabel.TableId,
             tableLabel.TableNumber);
 
-    private static KitchenTicketItemV1 ToDto(KitchenTicketItem value)
+    private static KitchenTicketItemV1 ToDto(KitchenTicketItem value, IReadOnlyDictionary<Guid, IReadOnlyList<LineOptionV1>>? optionNames = null)
         => new(
             value.Id,
             value.OrderItemId,
@@ -1005,7 +1027,8 @@ public sealed class KitchenOperationsStore
             value.ServedAt,
             value.CancelledAt,
             value.IsAgeRestricted,
-            value.IsHeld);
+            value.IsHeld,
+            optionNames is not null && optionNames.TryGetValue(value.OrderItemId, out var options) ? options.Select(option => option.Name).ToArray() : null);
 
     private static PrinterV1 ToDto(Printer value)
         => new(value.Id, value.Name, value.StationId, value.IsActive, value.CreatedAt, value.UpdatedAt,

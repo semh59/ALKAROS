@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (75 tests | 1 failed) 2067ms
+       × keeps an option whose name holds a comma as one option when the server sends the options as a list 40ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > keeps an option whose name holds a comma as one option when the server sends the options as a list
+AssertionError: expected [ '2×Az acılı', …(1) ] to deeply equal [ '2×Az acılı', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "2×Az acılı",
+-   "1×Az acılı, Peynir, çift",
++   "1×Az acılı, çift, Peynir",
+  ]
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:246:30
+    244|         { quantity: 2, modifiers: "Az acılı", modifierNames: ["Az acıl…
+    245|       ]);
+    246|       expect(rows[0].combos).toEqual(["2×Az acılı", "1×Az acılı, Peyni…
+       |                              ^
+    247|     });
+    248|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 74 passed (75)
+   Start at  17:44:05
+   Duration  3.92s (transform 255ms, setup 0ms, import 426ms, tests 2.07s, environment 1.16s)
+
