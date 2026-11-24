@@ -1,8 +1,8 @@
 # V1-RMD-1196 - Ödeme sayfasında yönetici kutuları adlandırılır, tutar kutusu 48 px ölçülür
 
 - Task ID: V1-RMD-1196
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
