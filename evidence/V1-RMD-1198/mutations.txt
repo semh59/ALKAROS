@@ -1,0 +1,7 @@
+R1-never-refund killed (restored)
+R2-always-cancelled-message killed (restored)
+R3-wrong-status killed (restored)
+R4-flag-overwritten killed (restored)
+R5-flag-not-passed killed (restored)
+R6-payments-not-read killed (restored)
+DONE

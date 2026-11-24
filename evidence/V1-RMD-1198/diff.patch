@@ -1,0 +1,165 @@
+diff --git a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+index 9a9de35b2..1576b2a49 100644
+--- a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
++++ b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+@@ -23,6 +23,8 @@ public static class CustomerDisplayPaymentProgress
+ 
+     public const string BillCancelledMessage = "Hesap iptal edildi.";
+ 
++    public const string BillRefundedMessage = "İade tamamlandı.";
++
+     public static async Task<CustomerDisplaySnapshotDto> AttachAsync(
+         CustomerDisplaySnapshotDto snapshot,
+         IBillRepository bills,
+@@ -36,11 +38,13 @@ public static class CustomerDisplayPaymentProgress
+ 
+         var live = new List<BillStatement>();
+         var anyCancelled = false;
++        var refundClosed = false;
+         foreach (var bill in await bills.GetByOrderIdAsync(orderId, cancellationToken))
+         {
+             if (bill.Status == BillState.Cancelled)
+             {
+                 anyCancelled = true;
++                refundClosed |= IsRefundClosure(await payments.GetByBillIdAsync(bill.Id, cancellationToken));
+                 continue;
+             }
+ 
+@@ -54,7 +58,7 @@ public static class CustomerDisplayPaymentProgress
+             live.Add(new BillStatement(bill, billAdjustments, projection));
+         }
+ 
+-        return Apply(snapshot, live, anyCancelled);
++        return Apply(snapshot, live, anyCancelled, refundClosed);
+     }
+ 
+     /// <param name="live">The order's bills that are not cancelled.</param>
+@@ -67,13 +71,13 @@ public static class CustomerDisplayPaymentProgress
+     /// and takes new lines), so there it stays; a quick sale and the customer display are cleared.
+     /// </remarks>
+     public static CustomerDisplaySnapshotDto Apply(
+-        CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false)
++        CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false, bool refundClosed = false)
+     {
+         if (snapshot.State is not (ActiveState or CompletedState))
+             return snapshot;
+ 
+         if (live.Count == 0)
+-            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot) : snapshot;
++            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot, refundClosed) : snapshot;
+ 
+         var summaries = live.Select(s => AdjustmentCalculator.Calculate(s.Bill, s.Adjustments)).ToList();
+         var lines = live
+@@ -98,7 +102,10 @@ public static class CustomerDisplayPaymentProgress
+         };
+     }
+ 
+-    private static CustomerDisplaySnapshotDto Cleared(CustomerDisplaySnapshotDto snapshot) => snapshot with
++    /// <summary>A bill closes by refund exactly when a payment of it was paid back; a plain cancel never had one.</summary>
++    public static bool IsRefundClosure(IEnumerable<Payment> billPayments) => billPayments.Any(p => p.Status == PaymentStatus.Refunded);
++
++    private static CustomerDisplaySnapshotDto Cleared(CustomerDisplaySnapshotDto snapshot, bool refundClosed) => snapshot with
+     {
+         State = IdleState,
+         Lines = [],
+@@ -110,6 +117,6 @@ public static class CustomerDisplayPaymentProgress
+         Total = 0m,
+         PaidTotal = 0m,
+         RemainingTotal = null,
+-        Message = BillCancelledMessage,
++        Message = refundClosed ? BillRefundedMessage : BillCancelledMessage,
+     };
+ }
+diff --git a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+index 03ce7b531..13454748d 100644
+--- a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+@@ -2,6 +2,8 @@ using ALKAROS.Billing.Adjustments;
+ using ALKAROS.Billing.BillFoundation;
+ using ALKAROS.Billing.PaymentClosure;
+ using ALKAROS.Host.DualScreen;
++using ALKAROS.Payments.PaymentAggregate;
++using System.Reflection;
+ using Xunit;
+ 
+ namespace ALKAROS.Host.Tests.DualScreen;
+@@ -218,6 +220,79 @@ public sealed class CustomerDisplayStatementTests
+         Assert.Null(result.RemainingTotal);
+     }
+ 
++    [Fact]
++    public void AnOrderWhoseBillClosedByRefundSaysTheRefundIsDoneNotThatTheBillWasCancelled()
++    {
++        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(), [], anyBillCancelled: true, refundClosed: true);
++
++        Assert.Equal("Idle", result.State);
++        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, result.Message);
++        Assert.Equal("İade tamamlandı.", result.Message);
++        Assert.Empty(result.Lines);
++    }
++
++    [Fact]
++    public void ARefundClosureOfATableOrderStillKeepsTheTableOrder()
++    {
++        var table = Snapshot(editable: true) with { TableNumber = "M-01" };
++
++        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true, refundClosed: true));
++    }
++
++    private static Payment PaymentIn(PaymentStatus status, decimal amount = 100m) => status switch
++    {
++        PaymentStatus.Refunded or PaymentStatus.Approved
++            => new Payment(Guid.NewGuid(), Guid.NewGuid(), amount, tenderedAmount: amount, approvedAmount: amount, status: status),
++        PaymentStatus.Initiated => new Payment(Guid.NewGuid(), Guid.NewGuid(), amount),
++        _ => new Payment(Guid.NewGuid(), Guid.NewGuid(), amount, tenderedAmount: amount, status: status),
++    };
++
++    /// <summary>Answers only the one repository call the display makes for a cancelled bill; any other call throws.</summary>
++    public class Fake<T> : DispatchProxy where T : class
++    {
++        public Func<string, object?[], object?> Answer { get; set; } = (_, _) => throw new NotSupportedException();
++
++        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => Answer(targetMethod!.Name, args!);
++    }
++
++    private static T Stub<T>(Func<string, object?[], object?> answer) where T : class
++    {
++        var proxy = DispatchProxy.Create<T, Fake<T>>();
++        ((Fake<T>)(object)proxy).Answer = answer;
++        return proxy;
++    }
++
++    private static async Task<CustomerDisplaySnapshotDto> AttachCancelledBills(params (Bill Bill, Payment[] Payments)[] cancelled)
++    {
++        var bills = Stub<IBillRepository>((_, _) => Task.FromResult<IReadOnlyList<Bill>>(cancelled.Select(c => c.Bill).ToList()));
++        var payments = Stub<IPaymentRepository>((_, args) =>
++            Task.FromResult<IReadOnlyList<Payment>>(cancelled.Single(c => c.Bill.Id == (Guid)args[0]!).Payments));
++        return await CustomerDisplayPaymentProgress.AttachAsync(Snapshot(), bills, null!, payments, null!, CancellationToken.None);
++    }
++
++    [Fact]
++    public async Task AttachingReadsTheCancelledBillsPaymentsAndNamesARefundClosureAsOne()
++    {
++        var refunded = Bill(Guid.NewGuid(), BillState.Cancelled);
++        var plain = Bill(Guid.NewGuid(), BillState.Cancelled);
++        Payment[] paidBack = [PaymentIn(PaymentStatus.Refunded)];
++
++        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack))).Message);
++        Assert.Equal(CustomerDisplayPaymentProgress.BillCancelledMessage, (await AttachCancelledBills((plain, []))).Message);
++        // One refunded bill among several cancelled ones is enough, whichever comes first or last.
++        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack), (plain, []))).Message);
++        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((plain, []), (refunded, paidBack))).Message);
++    }
++
++    [Fact]
++    public void ABillClosesByRefundOnlyWhenOneOfItsPaymentsWasPaidBack()
++    {
++        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Refunded)]));
++        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Declined), PaymentIn(PaymentStatus.Refunded)]));
++        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([]));
++        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Initiated), PaymentIn(PaymentStatus.Declined)]));
++    }
++
+     [Fact]
+     public void ACancelledBillNextToALiveOneIsIgnored()
+     {

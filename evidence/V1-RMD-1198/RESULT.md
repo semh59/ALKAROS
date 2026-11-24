@@ -1,0 +1,5 @@
+# V1-RMD-1198 sonuc
+Kok neden: musteri ekrani, tum hesaplari iptal olan siparisi bosa donerken sabit "Hesap iptal edildi." yazar; iade ile kapanan hesap (sunucu hesabi "Odeme iade edildi" nedeniyle iptal durumuna alir) ayni metni aliyordu.
+Duzeltme: CustomerDisplayPaymentProgress iptal edilmis hesabin odemelerini okur; en az biri Refunded ise "Iade tamamlandi." yazilir, odemesi olmayan gercek iptalde "Hesap iptal edildi." kalir. Masa siparisi ve canli hesap davranisi degismez.
+Kanit: red.log (2 kirmizi), green.log (27 test), mutations.txt R1-R6 killed (cp+cmp; R4-R6 AttachAsync yapistirmasi, sahte depolarla test edilir), build-final exit 0, plan-audit ve consistency-audit temiz.
+Acik risk: bir odeme tam iade edilmis, hesap baska bir odeme cozulunce elle iptal edilmisse ekran "Iade tamamlandi." der (para gercekten iade edildi, metin dogru ama olay iptal kaydi); kesin ayirici iptal nedeni (Bill modelinde alan yok, kapsam disi). Tutar henuz yazilmaz (V1-RMD-1199). Gercek ekranda/HTTP ucunda denenmedi.

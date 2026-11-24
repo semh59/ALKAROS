@@ -2,6 +2,8 @@ using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Payments.PaymentAggregate;
+using System.Reflection;
 using Xunit;
 
 namespace ALKAROS.Host.Tests.DualScreen;
@@ -216,6 +218,79 @@ public sealed class CustomerDisplayStatementTests
         Assert.Empty(result.Lines);
         Assert.Equal(0m, result.Subtotal + result.DiscountTotal + result.TipTotal + result.TaxTotal + result.Total + result.PaidTotal);
         Assert.Null(result.RemainingTotal);
+    }
+
+    [Fact]
+    public void AnOrderWhoseBillClosedByRefundSaysTheRefundIsDoneNotThatTheBillWasCancelled()
+    {
+        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(), [], anyBillCancelled: true, refundClosed: true);
+
+        Assert.Equal("Idle", result.State);
+        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, result.Message);
+        Assert.Equal("İade tamamlandı.", result.Message);
+        Assert.Empty(result.Lines);
+    }
+
+    [Fact]
+    public void ARefundClosureOfATableOrderStillKeepsTheTableOrder()
+    {
+        var table = Snapshot(editable: true) with { TableNumber = "M-01" };
+
+        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true, refundClosed: true));
+    }
+
+    private static Payment PaymentIn(PaymentStatus status, decimal amount = 100m) => status switch
+    {
+        PaymentStatus.Refunded or PaymentStatus.Approved
+            => new Payment(Guid.NewGuid(), Guid.NewGuid(), amount, tenderedAmount: amount, approvedAmount: amount, status: status),
+        PaymentStatus.Initiated => new Payment(Guid.NewGuid(), Guid.NewGuid(), amount),
+        _ => new Payment(Guid.NewGuid(), Guid.NewGuid(), amount, tenderedAmount: amount, status: status),
+    };
+
+    /// <summary>Answers only the one repository call the display makes for a cancelled bill; any other call throws.</summary>
+    public class Fake<T> : DispatchProxy where T : class
+    {
+        public Func<string, object?[], object?> Answer { get; set; } = (_, _) => throw new NotSupportedException();
+
+        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => Answer(targetMethod!.Name, args!);
+    }
+
+    private static T Stub<T>(Func<string, object?[], object?> answer) where T : class
+    {
+        var proxy = DispatchProxy.Create<T, Fake<T>>();
+        ((Fake<T>)(object)proxy).Answer = answer;
+        return proxy;
+    }
+
+    private static async Task<CustomerDisplaySnapshotDto> AttachCancelledBills(params (Bill Bill, Payment[] Payments)[] cancelled)
+    {
+        var bills = Stub<IBillRepository>((_, _) => Task.FromResult<IReadOnlyList<Bill>>(cancelled.Select(c => c.Bill).ToList()));
+        var payments = Stub<IPaymentRepository>((_, args) =>
+            Task.FromResult<IReadOnlyList<Payment>>(cancelled.Single(c => c.Bill.Id == (Guid)args[0]!).Payments));
+        return await CustomerDisplayPaymentProgress.AttachAsync(Snapshot(), bills, null!, payments, null!, CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task AttachingReadsTheCancelledBillsPaymentsAndNamesARefundClosureAsOne()
+    {
+        var refunded = Bill(Guid.NewGuid(), BillState.Cancelled);
+        var plain = Bill(Guid.NewGuid(), BillState.Cancelled);
+        Payment[] paidBack = [PaymentIn(PaymentStatus.Refunded)];
+
+        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack))).Message);
+        Assert.Equal(CustomerDisplayPaymentProgress.BillCancelledMessage, (await AttachCancelledBills((plain, []))).Message);
+        // One refunded bill among several cancelled ones is enough, whichever comes first or last.
+        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack), (plain, []))).Message);
+        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((plain, []), (refunded, paidBack))).Message);
+    }
+
+    [Fact]
+    public void ABillClosesByRefundOnlyWhenOneOfItsPaymentsWasPaidBack()
+    {
+        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Refunded)]));
+        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Declined), PaymentIn(PaymentStatus.Refunded)]));
+        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([]));
+        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Initiated), PaymentIn(PaymentStatus.Declined)]));
     }
 
     [Fact]
