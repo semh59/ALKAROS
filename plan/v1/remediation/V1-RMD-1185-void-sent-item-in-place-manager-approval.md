@@ -1,8 +1,8 @@
 # V1-RMD-1185 - Mutfağa giden kalemin iptali kasada yerinde yönetici onayıyla tamamlanır
 
 - Task ID: V1-RMD-1185
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
