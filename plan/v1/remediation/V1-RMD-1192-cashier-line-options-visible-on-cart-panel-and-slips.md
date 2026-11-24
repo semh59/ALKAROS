@@ -18,6 +18,7 @@ Kasiyer denemesi 18 (bulgu 1): seçenek (modifier) adları kasiyer ekranlarında
 ## Owned surface
 
 - `evidence/V1-RMD-1192/**`
+- `src/Clients/PosTerminal/src/routes/Cashier.line-options.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/DualScreen/DualScreenContracts.cs
   - src/Host/DualScreen/DualScreenStore.Display.cs
@@ -29,7 +30,6 @@ Kasiyer denemesi 18 (bulgu 1): seçenek (modifier) adları kasiyer ekranlarında
   - src/Clients/PosTerminal/src/strings.ts
   - src/Clients/PosTerminal/src/styles.css
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
-  - src/Clients/PosTerminal/src/routes/Cashier.line-options.test.tsx
   - src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
   - src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
   - src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts
