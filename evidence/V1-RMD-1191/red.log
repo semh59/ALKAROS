@@ -1,0 +1,103 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+stderr | src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+An update to KitchenOperationsWorkspace inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (71 tests | 4 failed) 3096ms
+       × shows the product total in a header and one line per combination below it, largest first 55ms
+       × treats empty options and note like none, collapses inner spaces and ignores cancelled items 41ms
+       × orders products by total and combinations by count, breaking ties by name so the order does not depend on arrival 65ms
+       × keeps each combination line at 14 px or larger 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > shows the product total in a header and one line per combination below it, largest first
+AssertionError: expected 3 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:216:27
+    214|         { quantity: 3, modifiers: null, notes: "soğansız" },
+    215|       ]);
+    216|       expect(rows.length).toBe(1);
+       |                           ^
+    217|       expect(rows[0].head).toBe("6×Mercimek çorbası");
+    218|       expect(rows[0].combos).toEqual(["3×Not: soğansız", "2×Ekstra pey…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > treats empty options and note like none, collapses inner spaces and ignores cancelled items
+AssertionError: expected null to be '7×Mercimek çorbası' // Object.is equality
+
+- Expected:
+"7×Mercimek çorbası"
+
++ Received:
+null
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:237:28
+    235|         { quantity: 9, modifiers: "Ekstra peynir", notes: null, status…
+    236|       ]);
+    237|       expect(rows[0].head).toBe("7×Mercimek çorbası");
+       |                            ^
+    238|       expect(rows[0].combos).toEqual(["5×Sade", "2×Not: az tuz"]);
+    239|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > orders products by total and combinations by count, breaking ties by name so the order does not depend on arrival
+AssertionError: expected [ '5×Börek', '2×Zeytinyağlı', …(2) ] to deeply equal [ '5×Börek', '2×Armut tatlısı', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "5×Börek",
+-   "2×Armut tatlısı",
+    "2×Zeytinyağlı",
++   "1×Armut tatlısıZeytin",
++   "1×Armut tatlısıAyva",
+  ]
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:257:55
+    255|         { productId: "p-b", productName: "Börek", quantity: 5, modifie…
+    256|       ]);
+    257|       expect(rows.map((row) => row.head ?? row.text)).toEqual(["5×Böre…
+       |                                                       ^
+    258|       expect(rows[1].combos).toEqual(["1×Ayva", "1×Zeytin"]);
+    259|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > keeps each combination line at 14 px or larger
+TypeError: The URL must be of scheme file
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:262:19
+    260|
+    261|     it("keeps each combination line at 14 px or larger", () => {
+    262|       const css = readFileSync(new URL("./kitchen-operations.css", imp…
+       |                   ^
+    263|       const rule = css.match(/\.kitchen-allday-combo\s*\{[^}]*\}/)?.[0…
+    264|       expect(rule).toMatch(/font-size:\s*(\.875|0\.875|1)/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 67 passed (71)
+   Start at  14:19:26
+   Duration  5.19s (transform 320ms, setup 0ms, import 510ms, tests 3.10s, environment 1.28s)
+

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (73 tests | 1 failed) 1853ms
+       × labels each nested combination list with its product and passes axe 33ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > labels each nested combination list with its product and passes axe
+AssertionError: expected null to be 'Mercimek çorbası seçenekleri' // Object.is equality
+
+- Expected:
+"Mercimek çorbası seçenekleri"
+
++ Received:
+null
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:274:92
+    272|     it("labels each nested combination list with its product and passe…
+    273|       await allDay([{ quantity: 1, modifiers: "Ekstra peynir", notes: …
+    274|       expect(document.querySelector(".kitchen-allday-combos")?.getAttr…
+       |                                                                                            ^
+    275|       const report = await axe.run(document, { rules: { "color-contras…
+    276|       expect(report.violations.filter((violation) => violation.impact …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 72 passed (73)
+   Start at  14:23:27
+   Duration  3.58s (transform 284ms, setup 0ms, import 482ms, tests 1.85s, environment 950ms)
+

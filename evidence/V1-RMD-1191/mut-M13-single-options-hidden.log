@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (71 tests | 1 failed) 1712ms
+       × renders a product with a single combination as one line with the count, options and note, without a nested list 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > renders a product with a single combination as one line with the count, options and note, without a nested list
+AssertionError: expected '3×Mercimek çorbasıNot: soğansız' to be '3×Mercimek çorbasıEkstra peynirNot: s…' // Object.is equality
+
+Expected: "3×Mercimek çorbasıEkstra peynirNot: soğansız"
+Received: "3×Mercimek çorbasıNot: soğansız"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:226:28
+    224|       expect(rows[0].head).toBeNull();
+    225|       expect(rows[0].combos).toEqual([]);
+    226|       expect(rows[0].text).toBe("3×Mercimek çorbasıEkstra peynirNot: s…
+       |                            ^
+    227|     });
+    228|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 70 passed (71)
+   Start at  14:21:37
+   Duration  3.40s (transform 255ms, setup 0ms, import 429ms, tests 1.71s, environment 1.01s)
+

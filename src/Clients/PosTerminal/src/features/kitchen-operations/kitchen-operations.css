@@ -36,6 +36,12 @@
 .kitchen-allday-row__name { font-weight: 700; font-size: clamp(1rem, .3vw + .95rem, 1.15rem); }
 .kitchen-allday-row__detail { color: var(--ds-color-muted); font-size: .875rem; }
 .kitchen-allday-row__detail--note { color: var(--ds-color-warning); font-weight: 700; }
+.kitchen-allday-row--group { display: grid; gap: .5rem; }
+.kitchen-allday-row__head { display: flex; align-items: baseline; gap: .75rem; }
+.kitchen-allday-row__head .kitchen-allday-row__name { font-size: clamp(1.15rem, .5vw + 1.05rem, 1.4rem); font-weight: 800; }
+.kitchen-allday-combos { display: grid; gap: .25rem; list-style: none; margin: 0; padding: 0 0 0 1.5rem; }
+.kitchen-allday-combo { display: flex; align-items: baseline; gap: .6rem; font-size: 1rem; }
+.kitchen-allday-combo__qty { font-family: var(--ds-font-mono); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--ds-color-brand); }
 
 /* V1-KIT-014/V1-KDS-009: performans raporu — istasyon tablosu + saatlik
    çubuk grafik, ek bir kütüphane olmadan düz CSS ile. */

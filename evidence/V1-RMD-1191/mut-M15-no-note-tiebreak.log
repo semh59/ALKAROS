@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (73 tests | 1 failed) 2103ms
+       × keeps two products with the same name but different ids apart and breaks equal combinations by note 36ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > keeps two products with the same name but different ids apart and breaks equal combinations by note
+AssertionError: expected [ '1×Not: tuzlu', '1×Not: acılı' ] to deeply equal [ '1×Not: acılı', '1×Not: tuzlu' ]
+
+- Expected
++ Received
+
+  [
+-   "1×Not: acılı",
+    "1×Not: tuzlu",
++   "1×Not: acılı",
+  ]
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:269:30
+    267|       expect(rows.length).toBe(2);
+    268|       expect(rows[0].head).toBe("2×Çorba");
+    269|       expect(rows[0].combos).toEqual(["1×Not: acılı", "1×Not: tuzlu"]);
+       |                              ^
+    270|     });
+    271|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 72 passed (73)
+   Start at  14:23:20
+   Duration  3.76s (transform 249ms, setup 0ms, import 419ms, tests 2.10s, environment 970ms)
+

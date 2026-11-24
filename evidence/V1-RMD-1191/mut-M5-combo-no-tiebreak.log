@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (71 tests | 1 failed) 1988ms
+       × orders products by total and combinations by count, breaking ties by name so the order does not depend on arrival 49ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > orders products by total and combinations by count, breaking ties by name so the order does not depend on arrival
+AssertionError: expected [ '1×Zeytin', '1×Ayva' ] to deeply equal [ '1×Ayva', '1×Zeytin' ]
+
+- Expected
++ Received
+
+  [
+-   "1×Ayva",
+    "1×Zeytin",
++   "1×Ayva",
+  ]
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:258:30
+    256|       ]);
+    257|       expect(rows.map((row) => row.head ?? row.text)).toEqual(["5×Böre…
+    258|       expect(rows[1].combos).toEqual(["1×Ayva", "1×Zeytin"]);
+       |                              ^
+    259|     });
+    260|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 70 passed (71)
+   Start at  14:20:48
+   Duration  3.84s (transform 264ms, setup 0ms, import 450ms, tests 1.99s, environment 1.14s)
+

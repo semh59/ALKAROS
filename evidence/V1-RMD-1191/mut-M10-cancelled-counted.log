@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (71 tests | 2 failed) 1779ms
+     × Tüm Gün Görünümü totals the same product across separate tickets and excludes cancelled/served items 39ms
+       × treats empty options and note like none, collapses inner spaces and ignores cancelled items 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü totals the same product across separate tickets and excludes cancelled/served items
+AssertionError: expected '104×Mercimek çorbasıEkmeği ayrıNot: a…' to contain '5×'
+
+Expected: "5×"
+Received: "104×Mercimek çorbasıEkmeği ayrıNot: az tuz"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:192:33
+    190|     const rows = document.querySelectorAll(".kitchen-allday-row");
+    191|     expect(rows.length).toBe(1);
+    192|     expect(rows[0].textContent).toContain("5×");
+       |                                 ^
+    193|     expect(rows[0].textContent).toContain("Mercimek çorbası");
+    194|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > treats empty options and note like none, collapses inner spaces and ignores cancelled items
+AssertionError: expected '16×Mercimek çorbası' to be '7×Mercimek çorbası' // Object.is equality
+
+Expected: "7×Mercimek çorbası"
+Received: "16×Mercimek çorbası"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:237:28
+    235|         { quantity: 9, modifiers: "Ekstra peynir", notes: null, status…
+    236|       ]);
+    237|       expect(rows[0].head).toBe("7×Mercimek çorbası");
+       |                            ^
+    238|       expect(rows[0].combos).toEqual(["5×Sade", "2×Not: az tuz"]);
+    239|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 69 passed (71)
+   Start at  14:21:20
+   Duration  3.46s (transform 260ms, setup 0ms, import 434ms, tests 1.78s, environment 993ms)
+

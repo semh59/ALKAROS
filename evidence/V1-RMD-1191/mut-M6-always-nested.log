@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (71 tests | 1 failed) 2088ms
+       × renders a product with a single combination as one line with the count, options and note, without a nested list 33ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > renders a product with a single combination as one line with the count, options and note, without a nested list
+AssertionError: expected '3×Mercimek çorbası' to be null
+
+- Expected:
+null
+
++ Received:
+"3×Mercimek çorbası"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:224:28
+    222|       const rows = await allDay([{ quantity: 1, modifiers: "Ekstra pey…
+    223|       expect(rows.length).toBe(1);
+    224|       expect(rows[0].head).toBeNull();
+       |                            ^
+    225|       expect(rows[0].combos).toEqual([]);
+    226|       expect(rows[0].text).toBe("3×Mercimek çorbasıEkstra peynirNot: s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 70 passed (71)
+   Start at  14:20:55
+   Duration  3.91s (transform 268ms, setup 0ms, import 448ms, tests 2.09s, environment 1.10s)
+

@@ -1,0 +1,201 @@
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+index b40c1a345..de8392936 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+@@ -3,6 +3,7 @@
+ import { act, type ComponentProps, type ReactElement } from "react";
+ import { createRoot, type Root } from "react-dom/client";
+ import axe from "axe-core";
++import { readFileSync } from "node:fs";
+ import { afterEach, describe, expect, it, vi } from "vitest";
+ import { KitchenOperationsWorkspace, type KitchenData } from "./index";
+ import { KitchenOperationsApiError } from "./kitchenApi";
+@@ -192,46 +193,93 @@ describe("kitchen operations workspace", () => {
+     expect(rows[0].textContent).toContain("Mercimek çorbası");
+   });
+ 
+-  describe("Tüm Gün Görünümü groups by product, options and note", () => {
+-    async function allDayRows(items: Array<{ quantity: number; modifiers: string | null; notes: string | null; status?: "Cancelled" }>) {
++  describe("Tüm Gün Görünümü groups by product with a total header over option/note combinations", () => {
++    type Line = { productId?: string; productName?: string; quantity: number; modifiers: string | null; notes: string | null; status?: "Cancelled" };
++    async function allDay(items: Line[]) {
+       const base = data.tickets[0].items[0];
+       const ticket = { ...data.tickets[0], items: items.map((item, index) => ({ ...base, status: "Queued" as const, ...item, id: `item-${index}` })) };
+       await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, tickets: [ticket] } })} />);
+       await click([...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent?.includes("Tüm Gün"))!);
+-      return [...document.querySelectorAll(".kitchen-allday-row")].map((row) => row.textContent ?? "");
++      return [...document.querySelectorAll(".kitchen-allday-row")].map((row) => ({
++        text: row.textContent ?? "",
++        head: row.querySelector(".kitchen-allday-row__head")?.textContent ?? null,
++        combos: [...row.querySelectorAll(".kitchen-allday-combo")].map((combo) => combo.textContent ?? ""),
++      }));
+     }
+ 
+-    it("keeps a note-free item and an item with a note on separate rows, each with its own count and the note visible", async () => {
+-      const rows = await allDayRows([{ quantity: 1, modifiers: null, notes: null }, { quantity: 1, modifiers: null, notes: "soğansız" }]);
+-      expect(rows.length).toBe(2);
+-      expect(rows.filter((row) => row.includes("soğansız")).length).toBe(1);
+-      expect(rows.every((row) => row.startsWith("1×"))).toBe(true);
++    it("shows the product total in a header and one line per combination below it, largest first", async () => {
++      const rows = await allDay([
++        { quantity: 1, modifiers: null, notes: null },
++        { quantity: 2, modifiers: "Ekstra peynir", notes: null },
++        { quantity: 3, modifiers: null, notes: "soğansız" },
++      ]);
++      expect(rows.length).toBe(1);
++      expect(rows[0].head).toBe("6×Mercimek çorbası");
++      expect(rows[0].combos).toEqual(["3×Not: soğansız", "2×Ekstra peynir", "1×Sade"]);
+     });
+ 
+-    it("keeps different options on separate rows and shows them", async () => {
+-      const rows = await allDayRows([{ quantity: 2, modifiers: "Ekstra peynir", notes: null }, { quantity: 1, modifiers: null, notes: null }]);
+-      expect(rows.length).toBe(2);
+-      expect(rows.some((row) => row.startsWith("2×") && row.includes("Ekstra peynir"))).toBe(true);
++    it("renders a product with a single combination as one line with the count, options and note, without a nested list", async () => {
++      const rows = await allDay([{ quantity: 1, modifiers: "Ekstra peynir", notes: "soğansız" }, { quantity: 2, modifiers: "Ekstra peynir", notes: " soğansız " }]);
++      expect(rows.length).toBe(1);
++      expect(rows[0].head).toBeNull();
++      expect(rows[0].combos).toEqual([]);
++      expect(rows[0].text).toBe("3×Mercimek çorbasıEkstra peynirNot: soğansız");
+     });
+ 
+-    it("treats empty options and note like none, collapses inner spaces, lists the larger group first", async () => {
+-      const rows = await allDayRows([
++    it("treats empty options and note like none, collapses inner spaces and ignores cancelled items", async () => {
++      const rows = await allDay([
+         { quantity: 1, modifiers: "", notes: "az   tuz" },
+         { quantity: 1, modifiers: null, notes: "az tuz" },
+         { quantity: 1, modifiers: " , ", notes: "   " },
+         { quantity: 4, modifiers: null, notes: null },
+         { quantity: 9, modifiers: "Ekstra peynir", notes: null, status: "Cancelled" },
+       ]);
+-      expect(rows.map((row) => row.slice(0, 2))).toEqual(["5×", "2×"]);
++      expect(rows[0].head).toBe("7×Mercimek çorbası");
++      expect(rows[0].combos).toEqual(["5×Sade", "2×Not: az tuz"]);
+     });
+ 
+-    it("sums identical product, options and note, whatever order the options arrive in", async () => {
+-      const rows = await allDayRows([
+-        { quantity: 1, modifiers: "Ekstra peynir, Az acılı", notes: "soğansız" },
+-        { quantity: 2, modifiers: "Az acılı, Ekstra peynir", notes: " soğansız " },
++    it("sums identical options whatever order they arrive in", async () => {
++      const rows = await allDay([
++        { quantity: 1, modifiers: "Ekstra peynir, Az acılı", notes: null },
++        { quantity: 2, modifiers: "Az acılı, Ekstra peynir", notes: null },
+       ]);
+       expect(rows.length).toBe(1);
+-      expect(rows[0].startsWith("3×")).toBe(true);
++      expect(rows[0].text.startsWith("3×")).toBe(true);
++    });
++
++    it("orders products by total and combinations by count, breaking ties by name so the order does not depend on arrival", async () => {
++      const rows = await allDay([
++        { productId: "p-a", productName: "Zeytinyağlı", quantity: 2, modifiers: null, notes: null },
++        { productId: "p-z", productName: "Armut tatlısı", quantity: 1, modifiers: "Zeytin", notes: null },
++        { productId: "p-z", productName: "Armut tatlısı", quantity: 1, modifiers: "Ayva", notes: null },
++        { productId: "p-b", productName: "Börek", quantity: 5, modifiers: null, notes: null },
++      ]);
++      expect(rows.map((row) => row.head ?? row.text)).toEqual(["5×Börek", "2×Armut tatlısı", "2×Zeytinyağlı"]);
++      expect(rows[1].combos).toEqual(["1×Ayva", "1×Zeytin"]);
++    });
++
++    it("keeps two products with the same name but different ids apart and breaks equal combinations by note", async () => {
++      const rows = await allDay([
++        { productId: "p-1", productName: "Çorba", quantity: 1, modifiers: null, notes: "tuzlu" },
++        { productId: "p-1", productName: "Çorba", quantity: 1, modifiers: null, notes: "acılı" },
++        { productId: "p-2", productName: "Çorba", quantity: 1, modifiers: null, notes: null },
++      ]);
++      expect(rows.length).toBe(2);
++      expect(rows[0].head).toBe("2×Çorba");
++      expect(rows[0].combos).toEqual(["1×Not: acılı", "1×Not: tuzlu"]);
++    });
++
++    it("labels each nested combination list with its product and passes axe", async () => {
++      await allDay([{ quantity: 1, modifiers: "Ekstra peynir", notes: null }, { quantity: 1, modifiers: null, notes: "soğansız" }]);
++      expect(document.querySelector(".kitchen-allday-combos")?.getAttribute("aria-label")).toBe("Mercimek çorbası seçenekleri");
++      const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });
++      expect(report.violations.filter((violation) => violation.impact === "critical" || violation.impact === "serious")).toEqual([]);
++    });
++
++    it("keeps each combination line at 14 px or larger", () => {
++      const css = readFileSync("src/features/kitchen-operations/kitchen-operations.css", "utf8");
++      const rule = css.match(/\.kitchen-allday-combo\s*\{[^}]*\}/)?.[0] ?? "";
++      expect(rule).toMatch(/font-size:\s*(\.875|0\.875|1|1\.\d+)rem/);
+     });
+   });
+ 
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+index 5f62acd05..fd62aa252 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+@@ -247,22 +247,34 @@ export function KitchenOperationsWorkspace({
+   // enum ever grows one - this filter is the one place that exclusion
+   // belongs, so it isn't forgotten when that day comes.
+   // V1-RMD-1190: batch prep must not merge an item with a note with a plain one, so
+-  // the group key is product + sorted options + note (option order is not part
+-  // of the identity).
++  // a combination is product + sorted options + note (option order is not part
++  // of the identity). V1-RMD-1191: combinations sit under one product header that
++  // carries the product total; ties break by name so the order never depends on
++  // which ticket arrived first.
+   const allDayGroups = useMemo(() => {
+-    const groups = new Map<string, { key: string; productName: string; options: string; note: string; quantity: number }>();
++    type Combo = { options: string; note: string; quantity: number };
++    const products = new Map<string, { productName: string; quantity: number; combos: Map<string, Combo> }>();
+     for (const ticket of activeTickets) {
+       for (const item of ticket.items) {
+         if (item.status === "Cancelled" || item.status === "Served") continue;
+         const options = (item.modifiers ?? "").split(",").map((option) => option.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
+         const note = (item.notes ?? "").trim().replace(/\s+/g, " ");
+-        const key = JSON.stringify([item.productId, options, note]);
+-        const existing = groups.get(key);
+-        if (existing) existing.quantity += item.quantity;
+-        else groups.set(key, { key, productName: item.productName, options, note, quantity: item.quantity });
++        const product = products.get(item.productId) ?? { productName: item.productName, quantity: 0, combos: new Map<string, Combo>() };
++        products.set(item.productId, product);
++        product.quantity += item.quantity;
++        const key = JSON.stringify([options, note]);
++        const combo = product.combos.get(key);
++        if (combo) combo.quantity += item.quantity;
++        else product.combos.set(key, { options, note, quantity: item.quantity });
+       }
+     }
+-    return [...groups.values()].sort((a, b) => b.quantity - a.quantity);
++    const tr = (a: string, b: string) => a.localeCompare(b, "tr");
++    return [...products].map(([productId, product]) => ({
++      productId,
++      productName: product.productName,
++      quantity: product.quantity,
++      combos: [...product.combos.values()].sort((a, b) => b.quantity - a.quantity || tr(a.options, b.options) || tr(a.note, b.note)),
++    })).sort((a, b) => b.quantity - a.quantity || tr(a.productName, b.productName) || tr(a.productId, b.productId));
+   }, [activeTickets]);
+ 
+   const openProducts = useMemo(() => {
+@@ -514,7 +526,9 @@ export function KitchenOperationsWorkspace({
+           <PerformanceReportPanel report={report} state={reportState} />
+         ) : viewMode === "allday" ? (
+           allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
+-            {allDayGroups.map((group) => <li key={group.key} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__body"><span className="kitchen-allday-row__name">{group.productName}</span>{group.options && <span className="kitchen-allday-row__detail">{group.options}</span>}{group.note && <span className="kitchen-allday-row__detail kitchen-allday-row__detail--note">Not: {group.note}</span>}</span></li>)}
++            {allDayGroups.map((group) => group.combos.length === 1
++              ? <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__body"><span className="kitchen-allday-row__name">{group.productName}</span>{group.combos[0].options && <span className="kitchen-allday-row__detail">{group.combos[0].options}</span>}{group.combos[0].note && <span className="kitchen-allday-row__detail kitchen-allday-row__detail--note">Not: {group.combos[0].note}</span>}</span></li>
++              : <li key={group.productId} className="kitchen-allday-row kitchen-allday-row--group"><div className="kitchen-allday-row__head"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></div><ul className="kitchen-allday-combos" aria-label={`${group.productName} seçenekleri`}>{group.combos.map((combo) => <li key={JSON.stringify([combo.options, combo.note])} className="kitchen-allday-combo"><span className="kitchen-allday-combo__qty">{combo.quantity}×</span><span className="kitchen-allday-row__body">{combo.options && <span>{combo.options}</span>}{combo.note && <span className="kitchen-allday-row__detail--note">Not: {combo.note}</span>}{!combo.options && !combo.note && <span className="kitchen-allday-row__detail">Sade</span>}</span></li>)}</ul></li>)}
+           </ul>
+         ) : state === "empty" || (orderGroups.length === 0 && readyGroups.length === 0) ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : <>
+           {orderGroups.map(renderGroup)}
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
+index f3f60ae15..d938743e9 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
+@@ -36,6 +36,12 @@
+ .kitchen-allday-row__name { font-weight: 700; font-size: clamp(1rem, .3vw + .95rem, 1.15rem); }
+ .kitchen-allday-row__detail { color: var(--ds-color-muted); font-size: .875rem; }
+ .kitchen-allday-row__detail--note { color: var(--ds-color-warning); font-weight: 700; }
++.kitchen-allday-row--group { display: grid; gap: .5rem; }
++.kitchen-allday-row__head { display: flex; align-items: baseline; gap: .75rem; }
++.kitchen-allday-row__head .kitchen-allday-row__name { font-size: clamp(1.15rem, .5vw + 1.05rem, 1.4rem); font-weight: 800; }
++.kitchen-allday-combos { display: grid; gap: .25rem; list-style: none; margin: 0; padding: 0 0 0 1.5rem; }
++.kitchen-allday-combo { display: flex; align-items: baseline; gap: .6rem; font-size: 1rem; }
++.kitchen-allday-combo__qty { font-family: var(--ds-font-mono); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--ds-color-brand); }
+ 
+ /* V1-KIT-014/V1-KDS-009: performans raporu — istasyon tablosu + saatlik
+    çubuk grafik, ek bir kütüphane olmadan düz CSS ile. */

@@ -247,22 +247,34 @@ export function KitchenOperationsWorkspace({
   // enum ever grows one - this filter is the one place that exclusion
   // belongs, so it isn't forgotten when that day comes.
   // V1-RMD-1190: batch prep must not merge an item with a note with a plain one, so
-  // the group key is product + sorted options + note (option order is not part
-  // of the identity).
+  // a combination is product + sorted options + note (option order is not part
+  // of the identity). V1-RMD-1191: combinations sit under one product header that
+  // carries the product total; ties break by name so the order never depends on
+  // which ticket arrived first.
   const allDayGroups = useMemo(() => {
-    const groups = new Map<string, { key: string; productName: string; options: string; note: string; quantity: number }>();
+    type Combo = { options: string; note: string; quantity: number };
+    const products = new Map<string, { productName: string; quantity: number; combos: Map<string, Combo> }>();
     for (const ticket of activeTickets) {
       for (const item of ticket.items) {
         if (item.status === "Cancelled" || item.status === "Served") continue;
         const options = (item.modifiers ?? "").split(",").map((option) => option.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
         const note = (item.notes ?? "").trim().replace(/\s+/g, " ");
-        const key = JSON.stringify([item.productId, options, note]);
-        const existing = groups.get(key);
-        if (existing) existing.quantity += item.quantity;
-        else groups.set(key, { key, productName: item.productName, options, note, quantity: item.quantity });
+        const product = products.get(item.productId) ?? { productName: item.productName, quantity: 0, combos: new Map<string, Combo>() };
+        products.set(item.productId, product);
+        product.quantity += item.quantity;
+        const key = JSON.stringify([options, note]);
+        const combo = product.combos.get(key);
+        if (combo) combo.quantity += item.quantity;
+        else product.combos.set(key, { options, note, quantity: item.quantity });
       }
     }
-    return [...groups.values()].sort((a, b) => b.quantity - a.quantity);
+    const tr = (a: string, b: string) => a.localeCompare(b, "tr");
+    return [...products].map(([productId, product]) => ({
+      productId,
+      productName: product.productName,
+      quantity: product.quantity,
+      combos: [...product.combos.values()].sort((a, b) => b.quantity - a.quantity || tr(a.options, b.options) || tr(a.note, b.note)),
+    })).sort((a, b) => b.quantity - a.quantity || tr(a.productName, b.productName) || tr(a.productId, b.productId));
   }, [activeTickets]);
 
   const openProducts = useMemo(() => {
@@ -514,7 +526,9 @@ export function KitchenOperationsWorkspace({
           <PerformanceReportPanel report={report} state={reportState} />
         ) : viewMode === "allday" ? (
           allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
-            {allDayGroups.map((group) => <li key={group.key} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__body"><span className="kitchen-allday-row__name">{group.productName}</span>{group.options && <span className="kitchen-allday-row__detail">{group.options}</span>}{group.note && <span className="kitchen-allday-row__detail kitchen-allday-row__detail--note">Not: {group.note}</span>}</span></li>)}
+            {allDayGroups.map((group) => group.combos.length === 1
+              ? <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__body"><span className="kitchen-allday-row__name">{group.productName}</span>{group.combos[0].options && <span className="kitchen-allday-row__detail">{group.combos[0].options}</span>}{group.combos[0].note && <span className="kitchen-allday-row__detail kitchen-allday-row__detail--note">Not: {group.combos[0].note}</span>}</span></li>
+              : <li key={group.productId} className="kitchen-allday-row kitchen-allday-row--group"><div className="kitchen-allday-row__head"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></div><ul className="kitchen-allday-combos" aria-label={`${group.productName} seçenekleri`}>{group.combos.map((combo) => <li key={JSON.stringify([combo.options, combo.note])} className="kitchen-allday-combo"><span className="kitchen-allday-combo__qty">{combo.quantity}×</span><span className="kitchen-allday-row__body">{combo.options && <span>{combo.options}</span>}{combo.note && <span className="kitchen-allday-row__detail--note">Not: {combo.note}</span>}{!combo.options && !combo.note && <span className="kitchen-allday-row__detail">Sade</span>}</span></li>)}</ul></li>)}
           </ul>
         ) : state === "empty" || (orderGroups.length === 0 && readyGroups.length === 0) ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : <>
           {orderGroups.map(renderGroup)}

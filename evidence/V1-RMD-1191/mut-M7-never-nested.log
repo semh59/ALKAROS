@@ -1,0 +1,77 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (71 tests | 3 failed) 1775ms
+       × shows the product total in a header and one line per combination below it, largest first 32ms
+       × treats empty options and note like none, collapses inner spaces and ignores cancelled items 25ms
+       × orders products by total and combinations by count, breaking ties by name so the order does not depend on arrival 37ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > shows the product total in a header and one line per combination below it, largest first
+AssertionError: expected null to be '6×Mercimek çorbası' // Object.is equality
+
+- Expected:
+"6×Mercimek çorbası"
+
++ Received:
+null
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:217:28
+    215|       ]);
+    216|       expect(rows.length).toBe(1);
+    217|       expect(rows[0].head).toBe("6×Mercimek çorbası");
+       |                            ^
+    218|       expect(rows[0].combos).toEqual(["3×Not: soğansız", "2×Ekstra pey…
+    219|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > treats empty options and note like none, collapses inner spaces and ignores cancelled items
+AssertionError: expected null to be '7×Mercimek çorbası' // Object.is equality
+
+- Expected:
+"7×Mercimek çorbası"
+
++ Received:
+null
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:237:28
+    235|         { quantity: 9, modifiers: "Ekstra peynir", notes: null, status…
+    236|       ]);
+    237|       expect(rows[0].head).toBe("7×Mercimek çorbası");
+       |                            ^
+    238|       expect(rows[0].combos).toEqual(["5×Sade", "2×Not: az tuz"]);
+    239|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > orders products by total and combinations by count, breaking ties by name so the order does not depend on arrival
+AssertionError: expected [ '5×Börek', …(2) ] to deeply equal [ '5×Börek', '2×Armut tatlısı', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "5×Börek",
+-   "2×Armut tatlısı",
++   "2×Armut tatlısıAyva",
+    "2×Zeytinyağlı",
+  ]
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:257:55
+    255|         { productId: "p-b", productName: "Börek", quantity: 5, modifie…
+    256|       ]);
+    257|       expect(rows.map((row) => row.head ?? row.text)).toEqual(["5×Böre…
+       |                                                       ^
+    258|       expect(rows[1].combos).toEqual(["1×Ayva", "1×Zeytin"]);
+    259|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 68 passed (71)
+   Start at  14:21:01
+   Duration  3.46s (transform 253ms, setup 0ms, import 429ms, tests 1.78s, environment 986ms)
+

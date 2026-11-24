@@ -1,0 +1,6 @@
+# V1-RMD-1191 sonuc
+Duzeltme: Tum Gun ozeti urun bazinda gruplanir. Birden cok kombinasyonlu urun: baslik (ad + TOPLAM adet, buyuk) + altinda kombinasyon satirlari (secenek + not + adet, 1rem; bos olan "Sade"). Tek kombinasyon: tek satir, ic ice yok. Urunler toplama gore azalan, kombinasyonlar adede gore azalan; esitlikte tr ad/secenek/not sirasi (gelis sirasindan bagimsiz). Ic ul aria-label "<urun> secenekleri".
+Kanit: red.log (4 kirmizi), green.log (124 test, mutfak klasoru), mutations.txt M1-M16 killed (cp+cmp), client-build-gate exit 0, plan-audit ve consistency-audit temiz.
+Virgul riski (1190 risk 1): DOGRULANDI, cozulemedi. Sunucu KitchenTicket.cs:~362 seceneklerin hepsini ", " ile tek dize (modifiersSummary) birlestirir; istemci modelinde (models.ts:31) ayri dizi yok. Secenek adinda virgul varsa istemci boler (ayni kombinasyonlar yine ayni gruba duser, yalniz goruntu sirasi/ayrisma etkilenir). Kalici cozum sunucu sozlesmesinde ayri dizi alani; bu gorevin sahipligi disinda, ayri gorev gerekir.
+Belge: plan V1-KDS-008:38/67 ve docs/engineering/kitchen-allday-view-and-performance-report-research.md:109 hala "yalniz urun bazli" diyor; sahibi baska gorev, DOKUNULMADI. docs/CASHIER_UI_RULES.md Tum Gun'u anmiyor, dokunulmadi.
+Acik risk: gercek tarayicida gorsel olcum yok; ayni productId farkli adla gelirse baslik ilk kalemin adini alir.

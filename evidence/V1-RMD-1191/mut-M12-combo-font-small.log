@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (71 tests | 1 failed) 1725ms
+       × keeps each combination line at 14 px or larger 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product with a total header over option/note combinations > keeps each combination line at 14 px or larger
+AssertionError: expected '.kitchen-allday-combo { display: flex…' to match /font-size:\s*(\.875|0\.875|1)/
+
+- Expected:
+/font-size:\s*(\.875|0\.875|1)/
+
++ Received:
+".kitchen-allday-combo { display: flex; align-items: baseline; gap: .6rem; font-size: .8rem; }"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:264:20
+    262|       const css = readFileSync("src/features/kitchen-operations/kitche…
+    263|       const rule = css.match(/\.kitchen-allday-combo\s*\{[^}]*\}/)?.[0…
+    264|       expect(rule).toMatch(/font-size:\s*(\.875|0\.875|1)/);
+       |                    ^
+    265|     });
+    266|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 70 passed (71)
+   Start at  14:21:31
+   Duration  3.39s (transform 249ms, setup 0ms, import 419ms, tests 1.73s, environment 997ms)
+
