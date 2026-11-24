@@ -1,8 +1,8 @@
 # V1-RMD-1187 - Kalem notu masa detay panelinde ve ön hesap fişinde görünür
 
 - Task ID: V1-RMD-1187
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
