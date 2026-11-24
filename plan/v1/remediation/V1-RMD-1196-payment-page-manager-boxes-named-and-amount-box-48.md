@@ -24,6 +24,8 @@ Kasiyer denemesi 18 (bulgu 5, 6): aynı ödeme sayfasında iki ayrı "Yönetici 
   - tests/Clients/StaticApps/split-payment-refund-approve-here.test.js
   - tests/Clients/StaticApps/split-payment-receipt-reset.test.js
   - tests/Clients/StaticApps/split-payment-discount-pending.test.js
+  - tests/Clients/StaticApps/split-payment-approval-restore.test.js
+  - tests/Clients/StaticApps/split-payment-comp.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
