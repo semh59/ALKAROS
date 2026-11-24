@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done, with the amount and the ExternalCard note, when the approval closed the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532518645-0.3547163719821871:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532518645-0.3547163719821871:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532518645-0.3547163719821871:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done when the card refund's slip number closes the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532519086-0.5969357668875835:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532519086-0.5969357668875835:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532519086-0.5969357668875835:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (34 tests | 2 failed) 6605ms
+     × says the refund is done, with the amount and the ExternalCard note, when the approval closed the bill 212ms
+     × says the refund is done when the card refund's slip number closes the bill 253ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done, with the amount and the ExternalCard note, when the approval closed the bill
+AssertionError: expected '✓İade Tamamlandı₺100,00 iade edildi. …' to contain '₺100,00 iade edildi. Kart iadesi bank…'
+
+Expected: "₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı; iade fişi: IF-7781."
+Received: "✓İade Tamamlandı₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:282:31
+    280|
+    281|     await vi.waitFor(() => expect(app().textContent).toContain("İade T…
+    282|     expect(app().textContent).toContain(sentence);
+       |                               ^
+    283|     expect(app().textContent).toContain("Hesap iade sonrası kapandı.");
+    284|     expect(app().textContent).not.toContain("Hesap İptal Edildi");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done when the card refund's slip number closes the bill
+AssertionError: expected '✓İade Tamamlandı₺100,00 iade edildi. …' to contain 'iade fişi: IF-7781'
+
+Expected: "iade fişi: IF-7781"
+Received: "✓İade Tamamlandı₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:300:31
+    298|
+    299|     await vi.waitFor(() => expect(app().textContent).toContain("İade T…
+    300|     expect(app().textContent).toContain("iade fişi: IF-7781");
+       |                               ^
+    301|     expect(app().textContent).not.toContain("Hesap İptal Edildi");
+    302|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  2 failed | 58 passed (60)
+   Start at  18:01:53
+   Duration  8.22s (transform 5.78s, setup 128ms, import 285ms, tests 14.22s, environment 4.74s)
+

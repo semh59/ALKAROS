@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refund-approve-here.test.js > split-payment.js a manager approving a refund at the till > says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532469139-0.9155017447037641:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532469139-0.9155017447037641:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532469139-0.9155017447037641:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refund-approve-here.test.js (6 tests | 1 failed) 2551ms
+     × says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill 1239ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refund-approve-here.test.js > split-payment.js a manager approving a refund at the till > says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill
+AssertionError: expected '!Hesap İptal EdildiBu hesap iptal edi…' to contain 'İade Tamamlandı'
+
+Expected: "İade Tamamlandı"
+Received: "!Hesap İptal EdildiBu hesap iptal edildi. Sipariş için gerekirse yeni hesap açılabilir.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refund-approve-here.test.js:100:79
+     98|     press();
+     99|
+    100|     await vi.waitFor(() => expect(document.getElementById("app").textC…
+       |                                                                               ^
+    101|     expect(document.getElementById("app").textContent).toContain("₺100…
+    102|     expect(document.getElementById("app").textContent).not.toContain("…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 59 passed (60)
+   Start at  18:01:06
+   Duration  7.98s (transform 5.41s, setup 114ms, import 283ms, tests 14.69s, environment 4.80s)
+

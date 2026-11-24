@@ -1,0 +1,118 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > offers the box unchecked with its explanation and sends no flag when it stays unchecked
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532493538-0.19387131988975437:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532493538-0.19387131988975437:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532493538-0.19387131988975437:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > leads back to the table when the order stays there, and not when it was cancelled with the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532494825-0.16856380132391513:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532494825-0.16856380132391513:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532494825-0.16856380132391513:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > cancels an unpaid bill with the reason and shows it as cancelled
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532495054-0.3572188840639864:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532495054-0.3572188840639864:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532495054-0.3572188840639864:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > sends cancelOrder when the box is checked and says the order was cancelled too
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532496020-0.9879496978640875:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532496020-0.9879496978640875:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532496020-0.9879496978640875:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-cancel-order.test.js (13 tests | 3 failed) 6210ms
+     × offers the box unchecked with its explanation and sends no flag when it stays unchecked 1286ms
+     × leads back to the table when the order stays there, and not when it was cancelled with the bill 1197ms
+     × sends cancelOrder when the box is checked and says the order was cancelled too 1185ms
+ ❯ split-payment-refunds.test.js (34 tests | 1 failed) 7365ms
+     × cancels an unpaid bill with the reason and shows it as cancelled 1194ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > offers the box unchecked with its explanation and sends no flag when it stays unchecked
+AssertionError: expected '✓İade Tamamlandı₺0,00 iade edildi. He…' to contain 'Hesap İptal Edildi'
+
+Expected: "Hesap İptal Edildi"
+Received: "✓İade Tamamlandı₺0,00 iade edildi. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-cancel-order.test.js:92:54
+     90|     confirmCancel();
+     91|
+     92|     await vi.waitFor(() => expect(app().textContent).toContain("Hesap …
+       |                                                      ^
+     93|     expect(cancelBody(fetchMock)).toEqual({ reason: "Müşteri vazgeçti"…
+     94|     expect(app().textContent).not.toContain("masa boşaldı");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > leads back to the table when the order stays there, and not when it was cancelled with the bill
+AssertionError: expected '✓İade Tamamlandı₺0,00 iade edildi. He…' to contain 'Hesap İptal Edildi'
+
+Expected: "Hesap İptal Edildi"
+Received: "✓İade Tamamlandı₺0,00 iade edildi. Hesap iade sonrası kapandı.Masaya dönBekleyen hesaplara dön"
+
+ ❯ split-payment-cancel-order.test.js:103:54
+    101|     confirmCancel();
+    102|
+    103|     await vi.waitFor(() => expect(app().textContent).toContain("Hesap …
+       |                                                      ^
+    104|     expect([...document.querySelectorAll("a.sp-btn")].map((link) => [l…
+    105|       ["Masaya dön", "/tables", true], ["Bekleyen hesaplara dön", "/pe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > sends cancelOrder when the box is checked and says the order was cancelled too
+AssertionError: expected '✓İade Tamamlandı₺0,00 iade edildi. He…' to contain 'Hesap ve sipariş iptal edildi; masa b…'
+
+Expected: "Hesap ve sipariş iptal edildi; masa boşaldı."
+Received: "✓İade Tamamlandı₺0,00 iade edildi. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-cancel-order.test.js:129:54
+    127|     confirmCancel();
+    128|
+    129|     await vi.waitFor(() => expect(app().textContent).toContain("Hesap …
+       |                                                      ^
+    130|     expect(cancelBody(fetchMock)).toEqual({ reason: "Müşteri vazgeçti"…
+    131|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > cancels an unpaid bill with the reason and shows it as cancelled
+AssertionError: expected '✓İade Tamamlandı₺0,00 iade edildi. He…' to contain 'Hesap İptal Edildi'
+
+Expected: "Hesap İptal Edildi"
+Received: "✓İade Tamamlandı₺0,00 iade edildi. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:221:54
+    219|     clickTwice('[data-refund-action="cancel"]');
+    220|
+    221|     await vi.waitFor(() => expect(app().textContent).toContain("Hesap …
+       |                                                      ^
+    222|     expect(posted(fetchMock, "/cancel").body).toEqual({ reason: "Müşte…
+    223|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  4 failed | 56 passed (60)
+   Start at  18:01:31
+   Duration  8.98s (transform 5.37s, setup 135ms, import 316ms, tests 17.11s, environment 4.75s)
+

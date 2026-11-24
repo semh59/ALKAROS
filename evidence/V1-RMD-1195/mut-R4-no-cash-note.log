@@ -1,0 +1,93 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refund-approve-here.test.js > split-payment.js a manager approving a refund at the till > says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532505366-0.5553918209121814:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532505366-0.5553918209121814:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532505366-0.5553918209121814:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-allowance.test.js > split-payment.js shift refund allowance > says the refund is done, not that the bill was cancelled, when a refund from the allowance closes the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532505697-0.5263864035917462:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532505697-0.5263864035917462:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532505697-0.5263864035917462:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refund-approve-here.test.js (6 tests | 1 failed) 1618ms
+     × says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill 339ms
+ ❯ split-payment-allowance.test.js (7 tests | 1 failed) 2080ms
+     × says the refund is done, not that the bill was cancelled, when a refund from the allowance closes the bill 216ms
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done, with the amount and the Cash note, when the approval closed the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532507786-0.6541304347577929:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532507786-0.6541304347577929:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532507786-0.6541304347577929:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (34 tests | 1 failed) 6618ms
+     × says the refund is done, with the amount and the Cash note, when the approval closed the bill 264ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-allowance.test.js > split-payment.js shift refund allowance > says the refund is done, not that the bill was cancelled, when a refund from the allowance closes the bill
+AssertionError: expected '✓İade Tamamlandı₺100,00 iade edildi. …' to contain '₺100,00 iade edildi. Parayı müşteriye…'
+
+Expected: "₺100,00 iade edildi. Parayı müşteriye geri verin."
+Received: "✓İade Tamamlandı₺100,00 iade edildi.  Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-allowance.test.js:103:31
+    101|
+    102|     await vi.waitFor(() => expect(app().textContent).toContain("İade T…
+    103|     expect(app().textContent).toContain("₺100,00 iade edildi. Parayı m…
+       |                               ^
+    104|     expect(app().textContent).not.toContain("Hesap İptal Edildi");
+    105|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  split-payment-refund-approve-here.test.js > split-payment.js a manager approving a refund at the till > says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill
+AssertionError: expected '✓İade Tamamlandı₺100,00 iade edildi. …' to contain '₺100,00 iade edildi. Parayı müşteriye…'
+
+Expected: "₺100,00 iade edildi. Parayı müşteriye geri verin."
+Received: "✓İade Tamamlandı₺100,00 iade edildi.  Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refund-approve-here.test.js:101:56
+     99|
+    100|     await vi.waitFor(() => expect(document.getElementById("app").textC…
+    101|     expect(document.getElementById("app").textContent).toContain("₺100…
+       |                                                        ^
+    102|     expect(document.getElementById("app").textContent).not.toContain("…
+    103|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done, with the amount and the Cash note, when the approval closed the bill
+AssertionError: expected '✓İade Tamamlandı₺100,00 iade edildi. …' to contain '₺100,00 iade edildi. Parayı müşteriye…'
+
+Expected: "₺100,00 iade edildi. Parayı müşteriye geri verin."
+Received: "✓İade Tamamlandı₺100,00 iade edildi.  Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:282:31
+    280|
+    281|     await vi.waitFor(() => expect(app().textContent).toContain("İade T…
+    282|     expect(app().textContent).toContain(sentence);
+       |                               ^
+    283|     expect(app().textContent).toContain("Hesap iade sonrası kapandı.");
+    284|     expect(app().textContent).not.toContain("Hesap İptal Edildi");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  3 failed | 57 passed (60)
+   Start at  18:01:42
+   Duration  8.23s (transform 5.50s, setup 106ms, import 293ms, tests 13.93s, environment 4.77s)
+

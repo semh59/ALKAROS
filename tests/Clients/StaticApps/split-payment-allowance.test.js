@@ -95,6 +95,15 @@ describe("split-payment.js shift refund allowance", () => {
     expect(app().textContent).not.toContain("onay bekliyor");
   });
 
+  it("says the refund is done, not that the bill was cancelled, when a refund from the allowance closes the bill", async () => {
+    await open({ allowance: shift(150, 0), requestResult: row("Completed", { approvedFromAllowance: true, billCancelled: true }) });
+    await askForRefund();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
+    expect(app().textContent).toContain("₺100,00 iade edildi. Parayı müşteriye geri verin.");
+    expect(app().textContent).not.toContain("Hesap İptal Edildi");
+  });
+
   it("asks for the slip number when a card refund was reserved from the allowance", async () => {
     await open({
       allowance: shift(150, 0),

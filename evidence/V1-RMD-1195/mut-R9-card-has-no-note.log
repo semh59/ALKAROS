@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done, with the amount and the Card note, when the approval closed the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532790537-0.08858591602710908:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532790537-0.08858591602710908:609:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795532790537-0.08858591602710908:723:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (36 tests | 1 failed) 6220ms
+     × says the refund is done, with the amount and the Card note, when the approval closed the bill 214ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says the refund is done, with the amount and the Card note, when the approval closed the bill
+AssertionError: expected '✓İade Tamamlandı₺100,00 iade edildi. …' to contain '₺100,00 iade edildi. Kart iadesi bank…'
+
+Expected: "₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı; iade fişi: IF-9001."
+Received: "✓İade Tamamlandı₺100,00 iade edildi. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:283:31
+    281|
+    282|     await vi.waitFor(() => expect(app().textContent).toContain("İade T…
+    283|     expect(app().textContent).toContain(sentence);
+       |                               ^
+    284|     expect(app().textContent).toContain("Hesap iade sonrası kapandı.");
+    285|     expect(app().textContent).not.toContain("Hesap İptal Edildi");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 35 passed (36)
+   Start at  18:06:26
+   Duration  7.51s (transform 2.35s, setup 35ms, import 65ms, tests 6.22s, environment 921ms)
+

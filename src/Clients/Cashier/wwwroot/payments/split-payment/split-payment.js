@@ -130,6 +130,7 @@
     refundApprover: { id: null, name: '', error: null, busy: false },
     cancelOrder: false,
     orderCancelled: false,
+    refundDone: null,
     refundRequests: null,
     refundReasons: {},
     refundSlips: {},
@@ -2013,8 +2014,7 @@
       }
       state.refundApprover = { id: null, name: '', error: null, busy: false };
       if (result.body && result.body.billCancelled) {
-        state.phase = 'cancelled';
-        render();
+        showRefundDone(result.body);
         return;
       }
       state.refundNotice = 'İade isteği onaylandı.';
@@ -2157,7 +2157,11 @@
         if (result.status === 409) loadEverything();
         return;
       }
-      if (action === 'cancel' || (result.body && result.body.billCancelled)) {
+      if (action !== 'cancel' && result.body && result.body.billCancelled) {
+        showRefundDone(result.body);
+        return;
+      }
+      if (action === 'cancel') {
         state.orderCancelled = !!(result.body && result.body.orderCancelled);
         state.phase = 'cancelled';
         render();
@@ -2555,6 +2559,33 @@
       ? { href: '/billing?billId=' + encodeURIComponent(queryParam('billId')), label: 'Hesap bölmeye dön', splitScreen: true, reselect: 'Hesap bölme ekranından tekrar seçin.' }
       : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
   var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
+
+  // A refund that closes the bill is its own result: what was paid back and how, never "bill cancelled".
+  function showRefundDone(refund) {
+    state.refundDone = refund;
+    state.phase = 'refunded';
+    render();
+  }
+
+  var REFUND_METHOD_NOTES = {
+    Cash: function () { return 'Parayı müşteriye geri verin.'; },
+    ExternalCard: function (refund) { return 'Kart iadesi banka POS cihazında yapıldı' + (refund.slipNumber ? '; iade fişi: ' + refund.slipNumber : '') + '.'; },
+    Eft: function () { return 'Havale iadesi kaydedildi.'; },
+  };
+  REFUND_METHOD_NOTES.Card = REFUND_METHOD_NOTES.ExternalCard;
+
+  function renderRefunded() {
+    var refund = state.refundDone;
+    var note = REFUND_METHOD_NOTES[refund.method];
+    app.innerHTML =
+      '<div class="sp-card sp-center-text">' +
+      '<span class="sp-icon-circle success">✓</span>' +
+      '<h1 class="sp-title">İade Tamamlandı</h1>' +
+      '<p class="sp-subtitle">' + escapeHtml((typeof refund.amount === 'number' ? formatMoney(refund.amount) + ' iade edildi. ' : '') + (note ? note(refund) + ' ' : '') + 'Hesap iade sonrası kapandı.') + '</p>' +
+      (state.billTable ? backLink('/tables', 'Masaya dön', true) : '') +
+      BACK_LINK +
+      '</div>';
+  }
 
   function renderCancelled() {
     app.innerHTML =
@@ -3071,6 +3102,7 @@
       case 'ready': return renderReady();
       case 'paid': return renderPaid();
       case 'cancelled': return renderCancelled();
+      case 'refunded': return renderRefunded();
       default: return renderReady();
     }
   }

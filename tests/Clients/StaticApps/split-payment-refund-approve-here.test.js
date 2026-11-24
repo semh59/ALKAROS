@@ -90,6 +90,18 @@ describe("split-payment.js a manager approving a refund at the till", () => {
     expect(document.body.innerHTML).not.toContain("Gizli-Sifre-9");
   });
 
+  it("says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill", async () => {
+    await open({ requests: [waiting()], approve: { body: { status: "Completed", billCancelled: true, method: "Cash", amount: 100 } } });
+    nameBox().value = "mudur";
+    secretBox().value = "Gizli-Sifre-9";
+
+    press();
+
+    await vi.waitFor(() => expect(document.getElementById("app").textContent).toContain("İade Tamamlandı"));
+    expect(document.getElementById("app").textContent).toContain("₺100,00 iade edildi. Parayı müşteriye geri verin.");
+    expect(document.getElementById("app").textContent).not.toContain("Hesap İptal Edildi");
+  });
+
   it("says in Turkish when the sign-in is wrong, keeps the name, and empties the password", async () => {
     const fetchMock = await open({
       requests: [waiting()],

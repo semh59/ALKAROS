@@ -1,0 +1,207 @@
+diff --git a/plan/v1/remediation/V1-RMD-1195-refund-completed-message-not-bill-cancelled.md b/plan/v1/remediation/V1-RMD-1195-refund-completed-message-not-bill-cancelled.md
+index 339156a44..0dcdde477 100644
+--- a/plan/v1/remediation/V1-RMD-1195-refund-completed-message-not-bill-cancelled.md
++++ b/plan/v1/remediation/V1-RMD-1195-refund-completed-message-not-bill-cancelled.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1195 - İade tamamlanınca iade sonucu gösterilir, "Hesap İptal Edildi" gösterilmez
+ 
+ - Task ID: V1-RMD-1195
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 2e14e88d5..b99e72b25 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -130,6 +130,7 @@
+     refundApprover: { id: null, name: '', error: null, busy: false },
+     cancelOrder: false,
+     orderCancelled: false,
++    refundDone: null,
+     refundRequests: null,
+     refundReasons: {},
+     refundSlips: {},
+@@ -2013,8 +2014,7 @@
+       }
+       state.refundApprover = { id: null, name: '', error: null, busy: false };
+       if (result.body && result.body.billCancelled) {
+-        state.phase = 'cancelled';
+-        render();
++        showRefundDone(result.body);
+         return;
+       }
+       state.refundNotice = 'İade isteği onaylandı.';
+@@ -2157,7 +2157,11 @@
+         if (result.status === 409) loadEverything();
+         return;
+       }
+-      if (action === 'cancel' || (result.body && result.body.billCancelled)) {
++      if (action !== 'cancel' && result.body && result.body.billCancelled) {
++        showRefundDone(result.body);
++        return;
++      }
++      if (action === 'cancel') {
+         state.orderCancelled = !!(result.body && result.body.orderCancelled);
+         state.phase = 'cancelled';
+         render();
+@@ -2556,6 +2560,33 @@
+       : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
+   var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
+ 
++  // A refund that closes the bill is its own result: what was paid back and how, never "bill cancelled".
++  function showRefundDone(refund) {
++    state.refundDone = refund;
++    state.phase = 'refunded';
++    render();
++  }
++
++  var REFUND_METHOD_NOTES = {
++    Cash: function () { return 'Parayı müşteriye geri verin.'; },
++    ExternalCard: function (refund) { return 'Kart iadesi banka POS cihazında yapıldı' + (refund.slipNumber ? '; iade fişi: ' + refund.slipNumber : '') + '.'; },
++    Eft: function () { return 'Havale iadesi kaydedildi.'; },
++  };
++  REFUND_METHOD_NOTES.Card = REFUND_METHOD_NOTES.ExternalCard;
++
++  function renderRefunded() {
++    var refund = state.refundDone;
++    var note = REFUND_METHOD_NOTES[refund.method];
++    app.innerHTML =
++      '<div class="sp-card sp-center-text">' +
++      '<span class="sp-icon-circle success">✓</span>' +
++      '<h1 class="sp-title">İade Tamamlandı</h1>' +
++      '<p class="sp-subtitle">' + escapeHtml((typeof refund.amount === 'number' ? formatMoney(refund.amount) + ' iade edildi. ' : '') + (note ? note(refund) + ' ' : '') + 'Hesap iade sonrası kapandı.') + '</p>' +
++      (state.billTable ? backLink('/tables', 'Masaya dön', true) : '') +
++      BACK_LINK +
++      '</div>';
++  }
++
+   function renderCancelled() {
+     app.innerHTML =
+       '<div class="sp-card sp-center-text">' +
+@@ -3071,6 +3102,7 @@
+       case 'ready': return renderReady();
+       case 'paid': return renderPaid();
+       case 'cancelled': return renderCancelled();
++      case 'refunded': return renderRefunded();
+       default: return renderReady();
+     }
+   }
+diff --git a/tests/Clients/StaticApps/split-payment-allowance.test.js b/tests/Clients/StaticApps/split-payment-allowance.test.js
+index 1a8f9f399..22a70e49a 100644
+--- a/tests/Clients/StaticApps/split-payment-allowance.test.js
++++ b/tests/Clients/StaticApps/split-payment-allowance.test.js
+@@ -95,6 +95,15 @@ describe("split-payment.js shift refund allowance", () => {
+     expect(app().textContent).not.toContain("onay bekliyor");
+   });
+ 
++  it("says the refund is done, not that the bill was cancelled, when a refund from the allowance closes the bill", async () => {
++    await open({ allowance: shift(150, 0), requestResult: row("Completed", { approvedFromAllowance: true, billCancelled: true }) });
++    await askForRefund();
++
++    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
++    expect(app().textContent).toContain("₺100,00 iade edildi. Parayı müşteriye geri verin.");
++    expect(app().textContent).not.toContain("Hesap İptal Edildi");
++  });
++
+   it("asks for the slip number when a card refund was reserved from the allowance", async () => {
+     await open({
+       allowance: shift(150, 0),
+diff --git a/tests/Clients/StaticApps/split-payment-refund-approve-here.test.js b/tests/Clients/StaticApps/split-payment-refund-approve-here.test.js
+index 4982a600f..01cd849f5 100644
+--- a/tests/Clients/StaticApps/split-payment-refund-approve-here.test.js
++++ b/tests/Clients/StaticApps/split-payment-refund-approve-here.test.js
+@@ -90,6 +90,18 @@ describe("split-payment.js a manager approving a refund at the till", () => {
+     expect(document.body.innerHTML).not.toContain("Gizli-Sifre-9");
+   });
+ 
++  it("says the refund is done, not that the bill was cancelled, when the manager's approval closes the bill", async () => {
++    await open({ requests: [waiting()], approve: { body: { status: "Completed", billCancelled: true, method: "Cash", amount: 100 } } });
++    nameBox().value = "mudur";
++    secretBox().value = "Gizli-Sifre-9";
++
++    press();
++
++    await vi.waitFor(() => expect(document.getElementById("app").textContent).toContain("İade Tamamlandı"));
++    expect(document.getElementById("app").textContent).toContain("₺100,00 iade edildi. Parayı müşteriye geri verin.");
++    expect(document.getElementById("app").textContent).not.toContain("Hesap İptal Edildi");
++  });
++
+   it("says in Turkish when the sign-in is wrong, keeps the name, and empties the password", async () => {
+     const fetchMock = await open({
+       requests: [waiting()],
+diff --git a/tests/Clients/StaticApps/split-payment-refunds.test.js b/tests/Clients/StaticApps/split-payment-refunds.test.js
+index 33f63b313..00d375f10 100644
+--- a/tests/Clients/StaticApps/split-payment-refunds.test.js
++++ b/tests/Clients/StaticApps/split-payment-refunds.test.js
+@@ -265,16 +265,67 @@ describe("split-payment.js cancel and refund", () => {
+     expect(posted(fetchMock, "/approve").url).toContain(`/refund-requests/${REQUEST_ID}/approve`);
+   });
+ 
+-  it("shows the cancelled screen when the approval closed the bill", async () => {
++  it.each([
++    ["Cash", null, "₺100,00 iade edildi. Parayı müşteriye geri verin."],
++    ["ExternalCard", "IF-7781", "₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı; iade fişi: IF-7781."],
++    ["Eft", null, "₺100,00 iade edildi. Havale iadesi kaydedildi."],
++    ["Card", "IF-9001", "₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı; iade fişi: IF-9001."],
++  ])("says the refund is done, with the amount and the %s note, when the approval closed the bill", async (method, slipNumber, sentence) => {
+     await open(routes({
+       summary: paidSummary, requests: [request("Requested")],
+-      post: { approve: { body: request("Completed", { billCancelled: true }) } },
++      post: { approve: { body: request("Completed", { billCancelled: true, method, slipNumber }) } },
+     }));
+     await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+ 
+     clickTwice('[data-refund-action="approve"]');
+ 
++    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
++    expect(app().textContent).toContain(sentence);
++    expect(app().textContent).toContain("Hesap iade sonrası kapandı.");
++    expect(app().textContent).not.toContain("Hesap İptal Edildi");
++    expect(app().textContent).not.toContain("iptal edildi");
++    expect(app().querySelector("a.sp-btn").textContent).toBe("Bekleyen hesaplara dön");
++  });
++
++  it("keeps the cancelled screen for a real cancel even when the answer also says the bill closed", async () => {
++    await open(routes({ summary: unpaidSummary, post: { cancel: { body: { billCancelled: true } } } }));
++    await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
++
++    type("#cancel-reason", "Müşteri vazgeçti");
++    clickTwice('[data-refund-action="cancel"]');
++
+     await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
++    expect(app().textContent).not.toContain("İade Tamamlandı");
++  });
++
++  it("names no amount when the answer carries none", async () => {
++    await open(routes({
++      summary: paidSummary, requests: [request("Requested")],
++      post: { approve: { body: request("Completed", { billCancelled: true, amount: undefined }) } },
++    }));
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
++
++    clickTwice('[data-refund-action="approve"]');
++
++    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
++    expect(app().textContent).not.toContain("₺0,00");
++    expect(app().textContent).toContain("Parayı müşteriye geri verin. Hesap iade sonrası kapandı.");
++  });
++
++  it("says the refund is done when the card refund's slip number closes the bill", async () => {
++    await open(routes({
++      summary: paidSummary,
++      requests: [request("AwaitingManualRefund", { method: "ExternalCard" })],
++      post: { complete: { body: request("Completed", { billCancelled: true, method: "ExternalCard", slipNumber: "IF-7781" }) } },
++    }));
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-slip]')).not.toBeNull());
++
++    type(`[data-refund-slip="${REQUEST_ID}"]`, "IF-7781");
++    clickTwice('[data-refund-action="complete"]');
++
++    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
++    expect(app().textContent).toContain("iade fişi: IF-7781");
++    expect(app().textContent).not.toContain("Hesap İptal Edildi");
+   });
+ 
+   it("offers a refund only for approved payments that have no open request", async () => {

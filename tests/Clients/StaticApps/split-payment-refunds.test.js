@@ -265,16 +265,67 @@ describe("split-payment.js cancel and refund", () => {
     expect(posted(fetchMock, "/approve").url).toContain(`/refund-requests/${REQUEST_ID}/approve`);
   });
 
-  it("shows the cancelled screen when the approval closed the bill", async () => {
+  it.each([
+    ["Cash", null, "₺100,00 iade edildi. Parayı müşteriye geri verin."],
+    ["ExternalCard", "IF-7781", "₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı; iade fişi: IF-7781."],
+    ["Eft", null, "₺100,00 iade edildi. Havale iadesi kaydedildi."],
+    ["Card", "IF-9001", "₺100,00 iade edildi. Kart iadesi banka POS cihazında yapıldı; iade fişi: IF-9001."],
+  ])("says the refund is done, with the amount and the %s note, when the approval closed the bill", async (method, slipNumber, sentence) => {
     await open(routes({
       summary: paidSummary, requests: [request("Requested")],
-      post: { approve: { body: request("Completed", { billCancelled: true }) } },
+      post: { approve: { body: request("Completed", { billCancelled: true, method, slipNumber }) } },
     }));
     await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
 
     clickTwice('[data-refund-action="approve"]');
 
+    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
+    expect(app().textContent).toContain(sentence);
+    expect(app().textContent).toContain("Hesap iade sonrası kapandı.");
+    expect(app().textContent).not.toContain("Hesap İptal Edildi");
+    expect(app().textContent).not.toContain("iptal edildi");
+    expect(app().querySelector("a.sp-btn").textContent).toBe("Bekleyen hesaplara dön");
+  });
+
+  it("keeps the cancelled screen for a real cancel even when the answer also says the bill closed", async () => {
+    await open(routes({ summary: unpaidSummary, post: { cancel: { body: { billCancelled: true } } } }));
+    await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
+
+    type("#cancel-reason", "Müşteri vazgeçti");
+    clickTwice('[data-refund-action="cancel"]');
+
     await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
+    expect(app().textContent).not.toContain("İade Tamamlandı");
+  });
+
+  it("names no amount when the answer carries none", async () => {
+    await open(routes({
+      summary: paidSummary, requests: [request("Requested")],
+      post: { approve: { body: request("Completed", { billCancelled: true, amount: undefined }) } },
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+
+    clickTwice('[data-refund-action="approve"]');
+
+    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
+    expect(app().textContent).not.toContain("₺0,00");
+    expect(app().textContent).toContain("Parayı müşteriye geri verin. Hesap iade sonrası kapandı.");
+  });
+
+  it("says the refund is done when the card refund's slip number closes the bill", async () => {
+    await open(routes({
+      summary: paidSummary,
+      requests: [request("AwaitingManualRefund", { method: "ExternalCard" })],
+      post: { complete: { body: request("Completed", { billCancelled: true, method: "ExternalCard", slipNumber: "IF-7781" }) } },
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-slip]')).not.toBeNull());
+
+    type(`[data-refund-slip="${REQUEST_ID}"]`, "IF-7781");
+    clickTwice('[data-refund-action="complete"]');
+
+    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
+    expect(app().textContent).toContain("iade fişi: IF-7781");
+    expect(app().textContent).not.toContain("Hesap İptal Edildi");
   });
 
   it("offers a refund only for approved payments that have no open request", async () => {
