@@ -1,0 +1,678 @@
+diff --git a/docs/domain/bill-pre-receipt.md b/docs/domain/bill-pre-receipt.md
+index 922597b20..0e5ad8265 100644
+--- a/docs/domain/bill-pre-receipt.md
++++ b/docs/domain/bill-pre-receipt.md
+@@ -4,7 +4,7 @@ Karar sahibi: ürün sahibi (2026-11-18). Kayıt: V1-RMD-1151.
+ 
+ ## Ne olduğu
+ 
+-Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmayan bir bilgi fişidir; fişin başlığı "BİLGİ FİŞİ", ibaresi "MALİ DEĞERİ YOKTUR" olur (ürün sahibi kararı; ÖKC bilgi fişlerinde kullanılan ibareler, başlığın ön hesap için kullanımı doğrulanmamıştır, aşağıdaki teyit notuna bakın; "Bu belge mali fiş değildir." hiçbir kaynakta zorunlu değildi, V1-RMD-1177 ile bu ibareye alındı). Fiş "HESAP NO: N" (ÖKC fişindeki "FİŞ NO" ile karışmaz), masa, basım tarihi ("Tarih") ve saati ("Saat", işletme saat diliminde, saat:dakika) taşır; mali sembol, sicil, Z no, KDV dökümü, fiş sıra numarası ya da ödeme belgesi iddiası taşımaz. Kalemin hazırlama notu ("soğansız") kalemin altında "Not: ..." satırı olarak yazılır; not en çok 200 karakterdir (kasa ve NFC yolları zaten 200'ü aşan notu reddeder; başka yoldan gelen uzun notu sunucu 200'de kırpar), serbest metindir (kişisel bilgi yazılmaz, KVKK); hesap birden çok siparişin kalemlerini taşıyorsa her kalemin notu yazılır. Ödenmiş hesabın fişindeki ibare ayrıdır ve bu karardan etkilenmez; iki fişin başlık ve ibaresi bilerek farklıdır (ödenmiş hesap fişi bilgi fişidir ve mali fiş olmadığını söyler, ön fiş ödeme öncesi hesap bilgisidir ve mali değeri olmadığını söyler); ikisi de mali fiş görünümü taşımaz; ön fişin ibare teyidi aşağıdaki mali müşavir notundadır.
++Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmayan bir bilgi fişidir; fişin başlığı "BİLGİ FİŞİ", ibaresi "MALİ DEĞERİ YOKTUR" olur (ürün sahibi kararı; ÖKC bilgi fişlerinde kullanılan ibareler, başlığın ön hesap için kullanımı doğrulanmamıştır, aşağıdaki teyit notuna bakın; "Bu belge mali fiş değildir." hiçbir kaynakta zorunlu değildi, V1-RMD-1177 ile bu ibareye alındı). Fiş "HESAP NO: N" (ÖKC fişindeki "FİŞ NO" ile karışmaz), masa, basım tarihi ("Tarih") ve saati ("Saat", işletme saat diliminde, saat:dakika) taşır; mali sembol, sicil, Z no, KDV dökümü, fiş sıra numarası ya da ödeme belgesi iddiası taşımaz. Kalemin seçenekleri (Az acılı, Ekstra peynir) kalemin altında tek satırda, ek ücretliyse "Ekstra peynir +₺15,00" biçiminde yazılır (aynı ürünün farklı seçenekli satırları ve fiyat farkı böylece anlaşılır; adet 1'den büyükse "2× ad" ve toplam ek ücret; ödenmiş hesap fişi de aynı satırı taşır). Kalemin hazırlama notu ("soğansız") kalemin altında "Not: ..." satırı olarak yazılır; not en çok 200 karakterdir (kasa ve NFC yolları zaten 200'ü aşan notu reddeder; başka yoldan gelen uzun notu sunucu 200'de kırpar), serbest metindir (kişisel bilgi yazılmaz, KVKK); hesap birden çok siparişin kalemlerini taşıyorsa her kalemin notu yazılır. Ödenmiş hesabın fişindeki ibare ayrıdır ve bu karardan etkilenmez; iki fişin başlık ve ibaresi bilerek farklıdır (ödenmiş hesap fişi bilgi fişidir ve mali fiş olmadığını söyler, ön fiş ödeme öncesi hesap bilgisidir ve mali değeri olmadığını söyler); ikisi de mali fiş görünümü taşımaz; ön fişin ibare teyidi aşağıdaki mali müşavir notundadır.
+ 
+ ## Ödenmiş hesabın fişinden farkı
+ 
+diff --git a/plan/v1/remediation/V1-RMD-1192-cashier-line-options-visible-on-cart-panel-and-slips.md b/plan/v1/remediation/V1-RMD-1192-cashier-line-options-visible-on-cart-panel-and-slips.md
+index c04f15d72..a61caaff0 100644
+--- a/plan/v1/remediation/V1-RMD-1192-cashier-line-options-visible-on-cart-panel-and-slips.md
++++ b/plan/v1/remediation/V1-RMD-1192-cashier-line-options-visible-on-cart-panel-and-slips.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1192 - Seçenek adları ve ek ücretleri kasiyer ekranlarında görünür
+ 
+ - Task ID: V1-RMD-1192
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index aa8972dd0..2e14e88d5 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2446,6 +2446,14 @@
+       '</table>';
+   }
+ 
++  // The options a line was ordered with, each with its extra charge when it has one, so the guest can see why a line costs what it does.
++  function receiptOptionsHtml(item) {
++    if (!item.options || item.options.length === 0) return '';
++    return '<br>' + escapeHtml(item.options.map(function (option) {
++      return option.price > 0 ? option.name + ' +' + formatMoney(option.price) : option.name;
++    }).join(', '));
++  }
++
+   function receiptHtml(receipt, isCopy) {
+     var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) : '';
+     return (
+@@ -2455,7 +2463,7 @@
+       '<p>Hesap: ' + escapeHtml(receipt.billNumber) + (receipt.tableNumber ? '<br>Masa: ' + escapeHtml(receipt.tableNumber) : '') + '<br>' + escapeHtml(opened) + '</p>' +
+       '<table>' +
+       receipt.items.map(function (item) {
+-        return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
++        return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + receiptOptionsHtml(item) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
+           (item.lineDiscount > 0
+             ? '<tr class="sp-receipt-refund"><td>İndirim / ikram</td><td>-' + formatMoney(item.lineDiscount) + '</td></tr>'
+             : '') +
+diff --git a/src/Clients/PosTerminal/src/contracts.ts b/src/Clients/PosTerminal/src/contracts.ts
+index c74502479..850fae03d 100644
+--- a/src/Clients/PosTerminal/src/contracts.ts
++++ b/src/Clients/PosTerminal/src/contracts.ts
+@@ -143,6 +143,11 @@ export interface CatalogProduct {
+   modifierGroups?: CatalogModifierGroup[] | null;
+ }
+ 
++export interface LineOption {
++  name: string;
++  price: number;
++}
++
+ export interface DisplayLine {
+   itemId: string;
+   name: string;
+@@ -158,6 +163,8 @@ export interface DisplayLine {
+   unsent?: boolean;
+   /** A short preparation note the cashier typed for the line; printed on the kitchen ticket. */
+   specialInstructions?: string;
++  /** The options picked for the line with their extra charge, so lines of one product with different options can be told apart. */
++  options?: readonly LineOption[];
+ }
+ 
+ export interface DisplaySnapshot {
+@@ -277,5 +284,6 @@ export interface TableOrder {
+     canVoidSent?: boolean;
+     addedWithoutKitchenReason?: string | null;
+     specialInstructions?: string | null;
++    modifiers?: readonly { name: string; priceDelta: number; quantity: number }[] | null;
+   }[];
+ }
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts
+index 7f19286d1..cac519b00 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts
++++ b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts
+@@ -50,6 +50,18 @@ describe("printPreReceipt", () => {
+     expect(document.querySelector("#pre-receipt-print i")).toBeNull();
+   });
+ 
++  it("writes a line's options and their extra charge under its name, as text, ahead of the note, and nothing for a line without any", async () => {
++    const optioned = {
++      ...sheet,
++      lines: [{ ...sheet.lines[0], options: [{ name: "Az acılı <i>", price: 0 }, { name: "2× Ekstra peynir", price: 30 }], note: "soğansız" }, sheet.lines[1]],
++    };
++    await printPreReceipt("t-1", "o-1", (async () => reply(200, optioned)) as typeof fetch, vi.fn());
++
++    const rows = [...document.querySelectorAll("#pre-receipt-print table:nth-of-type(1) tr")].map((row) => row.textContent);
++    expect(rows).toEqual(["2 × Köfte <b>Az acılı <i>, 2× Ekstra peynir +₺30,00Not: soğansız₺200,00", "1 × Ayran₺30,00"]);
++    expect(document.querySelector("#pre-receipt-print i")).toBeNull();
++  });
++
+   it("states the date and the time of the print in the venue's clock", async () => {
+     await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)) as typeof fetch, vi.fn());
+ 
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts
+index bc2b9f555..3ddb8266e 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts
++++ b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts
+@@ -1,6 +1,6 @@
+ import { notifySessionExpired } from "../../api";
+ import { formatClockMinutes, formatDate, formatMoney, formatQuantity } from "../../format";
+-import { lineNoteText, preReceiptText } from "../../strings";
++import { lineNoteText, lineOptionsText, preReceiptText } from "../../strings";
+ import "./pre-receipt.css";
+ 
+ interface PreReceiptSheet {
+@@ -9,7 +9,7 @@ interface PreReceiptSheet {
+   printedAt: string;
+   tableNumber: string | null;
+   currencyCode: string;
+-  lines: readonly { name: string; quantity: number; unitPrice: number; amount: number; note?: string | null }[];
++  lines: readonly { name: string; quantity: number; unitPrice: number; amount: number; note?: string | null; options?: readonly { name: string; price: number }[] | null }[];
+   adjustments: readonly { type: string; amount: number; isDeduction: boolean }[];
+   total: number;
+   paidAmount: number;
+@@ -46,8 +46,9 @@ function drawSheet(sheet: PreReceiptSheet): void {
+   );
+   const lines = document.createElement("table");
+   for (const line of sheet.lines) {
+-    // The note sits in the line's own name cell: the amount cell is the one that never wraps and is right-aligned.
++    // The options and the note sit in the line's own name cell: the amount cell is the one that never wraps and is right-aligned.
+     const lineRow = lines.appendChild(row(`${formatQuantity(line.quantity)} × ${line.name}`, money(line.amount)));
++    if (line.options?.length) lineRow.cells[0].append(document.createElement("br"), lineOptionsText(line.options, money));
+     if (line.note) lineRow.cells[0].append(document.createElement("br"), lineNoteText(line.note));
+   }
+   const totals = document.createElement("table");
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.line-options.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.line-options.test.tsx
+new file mode 100644
+index 000000000..dfda89810
+--- /dev/null
++++ b/src/Clients/PosTerminal/src/routes/Cashier.line-options.test.tsx
+@@ -0,0 +1,77 @@
++// @vitest-environment jsdom
++
++import { act, createElement } from "react";
++import { createRoot, type Root } from "react-dom/client";
++import { afterEach, describe, expect, it, vi } from "vitest";
++
++(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
++
++const json = (body: unknown, status = 200) =>
++  new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
++
++vi.mock("@microsoft/signalr", () => ({
++  LogLevel: { Warning: 2 },
++  HubConnectionBuilder: class {
++    withUrl() { return this; }
++    withAutomaticReconnect() { return this; }
++    configureLogging() { return this; }
++    build() {
++      return {
++        on: () => undefined, onreconnecting: () => undefined, onreconnected: () => undefined, onclose: () => undefined,
++        start: vi.fn(async () => undefined), stop: vi.fn(async () => undefined),
++      };
++    }
++  },
++}));
++
++const burger = (itemId: string, options?: { name: string; price: number }[]) => ({
++  itemId, name: "Hamburger", quantity: 1, unitPrice: 150, lineTotal: options?.some((option) => option.price > 0) ? 165 : 150, discountAmount: 0,
++  productId: "p-burger", unsent: true, ...(options ? { options } : {}),
++});
++const order = (lines: unknown[]) => ({
++  displayId: "d", terminalId: "terminal", orderId: "order-1", revision: 3, state: "Active", editable: true,
++  orderNumber: "1", lines, subtotal: 0, discountTotal: 0, taxTotal: 0, total: 0, currency: "TRY", serverTimestamp: "", message: "",
++});
++
++let root: Root | null = null;
++
++afterEach(() => {
++  if (root) act(() => root!.unmount());
++  root = null;
++  document.body.innerHTML = "";
++  vi.unstubAllGlobals();
++  vi.resetModules();
++});
++
++async function openTill(lines: unknown[]) {
++  vi.stubGlobal("matchMedia", () => ({ matches: false, media: "", addEventListener: () => undefined, removeEventListener: () => undefined, addListener: () => undefined, removeListener: () => undefined, onchange: null, dispatchEvent: () => false }));
++  vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
++    const path = String(input);
++    if (path.includes("/auth/session")) return json({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal", capabilities: ["orders.create"] });
++    if (path.endsWith("/catalog")) return json([]);
++    if (path.endsWith("/orders/active")) return json(order(lines));
++    if (path.endsWith("/health/ready")) return json({ status: "ready" });
++    return json({});
++  }));
++  const { Cashier } = await import("./Cashier");
++  const { RouterProvider } = await import("../router");
++  document.body.innerHTML = '<div id="root"></div>';
++  root = createRoot(document.getElementById("root")!);
++  await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
++  for (let i = 0; i < 3; i++) await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++}
++
++const optionsOf = () => [...document.querySelectorAll(".ticket-line")].map((line) => line.querySelector(".ticket-line-options")?.textContent ?? null);
++
++describe("the till's cart line options", () => {
++  it("names each line's options with their extra charge, so two burgers with different options can be told apart", async () => {
++    await openTill([
++      burger("l1", [{ name: "Az acılı", price: 0 }, { name: "Ekstra peynir", price: 15 }]),
++      burger("l2", [{ name: "Sade <b>", price: 0 }]),
++      burger("l3"),
++    ]);
++
++    expect(optionsOf()).toEqual(["Az acılı, Ekstra peynir +₺15,00", "Sade <b>", null]);
++    expect(document.querySelector(".ticket-line b")).toBeNull();
++  });
++});
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 11f7d4bc4..e0eface7b 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
+ import { isPlainClick, useRouter } from "../router";
+ import { focusOnMount } from "../focusOnMount";
+ import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
+-import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
++import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, lineOptionsText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
+ import { formatDateTime, formatMoney, formatQuantity } from "../format";
+ import { savedId } from "../storage";
+ import { playNewItemChime } from "../audioAlerts";
+@@ -1073,6 +1073,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+                     <div className="ticket-line-main">
+                       <strong>{line.name}</strong>
+                       <small>{formatMoney(line.lineTotal / line.quantity)} × {formatQuantity(line.quantity)} · KDV dahil</small>
++                      {line.options?.length ? <small className="ticket-line-options">{lineOptionsText(line.options, formatMoney)}</small> : null}
+                       {line.specialInstructions && <small className="ticket-line-note">{itemNoteText.onLine(line.specialInstructions)}</small>}
+                     </div>
+                     <strong className="line-total">{formatMoney(line.lineTotal)}</strong>
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index 5feda6768..22bd91d39 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -678,6 +678,17 @@ describe("TableOrderBridge mutfaktaki ürünü iptal et", () => {
+     expect(document.querySelectorAll(".table-order-bridge__line-note")).toHaveLength(1);
+   });
+ 
++  it("names the line's options with their extra charge under it, and nothing for a line without any", async () => {
++    const modifiers = [{ modifierId: "m1", name: "Az acılı", priceDelta: 0, quantity: 1 }, { modifierId: "m2", name: "Ekstra peynir", priceDelta: 15, quantity: 2 }];
++    stubFetch(undefined, { ...sentOrder, items: sentOrder.items.map((item) => item.itemId === "i1" ? { ...item, modifiers } : item) });
++    render();
++    await flush();
++
++    const lines = [...document.querySelectorAll(".table-order-bridge__lines li")];
++    expect(lines[0].querySelector(".table-order-bridge__line-options")?.textContent).toBe("Az acılı, 2× Ekstra peynir +₺30,00");
++    expect(document.querySelectorAll(".table-order-bridge__line-options")).toHaveLength(1);
++  });
++
+   it("offers the action only on a line the server marks voidable, once per line", async () => {
+     stubFetch(undefined, sentOrder);
+     render();
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index be8cb1dd3..6e9c34d21 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -6,7 +6,7 @@ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
+ import { collectionHref } from "../features/pending-checks/pendingChecksApi";
+ import { printPreReceipt, PreReceiptError } from "../features/pending-checks/preReceipt";
+-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, lineNoteText, preReceiptText, servedBillNote, voidSentText } from "../strings";
++import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, lineNoteText, lineOptionsText, preReceiptText, servedBillNote, voidSentText } from "../strings";
+ 
+ interface BridgeTable {
+   tableId: string;
+@@ -238,6 +238,9 @@ export function TableOrderBridge({
+       : read && <>
+         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+           {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span>
++            {line.modifiers?.length ? <small className="table-order-bridge__line-options">{lineOptionsText(line.modifiers.map((modifier) => ({
++              name: modifier.quantity > 1 ? `${modifier.quantity}× ${modifier.name}` : modifier.name, price: modifier.priceDelta * modifier.quantity,
++            })), formatMoney)}</small> : null}
+             {line.specialInstructions && <small className="table-order-bridge__line-note">{lineNoteText(line.specialInstructions)}</small>}
+             {line.canVoidSent && (voidingId === line.itemId
+               ? <div className="table-order-bridge__void" role="group" aria-label={voidSentText.pickReason}>
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index bba788c73..264ee5d1b 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1449,6 +1449,10 @@ export const voidSentText = {
+   failed: "Ürün iptal edilemedi.",
+ } as const;
+ 
++/** A line's options as the till, the table panel and the slips show them: the name, and the extra charge when there is one. */
++export const lineOptionsText = (options: readonly { name: string; price: number }[], money: (amount: number) => string) =>
++  options.map((option) => (option.price > 0 ? `${option.name} +${money(option.price)}` : option.name)).join(", ");
++
+ /** A line's preparation note as the table panel and the pre-payment slip show it. */
+ export const lineNoteText = (note: string) => `Not: ${note}`;
+ 
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index d381fe50a..b4934637c 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -205,6 +205,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
+ .table-order-bridge__total strong { font-size: 1.15rem; }
+ .table-order-bridge__lines-note { margin: 0; }
+ .table-order-bridge__unsent { color: var(--ds-color-warning); font-weight: 750; }
++.table-order-bridge__line-options,
+ .table-order-bridge__line-note { flex-basis: 100%; color: var(--ds-color-muted); font-size: .875rem; overflow-wrap: anywhere; }
+ .table-order-bridge p { margin: .25rem 0 0; color: var(--muted); font-size: .875rem; }
+ .table-order-bridge__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+@@ -383,6 +384,7 @@ button.operator-card { min-height: 48px; border: 1px solid #4d5e6c; border-radiu
+ .item-note__row input { flex: 1; min-width: 0; min-height: 48px; font-size: 1rem; }
+ .item-note button { min-height: 48px; }
+ .ticket-line-note { font-style: italic; }
++.ticket-line-options { overflow-wrap: anywhere; }
+ .ticket-empty { display: grid; place-items: center; min-height: 130px; color: #8b959e; text-align: center; }
+ .ticket-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .55rem .8rem; padding: 1rem 0; border-bottom: 1px solid #e7eaed; }
+ .ticket-line-main { display: grid; gap: .25rem; }
+diff --git a/src/Host/DualScreen/DualScreenApplication.Receipt.cs b/src/Host/DualScreen/DualScreenApplication.Receipt.cs
+index 1597d31c5..d2c42948c 100644
+--- a/src/Host/DualScreen/DualScreenApplication.Receipt.cs
++++ b/src/Host/DualScreen/DualScreenApplication.Receipt.cs
+@@ -1,4 +1,5 @@
+ using System.Text.Json;
++using System.Text.Json.Serialization;
+ using ALKAROS.Audit.EventStore;
+ using ALKAROS.Billing.Adjustments;
+ using ALKAROS.Billing.BillFoundation;
+@@ -16,7 +17,8 @@ namespace ALKAROS.Host.DualScreen;
+ 
+ public sealed record BillReceiptItemV1(
+     string Name, decimal Quantity, decimal UnitPrice, decimal Amount, Guid BillItemId, decimal RefundedQuantity,
+-    decimal CompletedRefundedQuantity, decimal LineDiscount = 0m, string? AddedWithoutKitchenReason = null);
++    decimal CompletedRefundedQuantity, decimal LineDiscount = 0m, string? AddedWithoutKitchenReason = null,
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<LineOptionV1>? Options = null);
+ 
+ public sealed record BillReceiptTaxLineV1(decimal RatePercent, decimal Net, decimal Tax, decimal Gross);
+ 
+@@ -44,7 +46,9 @@ public sealed record BillReceiptV1(
+     string? TableNumber = null);
+ 
+ /// <remarks><paramref name="Note"/> is the line's preparation note, cut at the length a note may be typed with.</remarks>
+-public sealed record BillPreReceiptLineV1(string Name, decimal Quantity, decimal UnitPrice, decimal Amount, string? Note = null);
++public sealed record BillPreReceiptLineV1(
++    string Name, decimal Quantity, decimal UnitPrice, decimal Amount, string? Note = null,
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<LineOptionV1>? Options = null);
+ 
+ /// <summary>The slip printed before payment; <paramref name="PrintNumber"/> counts these prints only, never the paid bill's original or copy.</summary>
+ public sealed record BillPreReceiptV1(
+@@ -290,10 +294,12 @@ public static partial class DualScreenApplication
+                 BillPreReceiptV1 sheet;
+                 if (bill is null)
+                 {
++                    var counted = order.Items.Where(i => i.CountsInOrderTotals).ToList();
++                    var optionsOfItem = await DualScreenStore.LoadLineOptionsAsync(connection, transaction, counted.Select(i => i.Id), cancellationToken);
+                     sheet = new BillPreReceiptV1(
+                         orderId, 0, DateTimeOffset.UtcNow, await BillOrderNotes.TableNumberAsync(dataSource, order.TableId, cancellationToken), order.CurrencyCode,
+-                        order.Items.Where(i => i.CountsInOrderTotals)
+-                            .Select(i => new BillPreReceiptLineV1(i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, SlipNote(i.Notes))).ToList(),
++                        counted.Select(i => new BillPreReceiptLineV1(
++                            i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, SlipNote(i.Notes), optionsOfItem.GetValueOrDefault(i.Id))).ToList(),
+                         [], order.Total, 0m);
+                 }
+                 else
+@@ -307,7 +313,7 @@ public static partial class DualScreenApplication
+                     sheet = new BillPreReceiptV1(
+                         orderId, 0, DateTimeOffset.UtcNow, receipt.TableNumber, receipt.CurrencyCode,
+                         receipt.Items.Select(i => new BillPreReceiptLineV1(
+-                            i.Name, i.Quantity, i.UnitPrice, i.Amount, SlipNote(noteOfOrderItem.GetValueOrDefault(orderItemOfBillItem[i.BillItemId])))).ToList(),
++                            i.Name, i.Quantity, i.UnitPrice, i.Amount, SlipNote(noteOfOrderItem.GetValueOrDefault(orderItemOfBillItem[i.BillItemId])), i.Options)).ToList(),
+                         receipt.Adjustments, receipt.PayableAmount, receipt.Payments.Sum(p => p.Amount - p.RefundedAmount));
+                 }
+ 
+@@ -443,6 +449,9 @@ public static partial class DualScreenApplication
+         var completedRefunded = await CompletedRefundedQuantitiesAsync(dataSource, billId, cancellationToken);
+         var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
+         var withoutKitchen = await BillOrderNotes.WithoutKitchenReasonsAsync(dataSource, bill.Items.Select(i => i.OrderItemId), cancellationToken);
++        Dictionary<Guid, IReadOnlyList<LineOptionV1>> optionsOfOrderItem;
++        await using (var optionsConnection = await dataSource.OpenConnectionAsync(cancellationToken))
++            optionsOfOrderItem = await DualScreenStore.LoadLineOptionsAsync(optionsConnection, null, bill.Items.Select(i => i.OrderItemId), cancellationToken);
+ 
+         return new BillReceiptV1(
+             bill.Id,
+@@ -454,7 +463,8 @@ public static partial class DualScreenApplication
+             bill.Items
+                 .Select(i => new BillReceiptItemV1(
+                     i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id),
+-                    completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount, withoutKitchen.GetValueOrDefault(i.OrderItemId)))
++                    completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount, withoutKitchen.GetValueOrDefault(i.OrderItemId),
++                    optionsOfOrderItem.GetValueOrDefault(i.OrderItemId)))
+                 .ToList(),
+             adjustments
+                 .Select(a => new BillReceiptAdjustmentV1(a.AdjustmentType.ToString(), a.GrossAmount, a.IsDeduction))
+diff --git a/src/Host/DualScreen/DualScreenContracts.cs b/src/Host/DualScreen/DualScreenContracts.cs
+index 8d2620fda..a326369b5 100644
+--- a/src/Host/DualScreen/DualScreenContracts.cs
++++ b/src/Host/DualScreen/DualScreenContracts.cs
+@@ -139,6 +139,9 @@ public sealed record PairingCompletionRequest(string Secret);
+ 
+ public sealed record PairingCompleted(Guid DisplayId, Guid TerminalId, DateTimeOffset ExpiresAt);
+ 
++/// <summary>An option picked for a line as the till and the slips show it: <paramref name="Name"/> carries "2× " when the option was taken more than once, <paramref name="Price"/> is the extra charge for all of it.</summary>
++public sealed record LineOptionV1(string Name, decimal Price);
++
+ public sealed record CustomerDisplayLineDto(
+     Guid ItemId,
+     string Name,
+@@ -149,7 +152,8 @@ public sealed record CustomerDisplayLineDto(
+     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] Guid ProductId = default,
+     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null,
+     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false,
+-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? SpecialInstructions = null);
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? SpecialInstructions = null,
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<LineOptionV1>? Options = null);
+ 
+ /// <remarks>
+ /// The figures always add up: the line totals sum to <c>Subtotal</c> (before any discount), and
+diff --git a/src/Host/DualScreen/DualScreenStore.Display.cs b/src/Host/DualScreen/DualScreenStore.Display.cs
+index a45857fac..3f22f6caf 100644
+--- a/src/Host/DualScreen/DualScreenStore.Display.cs
++++ b/src/Host/DualScreen/DualScreenStore.Display.cs
+@@ -308,6 +308,14 @@ public sealed partial class DualScreenStore
+             }
+         }
+ 
++        if (includeLineIds && lines.Count > 0)
++        {
++            var options = await LoadLineOptionsAsync(connection, transaction, lines.Select(line => line.ItemId), cancellationToken);
++            for (var i = 0; i < lines.Count; i++)
++                if (options.TryGetValue(lines[i].ItemId, out var lineOptions))
++                    lines[i] = lines[i] with { Options = lineOptions };
++        }
++
+         var state = order.Status switch
+         {
+             "Completed" => "Completed",
+@@ -327,6 +335,38 @@ public sealed partial class DualScreenStore
+             DateTimeOffset.UtcNow, message, AcceptsRound: order.AcceptsRound, TableNumber: includeLineIds ? order.TableNumber : null);
+     }
+ 
++    /// <summary>
++    /// The options recorded on the given order lines, by name, as the till and the slips list them; a line without options has no entry.
++    /// A quantity above one is part of the name ("2× ...") and the price is the extra charge for all of it. The order is by name in byte
++    /// order so it never depends on the database's collation.
++    /// </summary>
++    internal static async Task<Dictionary<Guid, IReadOnlyList<LineOptionV1>>> LoadLineOptionsAsync(
++        NpgsqlConnection connection, NpgsqlTransaction? transaction, IEnumerable<Guid> orderItemIds, CancellationToken cancellationToken)
++    {
++        var byLine = new Dictionary<Guid, List<LineOptionV1>>();
++        await using var command = new NpgsqlCommand(
++            """
++            SELECT order_item_id, modifier_name_snapshot, price_delta, quantity
++            FROM orders.order_item_modifiers
++            WHERE order_item_id = ANY(@ids)
++            ORDER BY modifier_name_snapshot COLLATE "C", order_item_modifier_id;
++            """, connection, transaction);
++        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderItemIds.ToArray();
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        while (await reader.ReadAsync(cancellationToken))
++        {
++            var quantity = reader.GetDecimal(3);
++            var name = reader.GetString(1);
++            var option = new LineOptionV1(
++                quantity > 1 ? $"{quantity.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)}× {name}" : name,
++                Math.Round(reader.GetDecimal(2) * quantity, 2, MidpointRounding.AwayFromZero));
++            if (!byLine.TryGetValue(reader.GetGuid(0), out var list))
++                byLine[reader.GetGuid(0)] = list = [];
++            list.Add(option);
++        }
++        return byLine.ToDictionary(pair => pair.Key, pair => (IReadOnlyList<LineOptionV1>)pair.Value);
++    }
++
+     /// <summary>When the terminal's live display session ends, or null without one: lets the till show it.</summary>
+     public async Task<DateTimeOffset?> GetDisplaySessionExpiryAsync(Guid terminalId, CancellationToken cancellationToken)
+     {
+diff --git a/tests/Clients/StaticApps/split-payment-receipt.test.js b/tests/Clients/StaticApps/split-payment-receipt.test.js
+index 92affe371..3015728e0 100644
+--- a/tests/Clients/StaticApps/split-payment-receipt.test.js
++++ b/tests/Clients/StaticApps/split-payment-receipt.test.js
+@@ -97,6 +97,23 @@ describe("split-payment.js information receipt", () => {
+     expect(text).toContain("110,00");
+   });
+ 
++  it("names a line's options with their extra charge under it on the paid receipt, as text", async () => {
++    const optioned = {
++      ...receipt,
++      items: [{ ...receipt.items[0], options: [{ name: "Az acılı <i>", price: 0 }, { name: "2× Ekstra peynir", price: 30 }] }, receipt.items[1]],
++    };
++    await open({ body: optioned });
++    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
++
++    clickPrint();
++
++    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
++    const rows = [...sheet().querySelectorAll("table:nth-of-type(1) tr")].map((row) => row.textContent);
++    expect(rows[0]).toContain("2 × Taş fırın pizzaAz acılı <i>, 2× Ekstra peynir +₺30,00");
++    expect(rows[1]).toBe("1 × Ayran <b>₺20,00");
++    expect(sheet().querySelector("i")).toBeNull();
++  });
++
+   it("has the sheet filled and the print button free again at the moment the print dialog opens", async () => {
+     let atPrint = null;
+     printSpy.mockImplementation(() => {
+diff --git a/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs b/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
+index 71759013d..9a1760877 100644
+--- a/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
++++ b/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
+@@ -811,6 +811,82 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
+         Assert.Equal("soğansız", Assert.Single(body.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString());
+     }
+ 
++    private async Task SetLineOptionsAsync(Guid orderId)
++    {
++        var groupId = Guid.NewGuid();
++        await using var command = _database.DataSource.CreateCommand(
++            """
++            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES (@group_id, @code, 'Ekstra', 2);
++            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES
++                (@spicy, @group_id, @code || 'S', 'Az acılı', 0), (@cheese, @group_id, @code || 'C', 'Ekstra peynir', 15);
++            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
++            SELECT gen_random_uuid(), order_item_id, @cheese, 'Ekstra peynir', 15, 2 FROM orders.order_items WHERE order_id = @order_id
++            UNION ALL
++            SELECT gen_random_uuid(), order_item_id, @spicy, 'Az acılı', 0, 1 FROM orders.order_items WHERE order_id = @order_id;
++            """);
++        command.Parameters.AddWithValue("group_id", groupId);
++        command.Parameters.AddWithValue("code", "MOD" + groupId.ToString("N")[..10]);
++        command.Parameters.AddWithValue("spicy", Guid.NewGuid());
++        command.Parameters.AddWithValue("cheese", Guid.NewGuid());
++        command.Parameters.AddWithValue("order_id", orderId);
++        await command.ExecuteNonQueryAsync();
++    }
++
++    private static string[] OptionsOf(JsonElement line)
++        => line.GetProperty("options").EnumerateArray().Select(option => $"{option.GetProperty("name").GetString()}={option.GetProperty("price").GetDecimal():0.##}").ToArray();
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task APreReceiptNamesTheLineOptionsWithTheirPriceWhetherOrNotABillIsOpen(bool billOpen)
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-options-" + billOpen, true, "bills.split");
++        var billId = await _database.SeedBillAsync(payable: 100m);
++        var orderId = await SubmittedOrderOfAsync(billId);
++        await SetLineOptionsAsync(orderId);
++        if (!billOpen)
++            await _database.SetBillStatusAsync(billId, "Cancelled");
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        var body = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
++
++        Assert.Equal(["Az acılı=0", "2× Ekstra peynir=30"], OptionsOf(Assert.Single(body.GetProperty("lines").EnumerateArray())));
++    }
++
++    [Fact]
++    public async Task APreReceiptLineWithoutOptionsWritesNoOptionsField()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-no-options", true, "bills.split");
++        var billId = await _database.SeedBillAsync(payable: 100m);
++        var orderId = await SubmittedOrderOfAsync(billId);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        var body = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
++
++        Assert.False(Assert.Single(body.GetProperty("lines").EnumerateArray()).TryGetProperty("options", out _));
++    }
++
++    [Fact]
++    public async Task ThePaidBillReceiptNamesTheLineOptionsWithTheirPrice()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-options");
++        var billId = await _database.SeedBillAsync(payable: 100m);
++        await SetLineOptionsAsync(await SubmittedOrderOfAsync(billId));
++        await _database.SeedCollectedAsync(billId, 100m);
++        await _database.SetBillStatusAsync(billId, "Paid");
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        var receipt = await ReadReceiptAsync(client, terminalId, billId, cookie);
++
++        Assert.Equal(["Az acılı=0", "2× Ekstra peynir=30"], OptionsOf(Assert.Single(receipt.GetProperty("items").EnumerateArray())));
++    }
++
+     [Fact]
+     public async Task APreReceiptCutsALongLineNoteAtTheSlipLimitAndLeavesALineWithoutOneEmpty()
+     {
+diff --git a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
+index bc33601c2..f47a48e21 100644
+--- a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
+@@ -70,6 +70,21 @@ public sealed class CustomerDisplayContractTests
+         Assert.Equal("soğansız", json.RootElement.GetProperty("specialInstructions").GetString());
+     }
+ 
++    [Fact]
++    public void LineOptionsAreWrittenOnlyWhenTheLineHasSome()
++    {
++        var plain = new CustomerDisplayLineDto(Guid.NewGuid(), "Çorba", 1, 100, 100, 0, Guid.NewGuid(), [], false, null, null);
++        var optioned = plain with { Options = [new LineOptionV1("Az acılı", 0), new LineOptionV1("2× Ekstra peynir", 30)] };
++
++        using var withoutOptions = JsonDocument.Parse(JsonSerializer.Serialize(plain, SerializerOptions));
++        using var withOptions = JsonDocument.Parse(JsonSerializer.Serialize(optioned, SerializerOptions));
++
++        Assert.False(withoutOptions.RootElement.TryGetProperty("options", out _));
++        var options = withOptions.RootElement.GetProperty("options").EnumerateArray().ToArray();
++        Assert.Equal(["Az acılı", "2× Ekstra peynir"], options.Select(option => option.GetProperty("name").GetString()));
++        Assert.Equal([0m, 30m], options.Select(option => option.GetProperty("price").GetDecimal()));
++    }
++
+     [Fact]
+     public void CatalogProductCarriesRealCategoryMetadata()
+     {
+diff --git a/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs b/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+index 52b07aee6..10f601a69 100644
+--- a/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+@@ -575,6 +575,50 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
+         Assert.Null(shown.ModifierIds);
+     }
+ 
++    [Fact]
++    public async Task TheTillSnapshotNamesEachLinesOptionsWithTheirPriceAndTheCustomerSnapshotNeverDoes()
++    {
++        var terminalId = Guid.NewGuid();
++        var displayId = Guid.NewGuid();
++        var order = await _store!.StartOrderAsync(terminalId, displayId, CancellationToken.None);
++        var first = await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, "a"), CancellationToken.None);
++        var second = await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, first.Revision, null, "b"), CancellationToken.None);
++        await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, second.Revision, null, "c"), CancellationToken.None);
++        var groupId = Guid.NewGuid();
++        await using (var seed = _dataSource!.CreateCommand(
++            """
++            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES (@group_id, @code, 'Ekstra', 2);
++            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES
++                (@spicy, @group_id, @code || 'S', 'Az acılı', 0), (@cheese, @group_id, @code || 'C', 'Ekstra peynir', 15);
++            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
++            SELECT gen_random_uuid(), order_item_id, @cheese, 'Ekstra peynir', 15, 2 FROM orders.order_items WHERE order_id = @order_id AND notes = 'a'
++            UNION ALL
++            SELECT gen_random_uuid(), order_item_id, @spicy, 'Az acılı', 0, 1 FROM orders.order_items WHERE order_id = @order_id AND notes = 'a'
++            UNION ALL
++            SELECT gen_random_uuid(), order_item_id, @spicy, 'Az acılı', 0, 1 FROM orders.order_items WHERE order_id = @order_id AND notes = 'b';
++            """))
++        {
++            seed.Parameters.AddWithValue("group_id", groupId);
++            seed.Parameters.AddWithValue("code", "MOD" + groupId.ToString("N")[..10]);
++            seed.Parameters.AddWithValue("spicy", Guid.NewGuid());
++            seed.Parameters.AddWithValue("cheese", Guid.NewGuid());
++            seed.Parameters.AddWithValue("order_id", order.OrderId);
++            await seed.ExecuteNonQueryAsync();
++        }
++
++        var forTheTill = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None, includeLineIds: true);
++        var forTheCustomer = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
++
++        var byNote = forTheTill.Lines.ToDictionary(line => line.SpecialInstructions!);
++        Assert.Equal(["Az acılı=0", "2× Ekstra peynir=30"], byNote["a"].Options!.Select(option => $"{option.Name}={option.Price:0.##}"));
++        Assert.Equal(["Az acılı=0"], byNote["b"].Options!.Select(option => $"{option.Name}={option.Price:0.##}"));
++        Assert.Null(byNote["c"].Options);
++        Assert.All(forTheCustomer.Lines, line => Assert.Null(line.Options));
++    }
++
+     [Fact]
+     public async Task ADiscountedLineIsShownBeforeItsDiscountSoTheLinesAddUpToTheSubtotal()
+     {

@@ -143,6 +143,11 @@ export interface CatalogProduct {
   modifierGroups?: CatalogModifierGroup[] | null;
 }
 
+export interface LineOption {
+  name: string;
+  price: number;
+}
+
 export interface DisplayLine {
   itemId: string;
   name: string;
@@ -158,6 +163,8 @@ export interface DisplayLine {
   unsent?: boolean;
   /** A short preparation note the cashier typed for the line; printed on the kitchen ticket. */
   specialInstructions?: string;
+  /** The options picked for the line with their extra charge, so lines of one product with different options can be told apart. */
+  options?: readonly LineOption[];
 }
 
 export interface DisplaySnapshot {
@@ -277,5 +284,6 @@ export interface TableOrder {
     canVoidSent?: boolean;
     addedWithoutKitchenReason?: string | null;
     specialInstructions?: string | null;
+    modifiers?: readonly { name: string; priceDelta: number; quantity: number }[] | null;
   }[];
 }

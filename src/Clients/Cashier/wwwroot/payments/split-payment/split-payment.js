@@ -2446,6 +2446,14 @@
       '</table>';
   }
 
+  // The options a line was ordered with, each with its extra charge when it has one, so the guest can see why a line costs what it does.
+  function receiptOptionsHtml(item) {
+    if (!item.options || item.options.length === 0) return '';
+    return '<br>' + escapeHtml(item.options.map(function (option) {
+      return option.price > 0 ? option.name + ' +' + formatMoney(option.price) : option.name;
+    }).join(', '));
+  }
+
   function receiptHtml(receipt, isCopy) {
     var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) : '';
     return (
@@ -2455,7 +2463,7 @@
       '<p>Hesap: ' + escapeHtml(receipt.billNumber) + (receipt.tableNumber ? '<br>Masa: ' + escapeHtml(receipt.tableNumber) : '') + '<br>' + escapeHtml(opened) + '</p>' +
       '<table>' +
       receipt.items.map(function (item) {
-        return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
+        return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + receiptOptionsHtml(item) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
           (item.lineDiscount > 0
             ? '<tr class="sp-receipt-refund"><td>İndirim / ikram</td><td>-' + formatMoney(item.lineDiscount) + '</td></tr>'
             : '') +

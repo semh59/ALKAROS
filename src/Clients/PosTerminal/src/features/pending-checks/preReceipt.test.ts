@@ -50,6 +50,18 @@ describe("printPreReceipt", () => {
     expect(document.querySelector("#pre-receipt-print i")).toBeNull();
   });
 
+  it("writes a line's options and their extra charge under its name, as text, ahead of the note, and nothing for a line without any", async () => {
+    const optioned = {
+      ...sheet,
+      lines: [{ ...sheet.lines[0], options: [{ name: "Az acılı <i>", price: 0 }, { name: "2× Ekstra peynir", price: 30 }], note: "soğansız" }, sheet.lines[1]],
+    };
+    await printPreReceipt("t-1", "o-1", (async () => reply(200, optioned)) as typeof fetch, vi.fn());
+
+    const rows = [...document.querySelectorAll("#pre-receipt-print table:nth-of-type(1) tr")].map((row) => row.textContent);
+    expect(rows).toEqual(["2 × Köfte <b>Az acılı <i>, 2× Ekstra peynir +₺30,00Not: soğansız₺200,00", "1 × Ayran₺30,00"]);
+    expect(document.querySelector("#pre-receipt-print i")).toBeNull();
+  });
+
   it("states the date and the time of the print in the venue's clock", async () => {
     await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)) as typeof fetch, vi.fn());
 

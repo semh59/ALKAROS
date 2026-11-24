@@ -1,6 +1,6 @@
 import { notifySessionExpired } from "../../api";
 import { formatClockMinutes, formatDate, formatMoney, formatQuantity } from "../../format";
-import { lineNoteText, preReceiptText } from "../../strings";
+import { lineNoteText, lineOptionsText, preReceiptText } from "../../strings";
 import "./pre-receipt.css";
 
 interface PreReceiptSheet {
@@ -9,7 +9,7 @@ interface PreReceiptSheet {
   printedAt: string;
   tableNumber: string | null;
   currencyCode: string;
-  lines: readonly { name: string; quantity: number; unitPrice: number; amount: number; note?: string | null }[];
+  lines: readonly { name: string; quantity: number; unitPrice: number; amount: number; note?: string | null; options?: readonly { name: string; price: number }[] | null }[];
   adjustments: readonly { type: string; amount: number; isDeduction: boolean }[];
   total: number;
   paidAmount: number;
@@ -46,8 +46,9 @@ function drawSheet(sheet: PreReceiptSheet): void {
   );
   const lines = document.createElement("table");
   for (const line of sheet.lines) {
-    // The note sits in the line's own name cell: the amount cell is the one that never wraps and is right-aligned.
+    // The options and the note sit in the line's own name cell: the amount cell is the one that never wraps and is right-aligned.
     const lineRow = lines.appendChild(row(`${formatQuantity(line.quantity)} × ${line.name}`, money(line.amount)));
+    if (line.options?.length) lineRow.cells[0].append(document.createElement("br"), lineOptionsText(line.options, money));
     if (line.note) lineRow.cells[0].append(document.createElement("br"), lineNoteText(line.note));
   }
   const totals = document.createElement("table");

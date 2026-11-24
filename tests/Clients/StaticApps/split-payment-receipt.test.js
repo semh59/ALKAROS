@@ -97,6 +97,23 @@ describe("split-payment.js information receipt", () => {
     expect(text).toContain("110,00");
   });
 
+  it("names a line's options with their extra charge under it on the paid receipt, as text", async () => {
+    const optioned = {
+      ...receipt,
+      items: [{ ...receipt.items[0], options: [{ name: "Az acılı <i>", price: 0 }, { name: "2× Ekstra peynir", price: 30 }] }, receipt.items[1]],
+    };
+    await open({ body: optioned });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    clickPrint();
+
+    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    const rows = [...sheet().querySelectorAll("table:nth-of-type(1) tr")].map((row) => row.textContent);
+    expect(rows[0]).toContain("2 × Taş fırın pizzaAz acılı <i>, 2× Ekstra peynir +₺30,00");
+    expect(rows[1]).toBe("1 × Ayran <b>₺20,00");
+    expect(sheet().querySelector("i")).toBeNull();
+  });
+
   it("has the sheet filled and the print button free again at the moment the print dialog opens", async () => {
     let atPrint = null;
     printSpy.mockImplementation(() => {

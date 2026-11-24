@@ -576,6 +576,50 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheTillSnapshotNamesEachLinesOptionsWithTheirPriceAndTheCustomerSnapshotNeverDoes()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, displayId, CancellationToken.None);
+        var first = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, "a"), CancellationToken.None);
+        var second = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, first.Revision, null, "b"), CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, second.Revision, null, "c"), CancellationToken.None);
+        var groupId = Guid.NewGuid();
+        await using (var seed = _dataSource!.CreateCommand(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES (@group_id, @code, 'Ekstra', 2);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES
+                (@spicy, @group_id, @code || 'S', 'Az acılı', 0), (@cheese, @group_id, @code || 'C', 'Ekstra peynir', 15);
+            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
+            SELECT gen_random_uuid(), order_item_id, @cheese, 'Ekstra peynir', 15, 2 FROM orders.order_items WHERE order_id = @order_id AND notes = 'a'
+            UNION ALL
+            SELECT gen_random_uuid(), order_item_id, @spicy, 'Az acılı', 0, 1 FROM orders.order_items WHERE order_id = @order_id AND notes = 'a'
+            UNION ALL
+            SELECT gen_random_uuid(), order_item_id, @spicy, 'Az acılı', 0, 1 FROM orders.order_items WHERE order_id = @order_id AND notes = 'b';
+            """))
+        {
+            seed.Parameters.AddWithValue("group_id", groupId);
+            seed.Parameters.AddWithValue("code", "MOD" + groupId.ToString("N")[..10]);
+            seed.Parameters.AddWithValue("spicy", Guid.NewGuid());
+            seed.Parameters.AddWithValue("cheese", Guid.NewGuid());
+            seed.Parameters.AddWithValue("order_id", order.OrderId);
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        var forTheTill = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None, includeLineIds: true);
+        var forTheCustomer = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+
+        var byNote = forTheTill.Lines.ToDictionary(line => line.SpecialInstructions!);
+        Assert.Equal(["Az acılı=0", "2× Ekstra peynir=30"], byNote["a"].Options!.Select(option => $"{option.Name}={option.Price:0.##}"));
+        Assert.Equal(["Az acılı=0"], byNote["b"].Options!.Select(option => $"{option.Name}={option.Price:0.##}"));
+        Assert.Null(byNote["c"].Options);
+        Assert.All(forTheCustomer.Lines, line => Assert.Null(line.Options));
+    }
+
+    [Fact]
     public async Task ADiscountedLineIsShownBeforeItsDiscountSoTheLinesAddUpToTheSubtotal()
     {
         var terminalId = Guid.NewGuid();

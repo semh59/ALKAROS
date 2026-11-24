@@ -139,6 +139,9 @@ public sealed record PairingCompletionRequest(string Secret);
 
 public sealed record PairingCompleted(Guid DisplayId, Guid TerminalId, DateTimeOffset ExpiresAt);
 
+/// <summary>An option picked for a line as the till and the slips show it: <paramref name="Name"/> carries "2× " when the option was taken more than once, <paramref name="Price"/> is the extra charge for all of it.</summary>
+public sealed record LineOptionV1(string Name, decimal Price);
+
 public sealed record CustomerDisplayLineDto(
     Guid ItemId,
     string Name,
@@ -149,7 +152,8 @@ public sealed record CustomerDisplayLineDto(
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] Guid ProductId = default,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? SpecialInstructions = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? SpecialInstructions = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<LineOptionV1>? Options = null);
 
 /// <remarks>
 /// The figures always add up: the line totals sum to <c>Subtotal</c> (before any discount), and

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
@@ -16,7 +17,8 @@ namespace ALKAROS.Host.DualScreen;
 
 public sealed record BillReceiptItemV1(
     string Name, decimal Quantity, decimal UnitPrice, decimal Amount, Guid BillItemId, decimal RefundedQuantity,
-    decimal CompletedRefundedQuantity, decimal LineDiscount = 0m, string? AddedWithoutKitchenReason = null);
+    decimal CompletedRefundedQuantity, decimal LineDiscount = 0m, string? AddedWithoutKitchenReason = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<LineOptionV1>? Options = null);
 
 public sealed record BillReceiptTaxLineV1(decimal RatePercent, decimal Net, decimal Tax, decimal Gross);
 
@@ -44,7 +46,9 @@ public sealed record BillReceiptV1(
     string? TableNumber = null);
 
 /// <remarks><paramref name="Note"/> is the line's preparation note, cut at the length a note may be typed with.</remarks>
-public sealed record BillPreReceiptLineV1(string Name, decimal Quantity, decimal UnitPrice, decimal Amount, string? Note = null);
+public sealed record BillPreReceiptLineV1(
+    string Name, decimal Quantity, decimal UnitPrice, decimal Amount, string? Note = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<LineOptionV1>? Options = null);
 
 /// <summary>The slip printed before payment; <paramref name="PrintNumber"/> counts these prints only, never the paid bill's original or copy.</summary>
 public sealed record BillPreReceiptV1(
@@ -290,10 +294,12 @@ public static partial class DualScreenApplication
                 BillPreReceiptV1 sheet;
                 if (bill is null)
                 {
+                    var counted = order.Items.Where(i => i.CountsInOrderTotals).ToList();
+                    var optionsOfItem = await DualScreenStore.LoadLineOptionsAsync(connection, transaction, counted.Select(i => i.Id), cancellationToken);
                     sheet = new BillPreReceiptV1(
                         orderId, 0, DateTimeOffset.UtcNow, await BillOrderNotes.TableNumberAsync(dataSource, order.TableId, cancellationToken), order.CurrencyCode,
-                        order.Items.Where(i => i.CountsInOrderTotals)
-                            .Select(i => new BillPreReceiptLineV1(i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, SlipNote(i.Notes))).ToList(),
+                        counted.Select(i => new BillPreReceiptLineV1(
+                            i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, SlipNote(i.Notes), optionsOfItem.GetValueOrDefault(i.Id))).ToList(),
                         [], order.Total, 0m);
                 }
                 else
@@ -307,7 +313,7 @@ public static partial class DualScreenApplication
                     sheet = new BillPreReceiptV1(
                         orderId, 0, DateTimeOffset.UtcNow, receipt.TableNumber, receipt.CurrencyCode,
                         receipt.Items.Select(i => new BillPreReceiptLineV1(
-                            i.Name, i.Quantity, i.UnitPrice, i.Amount, SlipNote(noteOfOrderItem.GetValueOrDefault(orderItemOfBillItem[i.BillItemId])))).ToList(),
+                            i.Name, i.Quantity, i.UnitPrice, i.Amount, SlipNote(noteOfOrderItem.GetValueOrDefault(orderItemOfBillItem[i.BillItemId])), i.Options)).ToList(),
                         receipt.Adjustments, receipt.PayableAmount, receipt.Payments.Sum(p => p.Amount - p.RefundedAmount));
                 }
 
@@ -443,6 +449,9 @@ public static partial class DualScreenApplication
         var completedRefunded = await CompletedRefundedQuantitiesAsync(dataSource, billId, cancellationToken);
         var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
         var withoutKitchen = await BillOrderNotes.WithoutKitchenReasonsAsync(dataSource, bill.Items.Select(i => i.OrderItemId), cancellationToken);
+        Dictionary<Guid, IReadOnlyList<LineOptionV1>> optionsOfOrderItem;
+        await using (var optionsConnection = await dataSource.OpenConnectionAsync(cancellationToken))
+            optionsOfOrderItem = await DualScreenStore.LoadLineOptionsAsync(optionsConnection, null, bill.Items.Select(i => i.OrderItemId), cancellationToken);
 
         return new BillReceiptV1(
             bill.Id,
@@ -454,7 +463,8 @@ public static partial class DualScreenApplication
             bill.Items
                 .Select(i => new BillReceiptItemV1(
                     i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id),
-                    completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount, withoutKitchen.GetValueOrDefault(i.OrderItemId)))
+                    completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount, withoutKitchen.GetValueOrDefault(i.OrderItemId),
+                    optionsOfOrderItem.GetValueOrDefault(i.OrderItemId)))
                 .ToList(),
             adjustments
                 .Select(a => new BillReceiptAdjustmentV1(a.AdjustmentType.ToString(), a.GrossAmount, a.IsDeduction))

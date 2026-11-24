@@ -6,7 +6,7 @@ import { BillingSplitApiError } from "../features/billing";
 import { collectionHrefForOrder } from "../collectOrder";
 import { collectionHref } from "../features/pending-checks/pendingChecksApi";
 import { printPreReceipt, PreReceiptError } from "../features/pending-checks/preReceipt";
-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, lineNoteText, preReceiptText, servedBillNote, voidSentText } from "../strings";
+import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, lineNoteText, lineOptionsText, preReceiptText, servedBillNote, voidSentText } from "../strings";
 
 interface BridgeTable {
   tableId: string;
@@ -238,6 +238,9 @@ export function TableOrderBridge({
       : read && <>
         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
           {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span>
+            {line.modifiers?.length ? <small className="table-order-bridge__line-options">{lineOptionsText(line.modifiers.map((modifier) => ({
+              name: modifier.quantity > 1 ? `${modifier.quantity}× ${modifier.name}` : modifier.name, price: modifier.priceDelta * modifier.quantity,
+            })), formatMoney)}</small> : null}
             {line.specialInstructions && <small className="table-order-bridge__line-note">{lineNoteText(line.specialInstructions)}</small>}
             {line.canVoidSent && (voidingId === line.itemId
               ? <div className="table-order-bridge__void" role="group" aria-label={voidSentText.pickReason}>

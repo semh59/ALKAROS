@@ -308,6 +308,14 @@ public sealed partial class DualScreenStore
             }
         }
 
+        if (includeLineIds && lines.Count > 0)
+        {
+            var options = await LoadLineOptionsAsync(connection, transaction, lines.Select(line => line.ItemId), cancellationToken);
+            for (var i = 0; i < lines.Count; i++)
+                if (options.TryGetValue(lines[i].ItemId, out var lineOptions))
+                    lines[i] = lines[i] with { Options = lineOptions };
+        }
+
         var state = order.Status switch
         {
             "Completed" => "Completed",
@@ -325,6 +333,38 @@ public sealed partial class DualScreenStore
             displayId, terminalId, orderId, order.Revision, state, order.Editable, order.Number, lines,
             order.Subtotal, order.Discount, order.Tax, order.Total, order.Currency,
             DateTimeOffset.UtcNow, message, AcceptsRound: order.AcceptsRound, TableNumber: includeLineIds ? order.TableNumber : null);
+    }
+
+    /// <summary>
+    /// The options recorded on the given order lines, by name, as the till and the slips list them; a line without options has no entry.
+    /// A quantity above one is part of the name ("2× ...") and the price is the extra charge for all of it. The order is by name in byte
+    /// order so it never depends on the database's collation.
+    /// </summary>
+    internal static async Task<Dictionary<Guid, IReadOnlyList<LineOptionV1>>> LoadLineOptionsAsync(
+        NpgsqlConnection connection, NpgsqlTransaction? transaction, IEnumerable<Guid> orderItemIds, CancellationToken cancellationToken)
+    {
+        var byLine = new Dictionary<Guid, List<LineOptionV1>>();
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT order_item_id, modifier_name_snapshot, price_delta, quantity
+            FROM orders.order_item_modifiers
+            WHERE order_item_id = ANY(@ids)
+            ORDER BY modifier_name_snapshot COLLATE "C", order_item_modifier_id;
+            """, connection, transaction);
+        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderItemIds.ToArray();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var quantity = reader.GetDecimal(3);
+            var name = reader.GetString(1);
+            var option = new LineOptionV1(
+                quantity > 1 ? $"{quantity.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)}× {name}" : name,
+                Math.Round(reader.GetDecimal(2) * quantity, 2, MidpointRounding.AwayFromZero));
+            if (!byLine.TryGetValue(reader.GetGuid(0), out var list))
+                byLine[reader.GetGuid(0)] = list = [];
+            list.Add(option);
+        }
+        return byLine.ToDictionary(pair => pair.Key, pair => (IReadOnlyList<LineOptionV1>)pair.Value);
     }
 
     /// <summary>When the terminal's live display session ends, or null without one: lets the till show it.</summary>

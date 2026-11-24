@@ -811,6 +811,82 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal("soğansız", Assert.Single(body.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString());
     }
 
+    private async Task SetLineOptionsAsync(Guid orderId)
+    {
+        var groupId = Guid.NewGuid();
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES (@group_id, @code, 'Ekstra', 2);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES
+                (@spicy, @group_id, @code || 'S', 'Az acılı', 0), (@cheese, @group_id, @code || 'C', 'Ekstra peynir', 15);
+            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
+            SELECT gen_random_uuid(), order_item_id, @cheese, 'Ekstra peynir', 15, 2 FROM orders.order_items WHERE order_id = @order_id
+            UNION ALL
+            SELECT gen_random_uuid(), order_item_id, @spicy, 'Az acılı', 0, 1 FROM orders.order_items WHERE order_id = @order_id;
+            """);
+        command.Parameters.AddWithValue("group_id", groupId);
+        command.Parameters.AddWithValue("code", "MOD" + groupId.ToString("N")[..10]);
+        command.Parameters.AddWithValue("spicy", Guid.NewGuid());
+        command.Parameters.AddWithValue("cheese", Guid.NewGuid());
+        command.Parameters.AddWithValue("order_id", orderId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private static string[] OptionsOf(JsonElement line)
+        => line.GetProperty("options").EnumerateArray().Select(option => $"{option.GetProperty("name").GetString()}={option.GetProperty("price").GetDecimal():0.##}").ToArray();
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task APreReceiptNamesTheLineOptionsWithTheirPriceWhetherOrNotABillIsOpen(bool billOpen)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-options-" + billOpen, true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await SetLineOptionsAsync(orderId);
+        if (!billOpen)
+            await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var body = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(["Az acılı=0", "2× Ekstra peynir=30"], OptionsOf(Assert.Single(body.GetProperty("lines").EnumerateArray())));
+    }
+
+    [Fact]
+    public async Task APreReceiptLineWithoutOptionsWritesNoOptionsField()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-no-options", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var body = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.False(Assert.Single(body.GetProperty("lines").EnumerateArray()).TryGetProperty("options", out _));
+    }
+
+    [Fact]
+    public async Task ThePaidBillReceiptNamesTheLineOptionsWithTheirPrice()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-options");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await SetLineOptionsAsync(await SubmittedOrderOfAsync(billId));
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var receipt = await ReadReceiptAsync(client, terminalId, billId, cookie);
+
+        Assert.Equal(["Az acılı=0", "2× Ekstra peynir=30"], OptionsOf(Assert.Single(receipt.GetProperty("items").EnumerateArray())));
+    }
+
     [Fact]
     public async Task APreReceiptCutsALongLineNoteAtTheSlipLimitAndLeavesALineWithoutOneEmpty()
     {

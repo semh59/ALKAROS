@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
 import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
-import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
+import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, lineOptionsText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
@@ -1073,6 +1073,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                     <div className="ticket-line-main">
                       <strong>{line.name}</strong>
                       <small>{formatMoney(line.lineTotal / line.quantity)} × {formatQuantity(line.quantity)} · KDV dahil</small>
+                      {line.options?.length ? <small className="ticket-line-options">{lineOptionsText(line.options, formatMoney)}</small> : null}
                       {line.specialInstructions && <small className="ticket-line-note">{itemNoteText.onLine(line.specialInstructions)}</small>}
                     </div>
                     <strong className="line-total">{formatMoney(line.lineTotal)}</strong>

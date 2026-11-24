@@ -1449,6 +1449,10 @@ export const voidSentText = {
   failed: "Ürün iptal edilemedi.",
 } as const;
 
+/** A line's options as the till, the table panel and the slips show them: the name, and the extra charge when there is one. */
+export const lineOptionsText = (options: readonly { name: string; price: number }[], money: (amount: number) => string) =>
+  options.map((option) => (option.price > 0 ? `${option.name} +${money(option.price)}` : option.name)).join(", ");
+
 /** A line's preparation note as the table panel and the pre-payment slip show it. */
 export const lineNoteText = (note: string) => `Not: ${note}`;
 

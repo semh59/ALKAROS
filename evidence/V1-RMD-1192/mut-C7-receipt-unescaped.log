@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > names a line's options with their extra charge under it on the paid receipt, as text
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795526435091-0.9989637030816713:299:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795526435091-0.9989637030816713:608:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795526435091-0.9989637030816713:722:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt.test.js (20 tests | 1 failed) 3848ms
+     × names a line's options with their extra charge under it on the paid receipt, as text 210ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > names a line's options with their extra charge under it on the paid receipt, as text
+AssertionError: expected '2 × Taş fırın pizzaAz acılı , 2× Ekst…' to contain '2 × Taş fırın pizzaAz acılı <i>, 2× E…'
+
+Expected: "2 × Taş fırın pizzaAz acılı <i>, 2× Ekstra peynir +₺30,00"
+Received: "2 × Taş fırın pizzaAz acılı , 2× Ekstra peynir +₺30,00₺80,00"
+
+ ❯ split-payment-receipt.test.js:112:21
+    110|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    111|     const rows = [...sheet().querySelectorAll("table:nth-of-type(1) tr…
+    112|     expect(rows[0]).toContain("2 × Taş fırın pizzaAz acılı <i>, 2× Eks…
+       |                     ^
+    113|     expect(rows[1]).toBe("1 × Ayran <b>₺20,00");
+    114|     expect(sheet().querySelector("i")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 19 passed (20)
+   Start at  16:20:33
+   Duration  5.26s (transform 1.22s, setup 55ms, import 53ms, tests 3.85s, environment 1.04s)
+

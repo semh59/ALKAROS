@@ -1,0 +1,3 @@
+# V1-RMD-1192 qa
+1. qa-frontend: kritik/yuksek yok (XSS, 14 px, Turkce, kapsam temiz). Orta "masa paneli ucret carpani" yanlis alarm: OrderItemModifierDto.PriceDelta birim ucrettir, toplam PriceDelta x Quantity (OrderItemModifier.Total); testte adet 2 var. Dusuk: negatif ucretli secenek (domain negatif ucreti reddeder, olmaz); "Secenekler:" oneki (kisa metin istendi, birakildi).
+2. qa-api-uclar: geriye uyum, musteri ekrani sizintisi, yetki, SQL temiz. Uygulandi: siralama COLLATE "C" (collation bagimsiz), BuildReceiptAsync'te ek baglanti kucuk blokta. Birakildi: iki siparisli birlesik hesap icin ayri secenek testi yok (secenek fatura kaleminin OrderItemId'siyle esleniyor, kodla dogru); kesirli adet yuvarlama testi yok.

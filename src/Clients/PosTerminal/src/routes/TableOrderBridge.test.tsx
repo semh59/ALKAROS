@@ -678,6 +678,17 @@ describe("TableOrderBridge mutfaktaki ürünü iptal et", () => {
     expect(document.querySelectorAll(".table-order-bridge__line-note")).toHaveLength(1);
   });
 
+  it("names the line's options with their extra charge under it, and nothing for a line without any", async () => {
+    const modifiers = [{ modifierId: "m1", name: "Az acılı", priceDelta: 0, quantity: 1 }, { modifierId: "m2", name: "Ekstra peynir", priceDelta: 15, quantity: 2 }];
+    stubFetch(undefined, { ...sentOrder, items: sentOrder.items.map((item) => item.itemId === "i1" ? { ...item, modifiers } : item) });
+    render();
+    await flush();
+
+    const lines = [...document.querySelectorAll(".table-order-bridge__lines li")];
+    expect(lines[0].querySelector(".table-order-bridge__line-options")?.textContent).toBe("Az acılı, 2× Ekstra peynir +₺30,00");
+    expect(document.querySelectorAll(".table-order-bridge__line-options")).toHaveLength(1);
+  });
+
   it("offers the action only on a line the server marks voidable, once per line", async () => {
     stubFetch(undefined, sentOrder);
     render();

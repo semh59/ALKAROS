@@ -71,6 +71,21 @@ public sealed class CustomerDisplayContractTests
     }
 
     [Fact]
+    public void LineOptionsAreWrittenOnlyWhenTheLineHasSome()
+    {
+        var plain = new CustomerDisplayLineDto(Guid.NewGuid(), "Çorba", 1, 100, 100, 0, Guid.NewGuid(), [], false, null, null);
+        var optioned = plain with { Options = [new LineOptionV1("Az acılı", 0), new LineOptionV1("2× Ekstra peynir", 30)] };
+
+        using var withoutOptions = JsonDocument.Parse(JsonSerializer.Serialize(plain, SerializerOptions));
+        using var withOptions = JsonDocument.Parse(JsonSerializer.Serialize(optioned, SerializerOptions));
+
+        Assert.False(withoutOptions.RootElement.TryGetProperty("options", out _));
+        var options = withOptions.RootElement.GetProperty("options").EnumerateArray().ToArray();
+        Assert.Equal(["Az acılı", "2× Ekstra peynir"], options.Select(option => option.GetProperty("name").GetString()));
+        Assert.Equal([0m, 30m], options.Select(option => option.GetProperty("price").GetDecimal()));
+    }
+
+    [Fact]
     public void CatalogProductCarriesRealCategoryMetadata()
     {
         var product = new CatalogProductDto(

@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.line-options.test.tsx (1 test | 1 failed) 2448ms
+     × names each line's options with their extra charge, so two burgers with different options can be told apart 2445ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.line-options.test.tsx > the till's cart line options > names each line's options with their extra charge, so two burgers with different options can be told apart
+AssertionError: expected [ null, null, null ] to deeply equal [ …(3) ]
+
+- Expected
++ Received
+
+  [
+-   "Az acılı, Ekstra peynir +₺15,00",
+-   "Sade <b>",
++   null,
++   null,
+    null,
+  ]
+
+ ❯ src/routes/Cashier.line-options.test.tsx:74:25
+     72|     ]);
+     73|
+     74|     expect(optionsOf()).toEqual(["Az acılı, Ekstra peynir +₺15,00", "S…
+       |                         ^
+     75|     expect(document.querySelector(".ticket-line b")).toBeNull();
+     76|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 87 passed (88)
+   Start at  16:19:55
+   Duration  4.04s (transform 2.39s, setup 0ms, import 966ms, tests 3.35s, environment 3.33s)
+

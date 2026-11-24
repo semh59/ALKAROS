@@ -1,0 +1,79 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (15 tests | 1 failed) 137ms
+     × writes a line's options and their extra charge under its name, as text, ahead of the note, and nothing for a line without any 14ms
+ ❯ src/routes/TableOrderBridge.test.tsx (72 tests | 1 failed) 715ms
+     × names the line's options with their extra charge under it, and nothing for a line without any 14ms
+ ❯ src/routes/Cashier.line-options.test.tsx (1 test | 1 failed) 2118ms
+     × names each line's options with their extra charge, so two burgers with different options can be told apart 2116ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.line-options.test.tsx > the till's cart line options > names each line's options with their extra charge, so two burgers with different options can be told apart
+AssertionError: expected [ …(3) ] to deeply equal [ …(3) ]
+
+- Expected
++ Received
+
+  [
+-   "Az acılı, Ekstra peynir +₺15,00",
++   "Az acılı; Ekstra peynir +₺15,00",
+    "Sade <b>",
+    null,
+  ]
+
+ ❯ src/routes/Cashier.line-options.test.tsx:74:25
+     72|     ]);
+     73|
+     74|     expect(optionsOf()).toEqual(["Az acılı, Ekstra peynir +₺15,00", "S…
+       |                         ^
+     75|     expect(document.querySelector(".ticket-line b")).toBeNull();
+     76|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > names the line's options with their extra charge under it, and nothing for a line without any
+AssertionError: expected 'Az acılı; 2× Ekstra peynir +₺30,00' to be 'Az acılı, 2× Ekstra peynir +₺30,00' // Object.is equality
+
+Expected: "Az acılı, 2× Ekstra peynir +₺30,00"
+Received: "Az acılı; 2× Ekstra peynir +₺30,00"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:688:86
+    686|
+    687|     const lines = [...document.querySelectorAll(".table-order-bridge__…
+    688|     expect(lines[0].querySelector(".table-order-bridge__line-options")…
+       |                                                                                      ^
+    689|     expect(document.querySelectorAll(".table-order-bridge__line-option…
+    690|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > writes a line's options and their extra charge under its name, as text, ahead of the note, and nothing for a line without any
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "2 × Köfte <b>Az acılı <i>, 2× Ekstra peynir +₺30,00Not: soğansız₺200,00",
++   "2 × Köfte <b>Az acılı <i>; 2× Ekstra peynir +₺30,00Not: soğansız₺200,00",
+    "1 × Ayran₺30,00",
+  ]
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:61:18
+     59|
+     60|     const rows = [...document.querySelectorAll("#pre-receipt-print tab…
+     61|     expect(rows).toEqual(["2 × Köfte <b>Az acılı <i>, 2× Ekstra peynir…
+       |                  ^
+     62|     expect(document.querySelector("#pre-receipt-print i")).toBeNull();
+     63|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  3 failed | 85 passed (88)
+   Start at  16:20:26
+   Duration  3.68s (transform 1.98s, setup 0ms, import 809ms, tests 2.97s, environment 3.29s)
+

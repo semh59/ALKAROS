@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (72 tests | 1 failed) 689ms
+     × names the line's options with their extra charge under it, and nothing for a line without any 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > names the line's options with their extra charge under it, and nothing for a line without any
+AssertionError: expected 'Az acılı, Ekstra peynir +₺30,00' to be 'Az acılı, 2× Ekstra peynir +₺30,00' // Object.is equality
+
+Expected: "Az acılı, 2× Ekstra peynir +₺30,00"
+Received: "Az acılı, Ekstra peynir +₺30,00"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:688:86
+    686|
+    687|     const lines = [...document.querySelectorAll(".table-order-bridge__…
+    688|     expect(lines[0].querySelector(".table-order-bridge__line-options")…
+       |                                                                                      ^
+    689|     expect(document.querySelectorAll(".table-order-bridge__line-option…
+    690|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 87 passed (88)
+   Start at  16:20:08
+   Duration  3.82s (transform 2.18s, setup 0ms, import 886ms, tests 3.06s, environment 3.28s)
+
