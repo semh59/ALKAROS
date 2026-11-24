@@ -19,11 +19,17 @@ export function takeWithoutKitchenIntent(): boolean {
   } catch { return false; }
 }
 
-/** Reads and clears the mark; the sales screen asks once each time it is entered. */
-export function takeTableCart(): string | null {
+/** Reads the mark without clearing it, so a reloaded sales screen shows the same table cart again. */
+export function readTableCart(): string | null {
   try {
-    const orderId = sessionStorage.getItem(key);
-    sessionStorage.removeItem(key);
-    return orderId;
+    return sessionStorage.getItem(key);
   } catch { return null; }
+}
+
+/** The cashier left the table cart (quick sale, another screen, sign-out): the next visit to the sales screen starts clean. */
+export function forgetTableCart(): void {
+  try {
+    sessionStorage.removeItem(key);
+    sessionStorage.removeItem(withoutKitchenKey);
+  } catch { /* storage unavailable: nothing was kept */ }
 }

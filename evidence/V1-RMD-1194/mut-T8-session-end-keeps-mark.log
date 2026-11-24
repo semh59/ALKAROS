@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (14 tests | 1 failed) 4036ms
+     × forgets the table cart when the session ends, so the next cashier does not find it 87ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > forgets the table cart when the session ends, so the next cashier does not find it
+AssertionError: expected 'order-table' to be null
+
+- Expected:
+null
+
++ Received:
+"order-table"
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:219:64
+    217|     await act(async () => { notifySessionExpired(); });
+    218|
+    219|     expect(sessionStorage.getItem("alkaros.table-cart-order")).toBeNul…
+       |                                                                ^
+    220|   });
+    221|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  17:54:08
+   Duration  5.43s (transform 1.70s, setup 0ms, import 127ms, tests 4.04s, environment 1.01s)
+

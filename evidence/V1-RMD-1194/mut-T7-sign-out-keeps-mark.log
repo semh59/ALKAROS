@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.logout-clears-storage.test.tsx (2 tests | 1 failed) 2357ms
+     × removes "alkaros.current-bill-id" when the cashier logs out 2281ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.logout-clears-storage.test.tsx > Cashier logout clears session-scoped localStorage > removes "alkaros.current-bill-id" when the cashier logs out
+AssertionError: expected 'order-prev' to be null
+
+- Expected:
+null
+
++ Received:
+"order-prev"
+
+ ❯ src/routes/Cashier.logout-clears-storage.test.tsx:94:64
+     92|     expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
+     93|     expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
+     94|     expect(sessionStorage.getItem("alkaros.table-cart-order")).toBeNul…
+       |                                                                ^
+     95|   });
+     96|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 13 passed (14)
+   Start at  17:50:16
+   Duration  5.34s (transform 3.33s, setup 0ms, import 256ms, tests 6.26s, environment 2.08s)
+

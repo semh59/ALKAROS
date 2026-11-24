@@ -12,7 +12,7 @@ import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } fr
 import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
-import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
+import { forgetTableCart, readTableCart, takeWithoutKitchenIntent } from "../tableCart";
 import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, lineOptionsText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
@@ -124,7 +124,13 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const sessionRef = useRef<CashierSession>("checking");
   const tableCartRef = useRef<string | null>(null);
   const withoutKitchenIntent = useRef(false);
-  useEffect(() => { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }, []);
+  // A page load at the sales screen keeps the table cart the cashier opened (a reload must not lose the table); anywhere else a kept mark is stale.
+  const previousPath = useRef(currentPath);
+  useEffect(() => {
+    if (previousPath.current === "/") tableCartRef.current = readTableCart();
+    else forgetTableCart();
+    withoutKitchenIntent.current = takeWithoutKitchenIntent();
+  }, []);
   useEffect(() => { sessionRef.current = session; }, [session]);
   const cashSession = useCashSessionState(terminalId, userId, session === "ready" && capabilities.includes("cash.drawer"));
   const [busy, setBusy] = useState(false);
@@ -244,11 +250,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   }, [terminalId]);
 
   // Another screen can open the till's order (a table order): coming back reads it, or the first product tap would try to open a second one.
-  const previousPath = useRef(currentPath);
   useEffect(() => {
     const cameBack = currentPath === "/" && previousPath.current !== "/";
+    const left = currentPath !== "/" && previousPath.current === "/";
     previousPath.current = currentPath;
-    if (cameBack) { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }
+    if (left) { forgetTableCart(); tableCartRef.current = null; }
+    if (cameBack) { tableCartRef.current = readTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }
     if (cameBack && sessionRef.current === "ready") void reloadOrder().catch(() => undefined);
   }, [currentPath, reloadOrder]);
 
@@ -281,6 +288,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       // The first session probe of a fresh page load also comes back 401; nobody was signed in, so nothing ended.
       const wasSignedIn = sessionRef.current === "ready";
       setSession("anonymous");
+      // Whoever signs in next must not find this cashier's table cart.
+      tableCartRef.current = null;
+      forgetTableCart();
       if (wasSignedIn) {
         forgetShiftState();
         setSessionEndedMessage("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
@@ -581,6 +591,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       setCatalog([]);
       setOrder(null);
       tableCartRef.current = null;
+      forgetTableCart();
       setNotice("");
       // V1-RMD-314 (independent 2026-09-26 audit, finding K4): workspace.tsx reads/writes this key across
       // a page reload so a cashier can resume the split-payment screen they were on - but logout() never
@@ -685,6 +696,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const leaveTableCart = () => {
     if (!activeOrder?.tableNumber) return;
     tableCartRef.current = null;
+    forgetTableCart();
     void reloadOrder().catch(() => undefined);
   };
 

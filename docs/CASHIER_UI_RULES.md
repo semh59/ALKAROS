@@ -100,3 +100,9 @@ Beyaz yazı yalnız yıkıcı onayda ve koyu dolguda kullanılır; `--ds-color-a
 
 Bir olay tek yerde bildirilir: eylem gerektiriyorsa kalıcı şerit, yalnız bilgi veya başarıysa kendiliğinden kapanan
 bildirim; aynı olay ikisinde birden görünmez (foundations 5.3).
+
+## 10. Satış ekranı yenilenince
+
+Masadan "Sipariş al" ile açılan satış ekranı yenilenince (F5) aynı masa ve o masanın siparişi geri gelir; gönderilmemiş
+kalemler masada yetim kalmaz. Kasiyer masa sepetinden bilerek çıkınca (Hızlı satış, başka ekran, çıkış) sonraki açılış temiz
+bir hızlı satıştır.

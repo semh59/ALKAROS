@@ -41,6 +41,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.resetModules();
   localStorage.clear();
+  sessionStorage.clear();
 });
 
 // V1-RMD-314 (independent 2026-09-26 audit, finding K4): workspace.tsx persists the split-payment
@@ -50,6 +51,7 @@ describe("Cashier logout clears session-scoped localStorage", () => {
   it('removes "alkaros.current-bill-id" when the cashier logs out', async () => {
     localStorage.setItem("alkaros.current-bill-id", "11111111-1111-1111-1111-111111111111");
     localStorage.setItem("alkaros.selected-table", "table-prev");
+    sessionStorage.setItem("alkaros.table-cart-order", "order-prev");
 
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
@@ -89,6 +91,7 @@ describe("Cashier logout clears session-scoped localStorage", () => {
 
     expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
     expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
+    expect(sessionStorage.getItem("alkaros.table-cart-order")).toBeNull();
   });
 
   it("posts the logout even when the browser applies the menu's own close between the menu and the page handlers", async () => {

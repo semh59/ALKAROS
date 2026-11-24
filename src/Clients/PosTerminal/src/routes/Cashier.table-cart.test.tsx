@@ -149,6 +149,103 @@ describe("a table order and the quick sale cart", () => {
     expect(calls.some((call) => call.includes("order-table"))).toBe(false);
   });
 
+  const reload = async (active: Record<string, unknown> = tableOrder) => {
+    act(() => root!.unmount());
+    root = null;
+    vi.resetModules();
+    return openTill(active);
+  };
+
+  it("shows the same table cart again when the sales screen is reloaded", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    await openTill();
+
+    await reload();
+
+    expect(document.body.textContent).toContain("Çay");
+    expect(document.querySelector(".eyebrow.dark")?.textContent).toBe("MASA M-10");
+  });
+
+  it("shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice", async () => {
+    await openTill();
+    const go = async (path: string) => {
+      window.history.pushState(null, "", path);
+      await act(async () => { window.dispatchEvent(new PopStateEvent("popstate")); });
+      await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    };
+    await go("/zzz");
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    await go("/");
+    expect(document.body.textContent).toContain("Çay");
+
+    await reload();
+    await reload();
+
+    expect(document.body.textContent).toContain("Çay");
+  });
+
+  it("reloads into a clean quick sale after the cashier left the table cart through the quick-sale tab", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    await openTill();
+    const tab = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Hızlı satış")!;
+    await act(async () => { tab.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 })); });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+
+    await reload();
+
+    expect(document.body.textContent).not.toContain("Çay");
+    expect(document.querySelector(".eyebrow.dark")?.textContent).toBe("HIZLI SİPARİŞ");
+  });
+
+  it("does not bring back a stale table cart when the page is loaded on another screen and the cashier then opens the sales screen", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    window.history.pushState(null, "", "/zzz");
+    await openTill();
+
+    window.history.pushState(null, "", "/");
+    await act(async () => { window.dispatchEvent(new PopStateEvent("popstate")); });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+
+    expect(document.body.textContent).not.toContain("Çay");
+  });
+
+  it("does not show another table's order after a reload when the kept mark belongs to a different order", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-other");
+    await openTill();
+
+    await reload();
+
+    expect(document.body.textContent).not.toContain("Çay");
+    expect(document.querySelector(".eyebrow.dark")?.textContent).toBe("HIZLI SİPARİŞ");
+  });
+
+  it("forgets the table cart when the session ends, so the next cashier does not find it", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    await openTill();
+    const { notifySessionExpired } = await import("../api");
+
+    await act(async () => { notifySessionExpired(); });
+
+    expect(sessionStorage.getItem("alkaros.table-cart-order")).toBeNull();
+  });
+
+  it("reloads into a clean quick sale after the cashier went to another screen and came back without opening a table", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    await openTill();
+    const go = async (path: string) => {
+      window.history.pushState(null, "", path);
+      await act(async () => { window.dispatchEvent(new PopStateEvent("popstate")); });
+      await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    };
+    await go("/zzz");
+    await go("/");
+    expect(document.body.textContent).not.toContain("Çay");
+
+    await reload();
+
+    expect(document.body.textContent).not.toContain("Çay");
+  });
+
   it("shows the table order, named by its table, when it was opened from the tables screen", async () => {
     sessionStorage.setItem("alkaros.table-cart-order", "order-table");
 

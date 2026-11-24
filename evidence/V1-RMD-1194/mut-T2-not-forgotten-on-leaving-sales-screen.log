@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (12 tests | 1 failed) 3854ms
+     × reloads into a clean quick sale after the cashier went to another screen and came back without opening a table 122ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > reloads into a clean quick sale after the cashier went to another screen and came back without opening a table
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' not to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾Gönderildi · Toplam₺45,00⌂Tümü101İçecek1MASA M-10Tüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞMasa M-10 · Sipariş 08:251ürünÇay₺45,00 × 1 · KDV dahil₺45,00−1+KaldırAra toplam₺45,00İçindeki KDV₺0,00Toplam₺45,00✓Sipariş gönderildiBu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:210:43
+    208|     await go("/zzz");
+    209|     await go("/");
+    210|     expect(document.body.textContent).not.toContain("Çay");
+       |                                           ^
+    211|
+    212|     await reload();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 13 passed (14)
+   Start at  17:49:37
+   Duration  5.27s (transform 3.33s, setup 0ms, import 318ms, tests 6.17s, environment 1.95s)
+

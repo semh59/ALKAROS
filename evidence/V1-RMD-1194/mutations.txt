@@ -1,0 +1,8 @@
+T1-mark-cleared-on-read killed (restored)
+T2-not-forgotten-on-leaving-sales-screen killed (restored)
+T3-not-forgotten-by-quick-sale-tab killed (restored)
+T4-mark-read-only-when-entering killed (restored)
+T6-reentry-does-not-read-mark killed (restored)
+T7-sign-out-keeps-mark killed (restored)
+T5-stale-mark-kept-off-sales-screen killed (restored)
+T8-session-end-keeps-mark killed (restored)

@@ -1,0 +1,259 @@
+diff --git a/docs/CASHIER_UI_RULES.md b/docs/CASHIER_UI_RULES.md
+index 62a078bc9..11db3b0f0 100644
+--- a/docs/CASHIER_UI_RULES.md
++++ b/docs/CASHIER_UI_RULES.md
+@@ -100,3 +100,9 @@ Beyaz yazı yalnız yıkıcı onayda ve koyu dolguda kullanılır; `--ds-color-a
+ 
+ Bir olay tek yerde bildirilir: eylem gerektiriyorsa kalıcı şerit, yalnız bilgi veya başarıysa kendiliğinden kapanan
+ bildirim; aynı olay ikisinde birden görünmez (foundations 5.3).
++
++## 10. Satış ekranı yenilenince
++
++Masadan "Sipariş al" ile açılan satış ekranı yenilenince (F5) aynı masa ve o masanın siparişi geri gelir; gönderilmemiş
++kalemler masada yetim kalmaz. Kasiyer masa sepetinden bilerek çıkınca (Hızlı satış, başka ekran, çıkış) sonraki açılış temiz
++bir hızlı satıştır.
+diff --git a/plan/v1/remediation/V1-RMD-1194-sales-screen-reload-keeps-table-cart.md b/plan/v1/remediation/V1-RMD-1194-sales-screen-reload-keeps-table-cart.md
+index ceeabca88..6ed162512 100644
+--- a/plan/v1/remediation/V1-RMD-1194-sales-screen-reload-keeps-table-cart.md
++++ b/plan/v1/remediation/V1-RMD-1194-sales-screen-reload-keeps-table-cart.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1194 - Satış ekranı yenilenince masa bağlamı korunur
+ 
+ - Task ID: V1-RMD-1194
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+index 92f201017..d352f1dd9 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+@@ -41,6 +41,7 @@ afterEach(() => {
+   vi.unstubAllGlobals();
+   vi.resetModules();
+   localStorage.clear();
++  sessionStorage.clear();
+ });
+ 
+ // V1-RMD-314 (independent 2026-09-26 audit, finding K4): workspace.tsx persists the split-payment
+@@ -50,6 +51,7 @@ describe("Cashier logout clears session-scoped localStorage", () => {
+   it('removes "alkaros.current-bill-id" when the cashier logs out', async () => {
+     localStorage.setItem("alkaros.current-bill-id", "11111111-1111-1111-1111-111111111111");
+     localStorage.setItem("alkaros.selected-table", "table-prev");
++    sessionStorage.setItem("alkaros.table-cart-order", "order-prev");
+ 
+     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+       const path = String(input);
+@@ -89,6 +91,7 @@ describe("Cashier logout clears session-scoped localStorage", () => {
+ 
+     expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
+     expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
++    expect(sessionStorage.getItem("alkaros.table-cart-order")).toBeNull();
+   });
+ 
+   it("posts the logout even when the browser applies the menu's own close between the menu and the page handlers", async () => {
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
+index 8f9a2916e..e2680058a 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
+@@ -149,6 +149,103 @@ describe("a table order and the quick sale cart", () => {
+     expect(calls.some((call) => call.includes("order-table"))).toBe(false);
+   });
+ 
++  const reload = async (active: Record<string, unknown> = tableOrder) => {
++    act(() => root!.unmount());
++    root = null;
++    vi.resetModules();
++    return openTill(active);
++  };
++
++  it("shows the same table cart again when the sales screen is reloaded", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    await openTill();
++
++    await reload();
++
++    expect(document.body.textContent).toContain("Çay");
++    expect(document.querySelector(".eyebrow.dark")?.textContent).toBe("MASA M-10");
++  });
++
++  it("shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice", async () => {
++    await openTill();
++    const go = async (path: string) => {
++      window.history.pushState(null, "", path);
++      await act(async () => { window.dispatchEvent(new PopStateEvent("popstate")); });
++      await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++    };
++    await go("/zzz");
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    await go("/");
++    expect(document.body.textContent).toContain("Çay");
++
++    await reload();
++    await reload();
++
++    expect(document.body.textContent).toContain("Çay");
++  });
++
++  it("reloads into a clean quick sale after the cashier left the table cart through the quick-sale tab", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    await openTill();
++    const tab = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Hızlı satış")!;
++    await act(async () => { tab.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 })); });
++    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++
++    await reload();
++
++    expect(document.body.textContent).not.toContain("Çay");
++    expect(document.querySelector(".eyebrow.dark")?.textContent).toBe("HIZLI SİPARİŞ");
++  });
++
++  it("does not bring back a stale table cart when the page is loaded on another screen and the cashier then opens the sales screen", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    window.history.pushState(null, "", "/zzz");
++    await openTill();
++
++    window.history.pushState(null, "", "/");
++    await act(async () => { window.dispatchEvent(new PopStateEvent("popstate")); });
++    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++
++    expect(document.body.textContent).not.toContain("Çay");
++  });
++
++  it("does not show another table's order after a reload when the kept mark belongs to a different order", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-other");
++    await openTill();
++
++    await reload();
++
++    expect(document.body.textContent).not.toContain("Çay");
++    expect(document.querySelector(".eyebrow.dark")?.textContent).toBe("HIZLI SİPARİŞ");
++  });
++
++  it("forgets the table cart when the session ends, so the next cashier does not find it", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    await openTill();
++    const { notifySessionExpired } = await import("../api");
++
++    await act(async () => { notifySessionExpired(); });
++
++    expect(sessionStorage.getItem("alkaros.table-cart-order")).toBeNull();
++  });
++
++  it("reloads into a clean quick sale after the cashier went to another screen and came back without opening a table", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    await openTill();
++    const go = async (path: string) => {
++      window.history.pushState(null, "", path);
++      await act(async () => { window.dispatchEvent(new PopStateEvent("popstate")); });
++      await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++    };
++    await go("/zzz");
++    await go("/");
++    expect(document.body.textContent).not.toContain("Çay");
++
++    await reload();
++
++    expect(document.body.textContent).not.toContain("Çay");
++  });
++
+   it("shows the table order, named by its table, when it was opened from the tables screen", async () => {
+     sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index e0eface7b..ffac1a844 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -12,7 +12,7 @@ import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } fr
+ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
+ import { isPlainClick, useRouter } from "../router";
+ import { focusOnMount } from "../focusOnMount";
+-import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
++import { forgetTableCart, readTableCart, takeWithoutKitchenIntent } from "../tableCart";
+ import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, lineOptionsText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
+ import { formatDateTime, formatMoney, formatQuantity } from "../format";
+ import { savedId } from "../storage";
+@@ -124,7 +124,13 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const sessionRef = useRef<CashierSession>("checking");
+   const tableCartRef = useRef<string | null>(null);
+   const withoutKitchenIntent = useRef(false);
+-  useEffect(() => { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }, []);
++  // A page load at the sales screen keeps the table cart the cashier opened (a reload must not lose the table); anywhere else a kept mark is stale.
++  const previousPath = useRef(currentPath);
++  useEffect(() => {
++    if (previousPath.current === "/") tableCartRef.current = readTableCart();
++    else forgetTableCart();
++    withoutKitchenIntent.current = takeWithoutKitchenIntent();
++  }, []);
+   useEffect(() => { sessionRef.current = session; }, [session]);
+   const cashSession = useCashSessionState(terminalId, userId, session === "ready" && capabilities.includes("cash.drawer"));
+   const [busy, setBusy] = useState(false);
+@@ -244,11 +250,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   }, [terminalId]);
+ 
+   // Another screen can open the till's order (a table order): coming back reads it, or the first product tap would try to open a second one.
+-  const previousPath = useRef(currentPath);
+   useEffect(() => {
+     const cameBack = currentPath === "/" && previousPath.current !== "/";
++    const left = currentPath !== "/" && previousPath.current === "/";
+     previousPath.current = currentPath;
+-    if (cameBack) { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }
++    if (left) { forgetTableCart(); tableCartRef.current = null; }
++    if (cameBack) { tableCartRef.current = readTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }
+     if (cameBack && sessionRef.current === "ready") void reloadOrder().catch(() => undefined);
+   }, [currentPath, reloadOrder]);
+ 
+@@ -281,6 +288,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       // The first session probe of a fresh page load also comes back 401; nobody was signed in, so nothing ended.
+       const wasSignedIn = sessionRef.current === "ready";
+       setSession("anonymous");
++      // Whoever signs in next must not find this cashier's table cart.
++      tableCartRef.current = null;
++      forgetTableCart();
+       if (wasSignedIn) {
+         forgetShiftState();
+         setSessionEndedMessage("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
+@@ -581,6 +591,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       setCatalog([]);
+       setOrder(null);
+       tableCartRef.current = null;
++      forgetTableCart();
+       setNotice("");
+       // V1-RMD-314 (independent 2026-09-26 audit, finding K4): workspace.tsx reads/writes this key across
+       // a page reload so a cashier can resume the split-payment screen they were on - but logout() never
+@@ -685,6 +696,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const leaveTableCart = () => {
+     if (!activeOrder?.tableNumber) return;
+     tableCartRef.current = null;
++    forgetTableCart();
+     void reloadOrder().catch(() => undefined);
+   };
+ 
+diff --git a/src/Clients/PosTerminal/src/tableCart.ts b/src/Clients/PosTerminal/src/tableCart.ts
+index b30ae6d9b..0bfa2c66a 100644
+--- a/src/Clients/PosTerminal/src/tableCart.ts
++++ b/src/Clients/PosTerminal/src/tableCart.ts
+@@ -19,11 +19,17 @@ export function takeWithoutKitchenIntent(): boolean {
+   } catch { return false; }
+ }
+ 
+-/** Reads and clears the mark; the sales screen asks once each time it is entered. */
+-export function takeTableCart(): string | null {
++/** Reads the mark without clearing it, so a reloaded sales screen shows the same table cart again. */
++export function readTableCart(): string | null {
+   try {
+-    const orderId = sessionStorage.getItem(key);
+-    sessionStorage.removeItem(key);
+-    return orderId;
++    return sessionStorage.getItem(key);
+   } catch { return null; }
+ }
++
++/** The cashier left the table cart (quick sale, another screen, sign-out): the next visit to the sales screen starts clean. */
++export function forgetTableCart(): void {
++  try {
++    sessionStorage.removeItem(key);
++    sessionStorage.removeItem(withoutKitchenKey);
++  } catch { /* storage unavailable: nothing was kept */ }
++}

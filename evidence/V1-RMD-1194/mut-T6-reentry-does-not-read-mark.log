@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (12 tests | 2 failed) 3735ms
+     × shows the table order after the cashier opens it on the tables screen and comes back 165ms
+     × shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice 111ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the table order after the cashier opens it on the tables screen and comes back
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:106:39
+    104|     await go("/");
+    105|
+    106|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    107|     window.history.pushState(null, "", "/");
+    108|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:179:39
+    177|     sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    178|     await go("/");
+    179|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    180|
+    181|     await reload();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 12 passed (14)
+   Start at  17:50:08
+   Duration  5.16s (transform 3.23s, setup 0ms, import 252ms, tests 6.01s, environment 2.05s)
+

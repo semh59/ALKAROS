@@ -1,7 +1,7 @@
 # V1-RMD-1194 - Satış ekranı yenilenince masa bağlamı korunur
 
 - Task ID: V1-RMD-1194
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

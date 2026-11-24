@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (12 tests | 2 failed) 3966ms
+     × shows the same table cart again when the sales screen is reloaded 199ms
+     × shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice 292ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the same table cart again when the sales screen is reloaded
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:165:39
+    163|     await reload();
+    164|
+    165|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    166|     expect(document.querySelector(".eyebrow.dark")?.textContent).toBe(…
+    167|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:184:39
+    182|     await reload();
+    183|
+    184|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    185|   });
+    186|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 12 passed (14)
+   Start at  17:49:29
+   Duration  5.38s (transform 3.35s, setup 0ms, import 299ms, tests 6.29s, environment 1.98s)
+

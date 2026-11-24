@@ -1,0 +1,101 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (12 tests | 5 failed) 3853ms
+     × does not offer a quick-sale switch inside the table cart 86ms
+     × does not mark the quick-sale tab as current while the table cart is open 90ms
+     × shows the same table cart again when the sales screen is reloaded 164ms
+     × shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice 315ms
+     × shows the table order, named by its table, when it was opened from the tables screen 81ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > does not offer a quick-sale switch inside the table cart
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:123:39
+    121|     await openTill();
+    122|
+    123|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    124|     expect([...document.querySelectorAll("button")].some((b) => b.text…
+    125|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > does not mark the quick-sale tab as current while the table cart is open
+AssertionError: expected 'page' to be null
+
+- Expected:
+null
+
++ Received:
+"page"
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:132:46
+    130|
+    131|     const tab = [...document.querySelectorAll(".view-switch a")].find(…
+    132|     expect(tab.getAttribute("aria-current")).toBeNull();
+       |                                              ^
+    133|     const tables = [...document.querySelectorAll(".view-switch a")].fi…
+    134|     expect(tables.getAttribute("aria-current")).toBe("page");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the same table cart again when the sales screen is reloaded
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:165:39
+    163|     await reload();
+    164|
+    165|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    166|     expect(document.querySelector(".eyebrow.dark")?.textContent).toBe(…
+    167|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the table cart again after the tables screen opened it, even when the sales screen is reloaded twice
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:184:39
+    182|     await reload();
+    183|
+    184|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    185|   });
+    186|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the table order, named by its table, when it was opened from the tables screen
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕Not ekleİçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:222:39
+    220|     await openTill();
+    221|
+    222|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    223|     expect([...document.querySelectorAll("h2")].some((heading) => head…
+    224|     expect(document.querySelector(".eyebrow.dark")?.textContent).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  5 failed | 9 passed (14)
+   Start at  17:49:52
+   Duration  5.27s (transform 3.29s, setup 0ms, import 260ms, tests 6.19s, environment 2.05s)
+
