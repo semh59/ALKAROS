@@ -1,0 +1,307 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index dd17e0fe2..26ddea8af 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2562,10 +2562,27 @@
+   var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
+ 
+   // A refund that closes the bill is its own result: what was paid back and how, never "bill cancelled".
++  // The screen shows at once with the last refund's amount; earlier partial refunds of the bill are added as soon as the list
++  // answers, so the amount ends up as what the customer got back in all. A list that cannot be read leaves the last amount.
+   function showRefundDone(refund) {
+     state.refundDone = refund;
+     state.phase = 'refunded';
+     render();
++    if (typeof refund.amount !== 'number') return;
++    var unreadable = function () {
++      if (state.refundDone !== refund) return;
++      state.refundDone = Object.assign({}, refund, { totalUnknown: true });
++      if (state.phase === 'refunded') render();
++    };
++    api(refundsBase() + '?billId=' + encodeURIComponent(state.billId)).then(function (result) {
++      if (!result.ok || !Array.isArray(result.body)) { unreadable(); return; }
++      if (state.refundDone !== refund) return;
++      var total = result.body.reduce(function (sum, row) {
++        return row.billId === state.billId && row.status === 'Completed' && row.requestId !== refund.requestId && typeof row.amount === 'number' ? sum + row.amount : sum;
++      }, refund.amount);
++      state.refundDone = Object.assign({}, refund, { amount: total });
++      if (state.phase === 'refunded') render();
++    }).catch(unreadable);
+   }
+ 
+   var REFUND_METHOD_NOTES = {
+@@ -2582,7 +2599,7 @@
+       '<div class="sp-card sp-center-text">' +
+       '<span class="sp-icon-circle success">✓</span>' +
+       '<h1 class="sp-title">İade Tamamlandı</h1>' +
+-      '<p class="sp-subtitle">' + escapeHtml((typeof refund.amount === 'number' ? formatMoney(refund.amount) + ' iade edildi. ' : '') + (note ? note(refund) + ' ' : '') + 'Hesap iade sonrası kapandı.') + '</p>' +
++      '<p class="sp-subtitle">' + escapeHtml((typeof refund.amount === 'number' ? formatMoney(refund.amount) + ' iade edildi. ' : '') + (note ? note(refund) + ' ' : '') + (refund.totalUnknown ? 'Önceki iadelerin toplamı okunamadı. ' : '') + 'Hesap iade sonrası kapandı.') + '</p>' +
+       (state.billTable ? backLink('/tables', 'Masaya dön', true) : '') +
+       BACK_LINK +
+       '</div>';
+diff --git a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+index 1576b2a49..b6807b711 100644
+--- a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
++++ b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+@@ -23,7 +23,7 @@ public static class CustomerDisplayPaymentProgress
+ 
+     public const string BillCancelledMessage = "Hesap iptal edildi.";
+ 
+-    public const string BillRefundedMessage = "İade tamamlandı.";
++    public static string BillRefundedMessage(decimal refundedTotal) => $"İade tamamlandı. {DualScreenApplication.FormatLira(refundedTotal)} iade edildi.";
+ 
+     public static async Task<CustomerDisplaySnapshotDto> AttachAsync(
+         CustomerDisplaySnapshotDto snapshot,
+@@ -38,13 +38,13 @@ public static class CustomerDisplayPaymentProgress
+ 
+         var live = new List<BillStatement>();
+         var anyCancelled = false;
+-        var refundClosed = false;
++        var refundedTotal = 0m;
+         foreach (var bill in await bills.GetByOrderIdAsync(orderId, cancellationToken))
+         {
+             if (bill.Status == BillState.Cancelled)
+             {
+                 anyCancelled = true;
+-                refundClosed |= IsRefundClosure(await payments.GetByBillIdAsync(bill.Id, cancellationToken));
++                refundedTotal += RefundedTotal(await payments.GetByBillIdAsync(bill.Id, cancellationToken));
+                 continue;
+             }
+ 
+@@ -58,7 +58,7 @@ public static class CustomerDisplayPaymentProgress
+             live.Add(new BillStatement(bill, billAdjustments, projection));
+         }
+ 
+-        return Apply(snapshot, live, anyCancelled, refundClosed);
++        return Apply(snapshot, live, anyCancelled, refundedTotal);
+     }
+ 
+     /// <param name="live">The order's bills that are not cancelled.</param>
+@@ -71,13 +71,13 @@ public static class CustomerDisplayPaymentProgress
+     /// and takes new lines), so there it stays; a quick sale and the customer display are cleared.
+     /// </remarks>
+     public static CustomerDisplaySnapshotDto Apply(
+-        CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false, bool refundClosed = false)
++        CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false, decimal refundedTotal = 0m)
+     {
+         if (snapshot.State is not (ActiveState or CompletedState))
+             return snapshot;
+ 
+         if (live.Count == 0)
+-            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot, refundClosed) : snapshot;
++            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot, refundedTotal) : snapshot;
+ 
+         var summaries = live.Select(s => AdjustmentCalculator.Calculate(s.Bill, s.Adjustments)).ToList();
+         var lines = live
+@@ -102,10 +102,11 @@ public static class CustomerDisplayPaymentProgress
+         };
+     }
+ 
+-    /// <summary>A bill closes by refund exactly when a payment of it was paid back; a plain cancel never had one.</summary>
+-    public static bool IsRefundClosure(IEnumerable<Payment> billPayments) => billPayments.Any(p => p.Status == PaymentStatus.Refunded);
++    /// <summary>What was paid back on a bill. A bill closes by refund only when no payment still holds money, so every refunded payment was refunded in full.</summary>
++    public static decimal RefundedTotal(IEnumerable<Payment> billPayments)
++        => billPayments.Where(p => p.Status == PaymentStatus.Refunded).Sum(p => p.ApprovedAmount ?? 0m);
+ 
+-    private static CustomerDisplaySnapshotDto Cleared(CustomerDisplaySnapshotDto snapshot, bool refundClosed) => snapshot with
++    private static CustomerDisplaySnapshotDto Cleared(CustomerDisplaySnapshotDto snapshot, decimal refundedTotal) => snapshot with
+     {
+         State = IdleState,
+         Lines = [],
+@@ -117,6 +118,6 @@ public static class CustomerDisplayPaymentProgress
+         Total = 0m,
+         PaidTotal = 0m,
+         RemainingTotal = null,
+-        Message = refundClosed ? BillRefundedMessage : BillCancelledMessage,
++        Message = refundedTotal > 0m ? BillRefundedMessage(refundedTotal) : BillCancelledMessage,
+     };
+ }
+diff --git a/src/Host/DualScreen/DualScreenApplication.Payments.cs b/src/Host/DualScreen/DualScreenApplication.Payments.cs
+index 05ba76667..3f96dbb20 100644
+--- a/src/Host/DualScreen/DualScreenApplication.Payments.cs
++++ b/src/Host/DualScreen/DualScreenApplication.Payments.cs
+@@ -801,7 +801,7 @@ public static partial class DualScreenApplication
+         return group;
+     }
+ 
+-    private static string FormatLira(decimal amount)
++    internal static string FormatLira(decimal amount)
+         => amount.ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("tr-TR")) + " ₺";
+ 
+     public static string PaymentStatusText(string status)
+diff --git a/tests/Clients/StaticApps/split-payment-refunds.test.js b/tests/Clients/StaticApps/split-payment-refunds.test.js
+index 00d375f10..3c76e1314 100644
+--- a/tests/Clients/StaticApps/split-payment-refunds.test.js
++++ b/tests/Clients/StaticApps/split-payment-refunds.test.js
+@@ -45,7 +45,7 @@ function routes({ summary, requests = [], post = {}, approver = false }) {
+     { test: (url, init) => url.endsWith("/approve") && init?.method === "POST", ...(post.approve ?? { body: request("Completed") }) },
+     { test: (url, init) => url.endsWith("/reject") && init?.method === "POST", body: request("Rejected") },
+     { test: (url, init) => url.endsWith("/complete") && init?.method === "POST", ...(post.complete ?? { body: request("Completed") }) },
+-    { test: (url, init) => url.endsWith(`${base}/refund-requests`) && (init?.method ?? "GET") === "GET", body: requests },
++    { test: (url, init) => url.split("?")[0].endsWith(`${base}/refund-requests`) && (init?.method ?? "GET") === "GET", body: requests },
+   ];
+ }
+ 
+@@ -298,6 +298,93 @@ describe("split-payment.js cancel and refund", () => {
+     expect(app().textContent).not.toContain("İade Tamamlandı");
+   });
+ 
++  it.each([
++    ["adds the bill's earlier completed refunds to the last one", [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 }), request("Requested", { amount: 60 })], "₺100,00 iade edildi."],
++    ["ignores other bills' and unfinished refunds", [request("Completed", { billId: "99999999-9999-9999-9999-999999999999", requestId: "66666666-6666-6666-6666-666666666666", amount: 500 }), request("Rejected", { requestId: "77777777-7777-7777-7777-777777777777", amount: 30 }), request("Requested", { amount: 60 })], "₺60,00 iade edildi."],
++  ])("the refund screen %s", async (_name, requests, sentence) => {
++    await open(routes({
++      summary: paidSummary, requests,
++      post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
++    }));
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
++
++    clickTwice('[data-refund-action="approve"]');
++
++    await vi.waitFor(() => expect(app().textContent).toContain(sentence));
++  });
++
++  it("counts the last refund once when the list shows it completed by the time the screen is built", async () => {
++    const requests = [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 }), request("Requested", { amount: 60 })];
++    const fetchMock = await open(routes({
++      summary: paidSummary, requests,
++      post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
++    }));
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
++    document.querySelector('[data-refund-action="approve"]').click();
++    requests[1].status = "Completed";
++    document.querySelector('[data-refund-action="approve"]').click();
++
++    await vi.waitFor(() => expect(app().textContent).toContain("₺100,00 iade edildi."));
++    expect(fetchMock.mock.calls.some(([url]) => url.endsWith(`/billing/refund-requests?billId=${BILL_ID}`))).toBe(true);
++  });
++
++  it("still shows the refund screen with the last refund's amount when the list cannot be read at that moment", async () => {
++    let offline = false;
++    await open([
++      { test: (url) => { if (offline && url.split("?")[0].endsWith("/billing/refund-requests")) throw new Error("offline"); return false; } },
++      ...routes({
++        summary: paidSummary, requests: [request("Requested", { amount: 60 })],
++        post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
++      }),
++    ]);
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
++    document.querySelector('[data-refund-action="approve"]').click();
++    offline = true;
++    document.querySelector('[data-refund-action="approve"]').click();
++
++    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
++    expect(app().textContent).toContain("₺60,00 iade edildi.");
++    expect(app().textContent).toContain("Önceki iadelerin toplamı okunamadı.");
++  });
++
++  it("keeps the last refund's amount when the list answers with an error", async () => {
++    let failing = false;
++    await open([
++      { test: (url) => failing && url.split("?")[0].endsWith("/billing/refund-requests"), status: 500, body: [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 })] },
++      ...routes({
++        summary: paidSummary, requests: [request("Requested", { amount: 60 })],
++        post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
++      }),
++    ]);
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
++    document.querySelector('[data-refund-action="approve"]').click();
++    failing = true;
++    document.querySelector('[data-refund-action="approve"]').click();
++
++    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
++    await new Promise((resolve) => setTimeout(resolve, 30));
++    expect(app().textContent).toContain("₺60,00 iade edildi.");
++    expect(app().textContent).toContain("Önceki iadelerin toplamı okunamadı.");
++    expect(app().textContent).not.toContain("₺100,00");
++  });
++
++  it("adds no amount from the list when the answer carries none", async () => {
++    const requests = [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 }), request("Requested")];
++    const fetchMock = await open(routes({
++      summary: paidSummary, requests,
++      post: { approve: { body: request("Completed", { billCancelled: true, amount: undefined }) } },
++    }));
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
++
++    clickTwice('[data-refund-action="approve"]');
++
++    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
++    await new Promise((resolve) => setTimeout(resolve, 30));
++    expect(app().textContent).not.toContain("iade edildi.");
++    expect(app().textContent).not.toContain("₺");
++    expect(fetchMock.mock.calls.some(([url]) => url.includes("/billing/refund-requests?billId="))).toBe(false);
++  });
++
+   it("names no amount when the answer carries none", async () => {
+     await open(routes({
+       summary: paidSummary, requests: [request("Requested")],
+diff --git a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+index 13454748d..7b31fcf5c 100644
+--- a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+@@ -223,11 +223,10 @@ public sealed class CustomerDisplayStatementTests
+     [Fact]
+     public void AnOrderWhoseBillClosedByRefundSaysTheRefundIsDoneNotThatTheBillWasCancelled()
+     {
+-        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(), [], anyBillCancelled: true, refundClosed: true);
++        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(), [], anyBillCancelled: true, refundedTotal: 100m);
+ 
+         Assert.Equal("Idle", result.State);
+-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, result.Message);
+-        Assert.Equal("İade tamamlandı.", result.Message);
++        Assert.Equal("İade tamamlandı. 100,00 ₺ iade edildi.", result.Message);
+         Assert.Empty(result.Lines);
+     }
+ 
+@@ -236,7 +235,7 @@ public sealed class CustomerDisplayStatementTests
+     {
+         var table = Snapshot(editable: true) with { TableNumber = "M-01" };
+ 
+-        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true, refundClosed: true));
++        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true, refundedTotal: 100m));
+     }
+ 
+     private static Payment PaymentIn(PaymentStatus status, decimal amount = 100m) => status switch
+@@ -271,26 +270,29 @@ public sealed class CustomerDisplayStatementTests
+     }
+ 
+     [Fact]
+-    public async Task AttachingReadsTheCancelledBillsPaymentsAndNamesARefundClosureAsOne()
++    public async Task AttachingSumsWhatWasPaidBackOnEveryCancelledBill()
+     {
+-        var refunded = Bill(Guid.NewGuid(), BillState.Cancelled);
++        var first = Bill(Guid.NewGuid(), BillState.Cancelled);
++        var second = Bill(Guid.NewGuid(), BillState.Cancelled);
+         var plain = Bill(Guid.NewGuid(), BillState.Cancelled);
+-        Payment[] paidBack = [PaymentIn(PaymentStatus.Refunded)];
++        Payment[] sixty = [PaymentIn(PaymentStatus.Refunded, 60m)];
++        Payment[] forty = [PaymentIn(PaymentStatus.Refunded, 40m)];
+ 
+-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack))).Message);
++        Assert.Equal("İade tamamlandı. 60,00 ₺ iade edildi.", (await AttachCancelledBills((first, sixty))).Message);
++        Assert.Equal("İade tamamlandı. 100,00 ₺ iade edildi.", (await AttachCancelledBills((first, sixty), (second, forty))).Message);
++        Assert.Equal("İade tamamlandı. 60,00 ₺ iade edildi.", (await AttachCancelledBills((plain, []), (first, sixty))).Message);
+         Assert.Equal(CustomerDisplayPaymentProgress.BillCancelledMessage, (await AttachCancelledBills((plain, []))).Message);
+-        // One refunded bill among several cancelled ones is enough, whichever comes first or last.
+-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack), (plain, []))).Message);
+-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((plain, []), (refunded, paidBack))).Message);
+     }
+ 
+     [Fact]
+-    public void ABillClosesByRefundOnlyWhenOneOfItsPaymentsWasPaidBack()
++    public void WhatWasPaidBackIsTheApprovedAmountOfTheRefundedPaymentsOnly()
+     {
+-        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Refunded)]));
+-        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Declined), PaymentIn(PaymentStatus.Refunded)]));
+-        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([]));
+-        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Initiated), PaymentIn(PaymentStatus.Declined)]));
++        Assert.Equal(100m, CustomerDisplayPaymentProgress.RefundedTotal([PaymentIn(PaymentStatus.Refunded)]));
++        Assert.Equal(1250.5m, CustomerDisplayPaymentProgress.RefundedTotal(
++            [PaymentIn(PaymentStatus.Refunded, 1000m), PaymentIn(PaymentStatus.Declined), PaymentIn(PaymentStatus.Refunded, 250.5m), PaymentIn(PaymentStatus.Approved, 30m)]));
++        Assert.Equal(0m, CustomerDisplayPaymentProgress.RefundedTotal([]));
++        Assert.Equal(0m, CustomerDisplayPaymentProgress.RefundedTotal([PaymentIn(PaymentStatus.Initiated), PaymentIn(PaymentStatus.Declined)]));
++        Assert.Equal("İade tamamlandı. 1.250,50 ₺ iade edildi.", CustomerDisplayPaymentProgress.BillRefundedMessage(1250.5m));
+     }
+ 
+     [Fact]

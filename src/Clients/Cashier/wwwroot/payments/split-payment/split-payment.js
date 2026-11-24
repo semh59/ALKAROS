@@ -2562,10 +2562,27 @@
   var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
 
   // A refund that closes the bill is its own result: what was paid back and how, never "bill cancelled".
+  // The screen shows at once with the last refund's amount; earlier partial refunds of the bill are added as soon as the list
+  // answers, so the amount ends up as what the customer got back in all. A list that cannot be read leaves the last amount.
   function showRefundDone(refund) {
     state.refundDone = refund;
     state.phase = 'refunded';
     render();
+    if (typeof refund.amount !== 'number') return;
+    var unreadable = function () {
+      if (state.refundDone !== refund) return;
+      state.refundDone = Object.assign({}, refund, { totalUnknown: true });
+      if (state.phase === 'refunded') render();
+    };
+    api(refundsBase() + '?billId=' + encodeURIComponent(state.billId)).then(function (result) {
+      if (!result.ok || !Array.isArray(result.body)) { unreadable(); return; }
+      if (state.refundDone !== refund) return;
+      var total = result.body.reduce(function (sum, row) {
+        return row.billId === state.billId && row.status === 'Completed' && row.requestId !== refund.requestId && typeof row.amount === 'number' ? sum + row.amount : sum;
+      }, refund.amount);
+      state.refundDone = Object.assign({}, refund, { amount: total });
+      if (state.phase === 'refunded') render();
+    }).catch(unreadable);
   }
 
   var REFUND_METHOD_NOTES = {
@@ -2582,7 +2599,7 @@
       '<div class="sp-card sp-center-text">' +
       '<span class="sp-icon-circle success">✓</span>' +
       '<h1 class="sp-title">İade Tamamlandı</h1>' +
-      '<p class="sp-subtitle">' + escapeHtml((typeof refund.amount === 'number' ? formatMoney(refund.amount) + ' iade edildi. ' : '') + (note ? note(refund) + ' ' : '') + 'Hesap iade sonrası kapandı.') + '</p>' +
+      '<p class="sp-subtitle">' + escapeHtml((typeof refund.amount === 'number' ? formatMoney(refund.amount) + ' iade edildi. ' : '') + (note ? note(refund) + ' ' : '') + (refund.totalUnknown ? 'Önceki iadelerin toplamı okunamadı. ' : '') + 'Hesap iade sonrası kapandı.') + '</p>' +
       (state.billTable ? backLink('/tables', 'Masaya dön', true) : '') +
       BACK_LINK +
       '</div>';

@@ -223,11 +223,10 @@ public sealed class CustomerDisplayStatementTests
     [Fact]
     public void AnOrderWhoseBillClosedByRefundSaysTheRefundIsDoneNotThatTheBillWasCancelled()
     {
-        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(), [], anyBillCancelled: true, refundClosed: true);
+        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(), [], anyBillCancelled: true, refundedTotal: 100m);
 
         Assert.Equal("Idle", result.State);
-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, result.Message);
-        Assert.Equal("İade tamamlandı.", result.Message);
+        Assert.Equal("İade tamamlandı. 100,00 ₺ iade edildi.", result.Message);
         Assert.Empty(result.Lines);
     }
 
@@ -236,7 +235,7 @@ public sealed class CustomerDisplayStatementTests
     {
         var table = Snapshot(editable: true) with { TableNumber = "M-01" };
 
-        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true, refundClosed: true));
+        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true, refundedTotal: 100m));
     }
 
     private static Payment PaymentIn(PaymentStatus status, decimal amount = 100m) => status switch
@@ -271,26 +270,29 @@ public sealed class CustomerDisplayStatementTests
     }
 
     [Fact]
-    public async Task AttachingReadsTheCancelledBillsPaymentsAndNamesARefundClosureAsOne()
+    public async Task AttachingSumsWhatWasPaidBackOnEveryCancelledBill()
     {
-        var refunded = Bill(Guid.NewGuid(), BillState.Cancelled);
+        var first = Bill(Guid.NewGuid(), BillState.Cancelled);
+        var second = Bill(Guid.NewGuid(), BillState.Cancelled);
         var plain = Bill(Guid.NewGuid(), BillState.Cancelled);
-        Payment[] paidBack = [PaymentIn(PaymentStatus.Refunded)];
+        Payment[] sixty = [PaymentIn(PaymentStatus.Refunded, 60m)];
+        Payment[] forty = [PaymentIn(PaymentStatus.Refunded, 40m)];
 
-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack))).Message);
+        Assert.Equal("İade tamamlandı. 60,00 ₺ iade edildi.", (await AttachCancelledBills((first, sixty))).Message);
+        Assert.Equal("İade tamamlandı. 100,00 ₺ iade edildi.", (await AttachCancelledBills((first, sixty), (second, forty))).Message);
+        Assert.Equal("İade tamamlandı. 60,00 ₺ iade edildi.", (await AttachCancelledBills((plain, []), (first, sixty))).Message);
         Assert.Equal(CustomerDisplayPaymentProgress.BillCancelledMessage, (await AttachCancelledBills((plain, []))).Message);
-        // One refunded bill among several cancelled ones is enough, whichever comes first or last.
-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((refunded, paidBack), (plain, []))).Message);
-        Assert.Equal(CustomerDisplayPaymentProgress.BillRefundedMessage, (await AttachCancelledBills((plain, []), (refunded, paidBack))).Message);
     }
 
     [Fact]
-    public void ABillClosesByRefundOnlyWhenOneOfItsPaymentsWasPaidBack()
+    public void WhatWasPaidBackIsTheApprovedAmountOfTheRefundedPaymentsOnly()
     {
-        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Refunded)]));
-        Assert.True(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Declined), PaymentIn(PaymentStatus.Refunded)]));
-        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([]));
-        Assert.False(CustomerDisplayPaymentProgress.IsRefundClosure([PaymentIn(PaymentStatus.Initiated), PaymentIn(PaymentStatus.Declined)]));
+        Assert.Equal(100m, CustomerDisplayPaymentProgress.RefundedTotal([PaymentIn(PaymentStatus.Refunded)]));
+        Assert.Equal(1250.5m, CustomerDisplayPaymentProgress.RefundedTotal(
+            [PaymentIn(PaymentStatus.Refunded, 1000m), PaymentIn(PaymentStatus.Declined), PaymentIn(PaymentStatus.Refunded, 250.5m), PaymentIn(PaymentStatus.Approved, 30m)]));
+        Assert.Equal(0m, CustomerDisplayPaymentProgress.RefundedTotal([]));
+        Assert.Equal(0m, CustomerDisplayPaymentProgress.RefundedTotal([PaymentIn(PaymentStatus.Initiated), PaymentIn(PaymentStatus.Declined)]));
+        Assert.Equal("İade tamamlandı. 1.250,50 ₺ iade edildi.", CustomerDisplayPaymentProgress.BillRefundedMessage(1250.5m));
     }
 
     [Fact]

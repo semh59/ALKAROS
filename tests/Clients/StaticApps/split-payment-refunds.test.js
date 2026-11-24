@@ -45,7 +45,7 @@ function routes({ summary, requests = [], post = {}, approver = false }) {
     { test: (url, init) => url.endsWith("/approve") && init?.method === "POST", ...(post.approve ?? { body: request("Completed") }) },
     { test: (url, init) => url.endsWith("/reject") && init?.method === "POST", body: request("Rejected") },
     { test: (url, init) => url.endsWith("/complete") && init?.method === "POST", ...(post.complete ?? { body: request("Completed") }) },
-    { test: (url, init) => url.endsWith(`${base}/refund-requests`) && (init?.method ?? "GET") === "GET", body: requests },
+    { test: (url, init) => url.split("?")[0].endsWith(`${base}/refund-requests`) && (init?.method ?? "GET") === "GET", body: requests },
   ];
 }
 
@@ -296,6 +296,93 @@ describe("split-payment.js cancel and refund", () => {
 
     await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
     expect(app().textContent).not.toContain("İade Tamamlandı");
+  });
+
+  it.each([
+    ["adds the bill's earlier completed refunds to the last one", [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 }), request("Requested", { amount: 60 })], "₺100,00 iade edildi."],
+    ["ignores other bills' and unfinished refunds", [request("Completed", { billId: "99999999-9999-9999-9999-999999999999", requestId: "66666666-6666-6666-6666-666666666666", amount: 500 }), request("Rejected", { requestId: "77777777-7777-7777-7777-777777777777", amount: 30 }), request("Requested", { amount: 60 })], "₺60,00 iade edildi."],
+  ])("the refund screen %s", async (_name, requests, sentence) => {
+    await open(routes({
+      summary: paidSummary, requests,
+      post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+
+    clickTwice('[data-refund-action="approve"]');
+
+    await vi.waitFor(() => expect(app().textContent).toContain(sentence));
+  });
+
+  it("counts the last refund once when the list shows it completed by the time the screen is built", async () => {
+    const requests = [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 }), request("Requested", { amount: 60 })];
+    const fetchMock = await open(routes({
+      summary: paidSummary, requests,
+      post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+    document.querySelector('[data-refund-action="approve"]').click();
+    requests[1].status = "Completed";
+    document.querySelector('[data-refund-action="approve"]').click();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("₺100,00 iade edildi."));
+    expect(fetchMock.mock.calls.some(([url]) => url.endsWith(`/billing/refund-requests?billId=${BILL_ID}`))).toBe(true);
+  });
+
+  it("still shows the refund screen with the last refund's amount when the list cannot be read at that moment", async () => {
+    let offline = false;
+    await open([
+      { test: (url) => { if (offline && url.split("?")[0].endsWith("/billing/refund-requests")) throw new Error("offline"); return false; } },
+      ...routes({
+        summary: paidSummary, requests: [request("Requested", { amount: 60 })],
+        post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
+      }),
+    ]);
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+    document.querySelector('[data-refund-action="approve"]').click();
+    offline = true;
+    document.querySelector('[data-refund-action="approve"]').click();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
+    expect(app().textContent).toContain("₺60,00 iade edildi.");
+    expect(app().textContent).toContain("Önceki iadelerin toplamı okunamadı.");
+  });
+
+  it("keeps the last refund's amount when the list answers with an error", async () => {
+    let failing = false;
+    await open([
+      { test: (url) => failing && url.split("?")[0].endsWith("/billing/refund-requests"), status: 500, body: [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 })] },
+      ...routes({
+        summary: paidSummary, requests: [request("Requested", { amount: 60 })],
+        post: { approve: { body: request("Completed", { billCancelled: true, amount: 60 }) } },
+      }),
+    ]);
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+    document.querySelector('[data-refund-action="approve"]').click();
+    failing = true;
+    document.querySelector('[data-refund-action="approve"]').click();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(app().textContent).toContain("₺60,00 iade edildi.");
+    expect(app().textContent).toContain("Önceki iadelerin toplamı okunamadı.");
+    expect(app().textContent).not.toContain("₺100,00");
+  });
+
+  it("adds no amount from the list when the answer carries none", async () => {
+    const requests = [request("Completed", { requestId: "55555555-5555-5555-5555-555555555555", amount: 40 }), request("Requested")];
+    const fetchMock = await open(routes({
+      summary: paidSummary, requests,
+      post: { approve: { body: request("Completed", { billCancelled: true, amount: undefined }) } },
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+
+    clickTwice('[data-refund-action="approve"]');
+
+    await vi.waitFor(() => expect(app().textContent).toContain("İade Tamamlandı"));
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(app().textContent).not.toContain("iade edildi.");
+    expect(app().textContent).not.toContain("₺");
+    expect(fetchMock.mock.calls.some(([url]) => url.includes("/billing/refund-requests?billId="))).toBe(false);
   });
 
   it("names no amount when the answer carries none", async () => {

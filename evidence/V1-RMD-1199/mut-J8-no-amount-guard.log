@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > adds no amount from the list when the answer carries none
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537331814-0.05670364032516029:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537331814-0.05670364032516029:610:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537331814-0.05670364032516029:724:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (43 tests | 1 failed) 7657ms
+     × adds no amount from the list when the answer carries none 223ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > adds no amount from the list when the answer carries none
+AssertionError: expected '✓İade Tamamlandı₺0,00 iade edildi. Pa…' not to contain 'iade edildi.'
+
+Expected: "iade edildi."
+Received: "✓İade Tamamlandı₺0,00 iade edildi. Parayı müşteriye geri verin. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:383:35
+    381|     await vi.waitFor(() => expect(app().textContent).toContain("İade T…
+    382|     await new Promise((resolve) => setTimeout(resolve, 30));
+    383|     expect(app().textContent).not.toContain("iade edildi.");
+       |                                   ^
+    384|     expect(app().textContent).not.toContain("₺");
+    385|     expect(fetchMock.mock.calls.some(([url]) => url.includes("/billing…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 42 passed (43)
+   Start at  19:22:06
+   Duration  8.91s (transform 2.72s, setup 34ms, import 61ms, tests 7.66s, environment 904ms)
+

@@ -1,0 +1,67 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > still shows the refund screen with the last refund's amount when the list cannot be read at that moment
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537308698-0.59746216344022:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537308698-0.59746216344022:610:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537308698-0.59746216344022:724:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (43 tests | 1 failed) 7724ms
+     × still shows the refund screen with the last refund's amount when the list cannot be read at that moment 195ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > still shows the refund screen with the last refund's amount when the list cannot be read at that moment
+AssertionError: expected '✓İade Tamamlandı₺60,00 iade edildi. P…' to contain 'Önceki iadelerin toplamı okunamadı.'
+
+Expected: "Önceki iadelerin toplamı okunamadı."
+Received: "✓İade Tamamlandı₺60,00 iade edildi. Parayı müşteriye geri verin. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:347:31
+    345|     await vi.waitFor(() => expect(app().textContent).toContain("İade T…
+    346|     expect(app().textContent).toContain("₺60,00 iade edildi.");
+    347|     expect(app().textContent).toContain("Önceki iadelerin toplamı okun…
+       |                               ^
+    348|   });
+    349|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+Error: offline
+ ❯ Object.test split-payment-refunds.test.js:334:103
+    332|     let offline = false;
+    333|     await open([
+    334|       { test: (url) => { if (offline && url.split("?")[0].endsWith("/b…
+       |                                                                                                       ^
+    335|       ...routes({
+    336|         summary: paidSummary, requests: [request("Requested", { amount…
+ ❯ support/fetchRouter.js:30:56
+ ❯ support/fetchRouter.js:30:26
+ ❯ Mock node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34
+ ❯ api ../../../src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537308698-0.59746216344022:300:12
+ ❯ showRefundDone ../../../src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537308698-0.59746216344022:2577:5
+ ❯ ../../../src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537308698-0.59746216344022:2162:9
+
+This error originated in "split-payment-refunds.test.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "still shows the refund screen with the last refund's amount when the list cannot be read at that moment". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 42 passed (43)
+     Errors  1 error
+   Start at  19:21:43
+   Duration  9.00s (transform 2.76s, setup 35ms, import 63ms, tests 7.72s, environment 928ms)
+

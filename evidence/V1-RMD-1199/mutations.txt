@@ -1,0 +1,18 @@
+R1-all-payments-counted killed (restored)
+R2-last-bill-only killed (restored)
+R3-no-amount-in-message killed (restored)
+R4-never-refund-message killed (restored)
+R5-amount-zero killed (restored)
+R6-total-not-passed killed (restored)
+DONE
+J1-unfinished-counted killed (restored)
+J2-last-counted-twice killed (restored)
+J3-other-bills-counted killed (restored)
+J4-last-amount-dropped killed (restored)
+J5-list-error-ignored killed (restored)
+J6-list-failure-breaks killed (restored)
+J7-bill-not-queried killed (restored)
+J8-no-amount-guard killed (restored)
+J9-no-immediate-screen killed (restored)
+J10-unknown-note-missing killed (restored)
+JSDONE

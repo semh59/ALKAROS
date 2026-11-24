@@ -801,7 +801,7 @@ public static partial class DualScreenApplication
         return group;
     }
 
-    private static string FormatLira(decimal amount)
+    internal static string FormatLira(decimal amount)
         => amount.ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("tr-TR")) + " ₺";
 
     public static string PaymentStatusText(string status)

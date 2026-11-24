@@ -1,7 +1,7 @@
 # V1-RMD-1199 - İade ile kapanışta ekranlar toplam iade edilen tutarı gösterir
 
 - Task ID: V1-RMD-1199
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

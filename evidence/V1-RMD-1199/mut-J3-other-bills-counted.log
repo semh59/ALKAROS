@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > the refund screen ignores other bills' and unfinished refunds
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537269540-0.9413706754004689:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537269540-0.9413706754004689:610:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795537269540-0.9413706754004689:724:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (43 tests | 1 failed) 8468ms
+     × the refund screen ignores other bills' and unfinished refunds 1156ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > the refund screen ignores other bills' and unfinished refunds
+AssertionError: expected '✓İade Tamamlandı₺560,00 iade edildi. …' to contain '₺60,00 iade edildi.'
+
+Expected: "₺60,00 iade edildi."
+Received: "✓İade Tamamlandı₺560,00 iade edildi. Parayı müşteriye geri verin. Hesap iade sonrası kapandı.Bekleyen hesaplara dön"
+
+ ❯ split-payment-refunds.test.js:313:54
+    311|     clickTwice('[data-refund-action="approve"]');
+    312|
+    313|     await vi.waitFor(() => expect(app().textContent).toContain(sentenc…
+       |                                                      ^
+    314|   });
+    315|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 42 passed (43)
+   Start at  19:21:04
+   Duration  9.77s (transform 2.55s, setup 36ms, import 63ms, tests 8.47s, environment 944ms)
+

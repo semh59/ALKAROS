@@ -23,7 +23,7 @@ public static class CustomerDisplayPaymentProgress
 
     public const string BillCancelledMessage = "Hesap iptal edildi.";
 
-    public const string BillRefundedMessage = "İade tamamlandı.";
+    public static string BillRefundedMessage(decimal refundedTotal) => $"İade tamamlandı. {DualScreenApplication.FormatLira(refundedTotal)} iade edildi.";
 
     public static async Task<CustomerDisplaySnapshotDto> AttachAsync(
         CustomerDisplaySnapshotDto snapshot,
@@ -38,13 +38,13 @@ public static class CustomerDisplayPaymentProgress
 
         var live = new List<BillStatement>();
         var anyCancelled = false;
-        var refundClosed = false;
+        var refundedTotal = 0m;
         foreach (var bill in await bills.GetByOrderIdAsync(orderId, cancellationToken))
         {
             if (bill.Status == BillState.Cancelled)
             {
                 anyCancelled = true;
-                refundClosed |= IsRefundClosure(await payments.GetByBillIdAsync(bill.Id, cancellationToken));
+                refundedTotal += RefundedTotal(await payments.GetByBillIdAsync(bill.Id, cancellationToken));
                 continue;
             }
 
@@ -58,7 +58,7 @@ public static class CustomerDisplayPaymentProgress
             live.Add(new BillStatement(bill, billAdjustments, projection));
         }
 
-        return Apply(snapshot, live, anyCancelled, refundClosed);
+        return Apply(snapshot, live, anyCancelled, refundedTotal);
     }
 
     /// <param name="live">The order's bills that are not cancelled.</param>
@@ -71,13 +71,13 @@ public static class CustomerDisplayPaymentProgress
     /// and takes new lines), so there it stays; a quick sale and the customer display are cleared.
     /// </remarks>
     public static CustomerDisplaySnapshotDto Apply(
-        CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false, bool refundClosed = false)
+        CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false, decimal refundedTotal = 0m)
     {
         if (snapshot.State is not (ActiveState or CompletedState))
             return snapshot;
 
         if (live.Count == 0)
-            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot, refundClosed) : snapshot;
+            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot, refundedTotal) : snapshot;
 
         var summaries = live.Select(s => AdjustmentCalculator.Calculate(s.Bill, s.Adjustments)).ToList();
         var lines = live
@@ -102,10 +102,11 @@ public static class CustomerDisplayPaymentProgress
         };
     }
 
-    /// <summary>A bill closes by refund exactly when a payment of it was paid back; a plain cancel never had one.</summary>
-    public static bool IsRefundClosure(IEnumerable<Payment> billPayments) => billPayments.Any(p => p.Status == PaymentStatus.Refunded);
+    /// <summary>What was paid back on a bill. A bill closes by refund only when no payment still holds money, so every refunded payment was refunded in full.</summary>
+    public static decimal RefundedTotal(IEnumerable<Payment> billPayments)
+        => billPayments.Where(p => p.Status == PaymentStatus.Refunded).Sum(p => p.ApprovedAmount ?? 0m);
 
-    private static CustomerDisplaySnapshotDto Cleared(CustomerDisplaySnapshotDto snapshot, bool refundClosed) => snapshot with
+    private static CustomerDisplaySnapshotDto Cleared(CustomerDisplaySnapshotDto snapshot, decimal refundedTotal) => snapshot with
     {
         State = IdleState,
         Lines = [],
@@ -117,6 +118,6 @@ public static class CustomerDisplayPaymentProgress
         Total = 0m,
         PaidTotal = 0m,
         RemainingTotal = null,
-        Message = refundClosed ? BillRefundedMessage : BillCancelledMessage,
+        Message = refundedTotal > 0m ? BillRefundedMessage(refundedTotal) : BillCancelledMessage,
     };
 }
