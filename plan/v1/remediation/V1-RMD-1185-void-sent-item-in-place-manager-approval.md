@@ -23,6 +23,7 @@ Kasiyer denemesi 17 (bulgu 2): `bills.void` yetkisi olmayan kasiyer mutfağa gid
   - tests/Host/Experience/Orders/VoidSent/OrderManagementVoidSentHttpTests.cs
   - tests/Host/Experience/Orders/VoidSent/OrderManagementVoidSentTestDatabase.cs
   - tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj
+  - tests/Architecture/ApiConventions/api_convention_allowlist.json
   - src/Clients/PosTerminal/src/api.ts
   - src/Clients/PosTerminal/src/api.test.ts
   - src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
