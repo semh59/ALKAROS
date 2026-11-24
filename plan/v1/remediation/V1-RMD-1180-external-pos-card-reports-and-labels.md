@@ -1,8 +1,8 @@
 # V1-RMD-1180 - Harici POS kartı: gün kapanışı ödeme yöntemleri satırı, iade ve son satışlar etiketleri (PosTerminal)
 
 - Task ID: V1-RMD-1180
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
