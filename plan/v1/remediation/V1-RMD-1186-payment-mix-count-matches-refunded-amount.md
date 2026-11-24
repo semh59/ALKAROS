@@ -17,6 +17,7 @@ Kasiyer denemesi 17 (bulgu 3): `PostgresPaymentSettlementReportRepository.GetPay
   - src/Modules/Reporting/Payments/PostgresPaymentSettlementReportRepository.cs
   - src/Modules/Reporting/Payments/ReportingModels.cs
   - tests/Modules/Reporting/Payments/PaymentSettlementReportTests.cs
+  - tests/Modules/Reporting/Payments/PaymentRefundNettingTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
