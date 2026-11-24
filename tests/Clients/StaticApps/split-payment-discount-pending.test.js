@@ -405,6 +405,17 @@ describe("split-payment.js manager approving a waiting discount at the till", ()
     window.localStorage.clear();
   });
 
+  it("names the discount box's fields and its heading by the discount they approve", async () => {
+    await open([{ status: 202, body: pending }]);
+    type("discount-value", "20");
+    submit().click();
+    await vi.waitFor(() => expect(approveFields().button).not.toBeNull());
+
+    expect(approveFields().name.getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (indirim onayı)");
+    expect(approveFields().secret.getAttribute("aria-label")).toBe("Yönetici şifresi (indirim onayı)");
+    expect(text()).toContain("İndirim onayı · Yönetici burada onaylasın");
+  });
+
   it("shows no manager fields until a request is waiting, then password-typed fields", async () => {
     await open([{ status: 202, body: pending }]);
     expect(approveFields().button).toBeNull();

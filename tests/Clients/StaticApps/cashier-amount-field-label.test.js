@@ -31,6 +31,11 @@ describe("till amount boxes", () => {
     expect(read(file)).toContain(`id="${id}" aria-label="${name}"`);
   });
 
+  it("draws the payment amount box's edge inside the box, so the input fills all 48 px and measures the same as the box", () => {
+    const css = read("split-payment/split-payment.css");
+    expect(css).toMatch(/\.sp-amount-field \{[^}]*border:\s*0[;\s][^}]*box-shadow:\s*inset 0 0 0 1\.5px var\(--color-brand\)/);
+  });
+
   it.each([
     ["split-payment/split-payment.css", ".sp-amount-field"],
     ["cash-session/cash-session.css", ".cs-amount-field"],

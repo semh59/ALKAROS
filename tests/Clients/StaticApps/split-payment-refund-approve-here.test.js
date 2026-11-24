@@ -68,6 +68,14 @@ describe("split-payment.js a manager approving a refund at the till", () => {
     expect(document.querySelector('[data-refund-action="approve-here"]').textContent).toBe("Yönetici onayı ver");
   });
 
+  it("names the refund box's fields and its heading by the refund they approve", async () => {
+    await open({ requests: [waiting()], approve: { body: {} } });
+
+    expect(nameBox().getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (iade onayı)");
+    expect(secretBox().getAttribute("aria-label")).toBe("Yönetici şifresi (iade onayı)");
+    expect(document.getElementById("app").textContent).toContain("İade onayı · Yönetici burada onaylasın");
+  });
+
   it("does not offer them on a request the caller may decide", async () => {
     window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
     installFetchRouter(routes({ requests: [waiting({ mayDecide: true })], approve: { body: {} } }));

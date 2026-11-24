@@ -56,6 +56,14 @@ describe("split-payment.js original receipt reset", () => {
     },
   );
 
+  it("names the reset card's sign-in fields by what they approve, so they cannot be mistaken for another manager box", async () => {
+    await open({ status: 200, body: {} }, []);
+
+    const name = document.getElementById("reset-approver-name");
+    expect(name.getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (fiş sıfırlama)");
+    expect(document.getElementById("reset-approver-secret").getAttribute("aria-label")).toBe("Yönetici şifresi (fiş sıfırlama)");
+  });
+
   it("does not draw the sign-in fields for a session that holds the refund approval", async () => {
     await open({ status: 200, body: {} });
 

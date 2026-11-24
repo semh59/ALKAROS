@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refund-approve-here.test.js > split-payment.js a manager approving a refund at the till > names the refund box's fields and its heading by the refund they approve
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795533244268-0.3204238220542376:300:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795533244268-0.3204238220542376:610:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1795533244268-0.3204238220542376:724:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refund-approve-here.test.js (7 tests | 1 failed) 1486ms
+     × names the refund box's fields and its heading by the refund they approve 163ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refund-approve-here.test.js > split-payment.js a manager approving a refund at the till > names the refund box's fields and its heading by the refund they approve
+AssertionError: expected 'Yönetici kullanıcı adı' to be 'Yönetici kullanıcı adı (iade onayı)' // Object.is equality
+
+Expected: "Yönetici kullanıcı adı (iade onayı)"
+Received: "Yönetici kullanıcı adı"
+
+ ❯ split-payment-refund-approve-here.test.js:74:50
+     72|     await open({ requests: [waiting()], approve: { body: {} } });
+     73|
+     74|     expect(nameBox().getAttribute("aria-label")).toBe("Yönetici kullan…
+       |                                                  ^
+     75|     expect(secretBox().getAttribute("aria-label")).toBe("Yönetici şifr…
+     76|     expect(document.getElementById("app").textContent).toContain("İade…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 82 passed (83)
+   Start at  18:14:02
+   Duration  10.37s (transform 6.70s, setup 175ms, import 370ms, tests 18.86s, environment 6.47s)
+

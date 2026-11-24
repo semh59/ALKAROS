@@ -1,0 +1,5 @@
+# V1-RMD-1196 sonuc
+Kok neden: ayni sayfada uc yonetici kutusu (indirim/ikram, iade onayi, fis sifirlama) ayni "Yonetici burada onaylasin" basligi ve ayni erisilebilir adlari tasiyordu; tutar kutusunun 1.5px kenarligi ic input'u 46 px'e dusuruyordu (dis label 48).
+Duzeltme: kutular birlestirilmedi (her biri ayri yetki). Basliklar "Indirim onayi / Ikram onayi / Iade onayi · Yonetici burada onaylasin"; fis sifirlama karti basligi zaten "Orijinal fisi sifirla (yonetici onayiyla)". Alan aria-label'lari islemi soyler (indirim onayi, ikram onayi, iade onayi, fis sifirlama); id/davranis ayni. .sp-amount-field kenarligi ic golge (inset) oldu.
+Kanit: red.log (5 kirmizi), green.log (7 dosya 109 test), live-measure.txt (Chromium: once label 48/input 46, sonra 48/48), mutations.txt B1-B5 killed, client-build-gate exit 0, plan-audit/consistency-audit temiz.
+Acik risk: cash-session sayfasi ayni belirsiz baslik ve 1.5px kenarligi tasir (plan kapsami disi); canli olcum tek viewport (1366x768), ekran goruntusu alinmadi; fis sifirlama karti ayri "X onayi" on eki almadi (basligi zaten islemi adlandirir).

@@ -239,6 +239,17 @@ describe("split-payment.js comp (ikram)", () => {
     await vi.waitFor(() => expect(compCalls(fetchMock)).toHaveLength(1));
   });
 
+  it("names the comp box's fields and its heading by the comp they approve", async () => {
+    await open([{ status: 202, body: pending }]);
+    type("comp-amount", "30");
+    submit().click();
+    await vi.waitFor(() => expect(document.getElementById("comp-approve-here")).not.toBeNull());
+
+    expect(document.getElementById("comp-approver-name").getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (ikram onayı)");
+    expect(document.getElementById("comp-approver-secret").getAttribute("aria-label")).toBe("Yönetici şifresi (ikram onayı)");
+    expect(text()).toContain("İkram onayı · Yönetici burada onaylasın");
+  });
+
   it("lets a manager approve a waiting comp at the till with the comp request's own key", async () => {
     const fetchMock = await open(
       [{ status: 202, body: pending }, { status: 200, body: applied }],

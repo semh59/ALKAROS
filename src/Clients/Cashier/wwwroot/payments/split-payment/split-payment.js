@@ -415,12 +415,13 @@
     if (!state[kind + 'Pending'] || !state[kind + 'GrantId']) return '';
     var busy = state[kind + 'ApproveBusy'];
     var disabled = busy ? ' disabled' : '';
+    var what = kind === 'comp' ? 'ikram onayı' : 'indirim onayı';
     return (
-      '<div class="sp-field"><span class="sp-field-label">Yönetici burada onaylasın</span>' +
+      '<div class="sp-field"><span class="sp-field-label">' + what.charAt(0).toLocaleUpperCase('tr-TR') + what.slice(1) + ' · Yönetici burada onaylasın</span>' +
       (state[kind + 'ApproveError'] ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state[kind + 'ApproveError']) + '</div>' : '') +
-      '<input class="sp-input" type="text" id="' + kind + '-approver-name" autocomplete="off" maxlength="64" placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı"' +
+      '<input class="sp-input" type="text" id="' + kind + '-approver-name" autocomplete="off" maxlength="64" placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı (' + what + ')"' +
       disabled + ' value="' + escapeHtml(state[kind + 'ApproverName']) + '">' +
-      '<input class="sp-input" type="password" id="' + kind + '-approver-secret" autocomplete="off" maxlength="256" placeholder="Yönetici şifresi" aria-label="Yönetici şifresi"' + disabled + '>' +
+      '<input class="sp-input" type="password" id="' + kind + '-approver-secret" autocomplete="off" maxlength="256" placeholder="Yönetici şifresi" aria-label="Yönetici şifresi (' + what + ')"' + disabled + '>' +
       '<button class="sp-btn sp-btn-secondary" id="' + kind + '-approve-here" type="button"' + disabled + '>' +
       (busy ? 'Onaylanıyor…' : 'Yönetici onayı ver') + '</button>' +
       '</div>'
@@ -1981,12 +1982,12 @@
     var disabled = mine.busy || state.refundBusy ? ' disabled' : '';
     var id = escapeHtml(requestId);
     return (
-      '<div class="sp-field"><span class="sp-field-label">Yönetici burada onaylasın</span>' +
+      '<div class="sp-field"><span class="sp-field-label">İade onayı · Yönetici burada onaylasın</span>' +
       (mine.error ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(mine.error) + '</div>' : '') +
       '<input class="sp-input" type="text" data-approver-name="' + id + '" id="refund-approver-name-' + id + '" autocomplete="off" maxlength="64"' +
-      ' placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı"' + disabled + ' value="' + escapeHtml(mine.name) + '">' +
+      ' placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı (iade onayı)"' + disabled + ' value="' + escapeHtml(mine.name) + '">' +
       '<input class="sp-input" type="password" id="refund-approver-secret-' + id + '" autocomplete="off" maxlength="256"' +
-      ' placeholder="Yönetici şifresi" aria-label="Yönetici şifresi"' + disabled + '>' +
+      ' placeholder="Yönetici şifresi" aria-label="Yönetici şifresi (iade onayı)"' + disabled + '>' +
       '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="approve-here" data-request-id="' + id + '"' + disabled + '>' +
       (mine.busy ? 'Onaylanıyor…' : 'Yönetici onayı ver') + '</button></div>'
     );
@@ -3025,9 +3026,9 @@
       '<input class="sp-input" type="text" id="reset-reason" maxlength="500" placeholder="Gerekçe (zorunlu)" aria-label="Orijinal fişi sıfırlama gerekçesi"' +
       (state.resetBusy ? ' disabled' : '') + ' value="' + escapeHtml(state.resetReason) + '">' +
       (inPlace
-        ? '<input class="sp-input" type="text" id="reset-approver-name" autocomplete="off" maxlength="64" placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı"' +
+        ? '<input class="sp-input" type="text" id="reset-approver-name" autocomplete="off" maxlength="64" placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı (fiş sıfırlama)"' +
           (state.resetBusy ? ' disabled' : '') + ' value="' + escapeHtml(state.resetApproverName) + '">' +
-          '<input class="sp-input" type="password" id="reset-approver-secret" autocomplete="off" maxlength="256" placeholder="Yönetici şifresi" aria-label="Yönetici şifresi"' +
+          '<input class="sp-input" type="password" id="reset-approver-secret" autocomplete="off" maxlength="256" placeholder="Yönetici şifresi" aria-label="Yönetici şifresi (fiş sıfırlama)"' +
           (state.resetBusy ? ' disabled' : '') + '>'
         : '') +
       '<button class="sp-btn sp-btn-secondary" type="button" id="reset-receipt" data-receipt-action="reset"' +

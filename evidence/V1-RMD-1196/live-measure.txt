@@ -1,0 +1,3 @@
+Chromium (Playwright), 1366x768, split-payment.css + .sp-amount-field kutusu (getBoundingClientRect)
+ONCE (HEAD css):  label 48, ic input 46, kenarlik 1px(1.5 yuvarlanir), golge yok
+SONRA (duzeltme): label 48, ic input 48, kenarlik 0, golge inset 1.5px brand
