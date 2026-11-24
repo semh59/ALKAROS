@@ -1,8 +1,8 @@
 # V1-RMD-1184 - Mutfak panosunda kalem notu her yoğunluk modunda görünür
 
 - Task ID: V1-RMD-1184
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
