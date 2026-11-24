@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts (4 tests | 1 failed) 33ms
+     × shows the cook's note in the dense mode the board enters on its own 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/kitchenDenseNote.test.ts > kitchen line note in every density mode > shows the cook's note in the dense mode the board enters on its own
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts:31:39
+     29|
+     30|   it("shows the cook's note in the dense mode the board enters on its …
+     31|     expect(hiddenIn("is-dense").note).toBe(false);
+       |                                       ^
+     32|   });
+     33|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  10:59:24
+   Duration  1.44s (transform 32ms, setup 0ms, import 51ms, tests 33ms, environment 1.07s)
+

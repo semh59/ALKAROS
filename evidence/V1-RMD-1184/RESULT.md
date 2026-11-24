@@ -1,0 +1,6 @@
+# V1-RMD-1184 sonuc
+Kok neden: kitchen-operations.css yogun modda `.kitchen-item-row__detail` tum ayrintilari (secenek metni ve kalem notu) display:none yapiyordu; pano 18 acik kalemde kendiliginden yogun moda girdigi icin ascinin notu (sogansiz, alerji) gorunmuyordu.
+Duzeltme: kural `:not(.kitchen-item-row__detail--note)` ile yalniz secenek ayrintisini gizler; not her modda gorunur, uyari rengi ve kalin yazi ayni, kisaltma yok, 14 px alt siniri degismedi. docs/CASHIER_UI_RULES.md mutfak kuralina tek cumle eklendi.
+Kanit: red.log (yogun modda not gizli, 1 kirmizi); green.log mutfak dizini 8 dosya 116 test; mutations.txt M1-M5 killed (cp+cmp restore); client-build-gate exit 0; plan-audit ve consistency-audit temiz.
+Test: gercek CSS dosyasi okunur, gizleme kurallari (display/visibility/opacity/font-size 0/max-height 0) DOM'a `matches` ile uygulanir; not span'inin iki sinifi TSX kaynaginda sabitlenir.
+Acik risk: (1) secenek (modifier) ayrintisi yogun modda hala gizli ("Ekstra peynir" gibi); ayri karar, kapsam disi. (2) test jsdom'da kaskad/ozgullugu degil kural eslesmesini olcer; @media icindeki bir gizleme de "her zaman gizli" sayilir (siki yon). (3) gercek tarayicida gorsel olcum yapilmadi (yigin durdurulmus).

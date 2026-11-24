@@ -1,0 +1,41 @@
+diff --git a/docs/CASHIER_UI_RULES.md b/docs/CASHIER_UI_RULES.md
+index 700f34fe5..596d77cff 100644
+--- a/docs/CASHIER_UI_RULES.md
++++ b/docs/CASHIER_UI_RULES.md
+@@ -34,7 +34,7 @@ durumlarını kapsar; diğer ekranlar aynı jetonları kullanır.
+ 
+ ## 2. Punto
+ 
+-- En küçük yazı 14px (`0.875rem`): rozet, alt not, kart altı, etiket, uyarı. 14px'ten küçük yazı yoktur. Mutfak panosu (`kitchen-operations.css`) aynı 14px alt sınırına bağlıdır.
++- En küçük yazı 14px (`0.875rem`): rozet, alt not, kart altı, etiket, uyarı. 14px'ten küçük yazı yoktur. Mutfak panosu (`kitchen-operations.css`) aynı 14px alt sınırına bağlıdır; kalem notu (soğansız, alerji) yoğun dahil hiçbir modda gizlenmez.
+ - Gövde ve düğme yazısı 16px, tutar ve ana değer 20px ve üstü, ekran başlığı 22px ve üstü.
+ - Rozet ve etiketler kalın (700) yazılır; renk tek başına anlam taşımaz.
+ 
+diff --git a/plan/v1/remediation/V1-RMD-1184-kitchen-line-note-visible-in-every-density.md b/plan/v1/remediation/V1-RMD-1184-kitchen-line-note-visible-in-every-density.md
+index e598bc35c..d69044a4e 100644
+--- a/plan/v1/remediation/V1-RMD-1184-kitchen-line-note-visible-in-every-density.md
++++ b/plan/v1/remediation/V1-RMD-1184-kitchen-line-note-visible-in-every-density.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1184 - Mutfak panosunda kalem notu her yoğunluk modunda görünür
+ 
+ - Task ID: V1-RMD-1184
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
+index 61a9a6bbf..39115d0e6 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
+@@ -91,8 +91,8 @@
+ .kitchen-held-badge { font-size: .875rem; font-weight: 800; color: var(--ds-color-warning); border: 1px solid var(--ds-color-warning); border-radius: 999px; padding: .05rem .5rem; white-space: nowrap; }
+ .kitchen-item-row__detail { color: var(--ds-color-muted); font-size: .875rem; }
+ .kitchen-item-row__detail--note { color: var(--ds-color-warning); font-weight: 700; }
+-/* Yoğun mod: ikincil ayrıntılar (mod/not) gizlenir, ekran "white-out" olmasın. */
+-.kitchen-workspace.is-dense .kitchen-item-row__detail { display: none; }
++/* Yoğun mod: seçenek ayrıntısı gizlenir, ekran "white-out" olmasın; aşçı notu (soğansız, alerji) hiçbir modda gizlenmez. */
++.kitchen-workspace.is-dense .kitchen-item-row__detail:not(.kitchen-item-row__detail--note) { display: none; }
+ 
+ .kitchen-stepper { display: flex; gap: .35rem; flex-wrap: wrap; }
+ .kitchen-step { flex: 1 1 auto; white-space: nowrap; min-height: 48px; border: 1.5px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); background: var(--ds-color-surface); color: var(--ds-color-muted); font: inherit; font-size: .875rem; font-weight: 800; cursor: default; padding: .2rem .5rem; }

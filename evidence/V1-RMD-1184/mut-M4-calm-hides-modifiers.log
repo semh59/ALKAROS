@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts (4 tests | 1 failed) 36ms
+     × keeps hiding the option detail in the dense mode only 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/kitchenDenseNote.test.ts > kitchen line note in every density mode > keeps hiding the option detail in the dense mode only
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts:40:36
+     38|   it("keeps hiding the option detail in the dense mode only", () => {
+     39|     expect(hiddenIn("is-dense").modifiers).toBe(true);
+     40|     expect(hiddenIn("").modifiers).toBe(false);
+       |                                    ^
+     41|   });
+     42| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  10:59:29
+   Duration  1.56s (transform 34ms, setup 0ms, import 55ms, tests 36ms, environment 1.17s)
+

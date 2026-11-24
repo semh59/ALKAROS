@@ -1,0 +1,6 @@
+M1-original-rule killed (restored)
+M2-not-wrong-class killed (restored)
+M3-note-own-rule killed (restored)
+M4-calm-hides-modifiers killed (restored)
+M5-note-visibility-hidden killed (restored)
+M6-tsx-note-class-dropped killed (restored)
