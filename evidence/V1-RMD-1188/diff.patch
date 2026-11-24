@@ -1,0 +1,75 @@
+diff --git a/docs/domain/bill-pre-receipt.md b/docs/domain/bill-pre-receipt.md
+index 32130cbb5..922597b20 100644
+--- a/docs/domain/bill-pre-receipt.md
++++ b/docs/domain/bill-pre-receipt.md
+@@ -4,7 +4,7 @@ Karar sahibi: ürün sahibi (2026-11-18). Kayıt: V1-RMD-1151.
+ 
+ ## Ne olduğu
+ 
+-Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmayan bir bilgi fişidir; fişin başlığı "BİLGİ FİŞİ", ibaresi "MALİ DEĞERİ YOKTUR" olur (ürün sahibi kararı; ÖKC bilgi fişlerinde kullanılan ibareler, başlığın ön hesap için kullanımı doğrulanmamıştır, aşağıdaki teyit notuna bakın; "Bu belge mali fiş değildir." hiçbir kaynakta zorunlu değildi, V1-RMD-1177 ile bu ibareye alındı). Fiş "HESAP NO: N" (ÖKC fişindeki "FİŞ NO" ile karışmaz), masa, basım tarihi ("Tarih") ve saati ("Saat", işletme saat diliminde, saat:dakika) taşır; mali sembol, sicil, Z no, KDV dökümü, fiş sıra numarası ya da ödeme belgesi iddiası taşımaz. Kalemin hazırlama notu ("soğansız") kalemin altında "Not: ..." satırı olarak yazılır; not en çok 200 karakterdir (kasa ve NFC yolları zaten 200'ü aşan notu reddeder; başka yoldan gelen uzun notu sunucu 200'de kırpar), serbest metindir (kişisel bilgi yazılmaz, KVKK); hesap birden çok siparişin kalemlerini taşıyorsa her kalemin notu yazılır. Ödenmiş hesabın fişindeki ibare ayrıdır ve bu karardan etkilenmez.
++Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmayan bir bilgi fişidir; fişin başlığı "BİLGİ FİŞİ", ibaresi "MALİ DEĞERİ YOKTUR" olur (ürün sahibi kararı; ÖKC bilgi fişlerinde kullanılan ibareler, başlığın ön hesap için kullanımı doğrulanmamıştır, aşağıdaki teyit notuna bakın; "Bu belge mali fiş değildir." hiçbir kaynakta zorunlu değildi, V1-RMD-1177 ile bu ibareye alındı). Fiş "HESAP NO: N" (ÖKC fişindeki "FİŞ NO" ile karışmaz), masa, basım tarihi ("Tarih") ve saati ("Saat", işletme saat diliminde, saat:dakika) taşır; mali sembol, sicil, Z no, KDV dökümü, fiş sıra numarası ya da ödeme belgesi iddiası taşımaz. Kalemin hazırlama notu ("soğansız") kalemin altında "Not: ..." satırı olarak yazılır; not en çok 200 karakterdir (kasa ve NFC yolları zaten 200'ü aşan notu reddeder; başka yoldan gelen uzun notu sunucu 200'de kırpar), serbest metindir (kişisel bilgi yazılmaz, KVKK); hesap birden çok siparişin kalemlerini taşıyorsa her kalemin notu yazılır. Ödenmiş hesabın fişindeki ibare ayrıdır ve bu karardan etkilenmez; iki fişin başlık ve ibaresi bilerek farklıdır (ödenmiş hesap fişi bilgi fişidir ve mali fiş olmadığını söyler, ön fiş ödeme öncesi hesap bilgisidir ve mali değeri olmadığını söyler); ikisi de mali fiş görünümü taşımaz; ön fişin ibare teyidi aşağıdaki mali müşavir notundadır.
+ 
+ ## Ödenmiş hesabın fişinden farkı
+ 
+@@ -14,6 +14,7 @@ Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmay
+ | Sayaç | `billing.bills.receipt_first_printed_at`: ilk basım orijinal, sonrakiler KOPYA | Ayrı: `order.pre-receipt.printed` denetim kayıtlarının sayısı; fişte "HESAP NO: N" |
+ | Etki | Orijinal hakkını tüketir | Orijinal/kopya akışına dokunmaz |
+ | Hesap | Ödenmiş hesap gerekir | Hesap açmaz; açık hesap varsa ondan, yoksa siparişten okur |
++| Başlık ve ibare | "Bilgi Fişi", "Bu belge mali fiş değildir.", "Hesap: <hesap no>" ve tarih+saat tek satırda (`split-payment.js`, V1-RMD-887) | "BİLGİ FİŞİ", "MALİ DEĞERİ YOKTUR", "HESAP NO: N", "Tarih" ve "Saat" ayrı satırlarda (V1-RMD-1177) |
+ 
+ Ödenmiş hesabı olan sipariş için ön fiş reddedilir (`BILL_NOT_UNPAID`); gönderilmemiş (taslak), iptal, reddedilmiş ya da tamamlanmış sipariş için `ORDER_NOT_OPEN` döner (taslak sipariş hesaba da çevrilemez).
+ 
+diff --git a/docs/qa/device-browser-test-plan.md b/docs/qa/device-browser-test-plan.md
+index 422357978..b4badee71 100644
+--- a/docs/qa/device-browser-test-plan.md
++++ b/docs/qa/device-browser-test-plan.md
+@@ -80,7 +80,7 @@ Gerekenler: çekmece kablosu (RJ11/RJ12) bağlı bir fiş yazıcısı, yazıcın
+ | 6 | Kasa oturumu ekranında "Satış yok"a basın; "Bozuk para" seçip "Çekmeceyi aç"a basın. | "Çekmece açıldı." çıkar, çekmece açılır; "Bu vardiyada satışsız açma: 1" görünür; kasadaki beklenen tutar DEĞİŞMEZ. |
+ | 7 | "Satış yok" > "Sayım", sonra "Diğer" (not yazmadan deneyin, sonra notla). | Notsuz "Diğer" reddedilir ("“Diğer” için not yazın."); notla açılır. |
+ | 8 | Aynı oturumda beş kez "Satış yok" yapın. | Beşincide Türkçe uyarı çıkar ("Bu vardiyada 5 kez satışsız çekmece açıldı."). |
+-| 9 | Kasayı sayıp kapatın; yönetici denetim kaydında kapanış olayına bakın (veya geliştiriciden kapanış kaydındaki `drawerSaleOpenCount`, `drawerNoSaleCount`, `drawerNoSaleKickFailedCount`, `drawerSaleKickFailedCount` sayılarını isteyin). | Sayılar yaptığınız denemelerle eşleşir: açılamayan satışsız denemeler ile ödeme sırasında açılamayan darbeler ayrı sayılır. |
++| 9 | Kasayı sayıp kapatın; yönetici denetim kaydında kapanış olayına bakın (veya geliştiriciden kapanış kaydındaki `drawerSaleOpenCount`, `drawerNoSaleCount`, `drawerNoSaleKickFailedCount`, `drawerSaleKickFailedCount` sayılarını isteyin). | Sayılar yaptığınız denemelerle eşleşir: açılamayan satışsız denemeler ile ödeme sırasında açılamayan çekmece sayısı ayrı sayılır. |
+ | 10 | Ayarı Hayır yapın ve nakit ödeme ile "Satış yok"u yeniden deneyin. | Ödeme normal alınır, çekmece açılmaz; "Satış yok" düğmesi görünmez. |
+ 
+ Sorun giderme:
+diff --git a/plan/v1/remediation/V1-RMD-1188-closing-drawer-counter-one-name-and-receipt-wording-note.md b/plan/v1/remediation/V1-RMD-1188-closing-drawer-counter-one-name-and-receipt-wording-note.md
+index 0cdde4e6f..9cd264590 100644
+--- a/plan/v1/remediation/V1-RMD-1188-closing-drawer-counter-one-name-and-receipt-wording-note.md
++++ b/plan/v1/remediation/V1-RMD-1188-closing-drawer-counter-one-name-and-receipt-wording-note.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1188 - Çekmece sayacı tek adla anılır; iki fişin ibare farkı belgelenir
+ 
+ - Task ID: V1-RMD-1188
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/PosTerminal/src/features/management-closing/ClosingSection.test.tsx b/src/Clients/PosTerminal/src/features/management-closing/ClosingSection.test.tsx
+index 18722f27e..57508ed12 100644
+--- a/src/Clients/PosTerminal/src/features/management-closing/ClosingSection.test.tsx
++++ b/src/Clients/PosTerminal/src/features/management-closing/ClosingSection.test.tsx
+@@ -92,7 +92,9 @@ describe("closing and reconciliation section", () => {
+     const scroll = table.parentElement!;
+     expect([scroll.getAttribute("role"), scroll.getAttribute("aria-label")]).toEqual(["region", "Kasa oturumları"]);
+     expect(document.body.textContent).toContain("— işareti: bu oturum için kayıt yok");
+-    expect([...table.querySelectorAll("th")].map((cell) => cell.textContent).slice(4)).toEqual(["İlk sayım", "Düzeltme sayısı", "Satışsız açma", "Açılamayan satışsız deneme", "Ödemede açılamayan darbe"]);
++    expect([...table.querySelectorAll("th")].map((cell) => cell.textContent).slice(4)).toEqual(["İlk sayım", "Düzeltme sayısı", "Satışsız açma", "Açılamayan satışsız deneme", "Ödeme sırasında açılamayan çekmece"]);
++    const cashierScreen = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../../../Cashier/wwwroot/payments/cash-session/cash-session.js"), "utf8");
++    expect(cashierScreen).toContain("<span>Ödeme sırasında açılamayan çekmece</span>");
+     const rows = [...table.querySelectorAll("tbody tr")].map((row) => [...row.querySelectorAll("td")].map((cell) => cell.textContent!));
+     expect(rows[0]![4]).toContain("1.050");
+     expect(rows[0]!.slice(5)).toEqual(["2", "1", "4", "5"]);
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 113b1fc4b..bba788c73 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -130,7 +130,7 @@ export const managementText = {
+     countCorrections: "Düzeltme sayısı",
+     noSaleOpenings: "Satışsız açma",
+     noSaleFailed: "Açılamayan satışsız deneme",
+-    saleFailed: "Ödemede açılamayan darbe",
++    saleFailed: "Ödeme sırasında açılamayan çekmece",
+     cashSessionsUnknown: "— işareti: bu oturum için kayıt yok (oturum açık ya da bu sayaçlar yazılmadan önce kapanmış). Sıfır, sayılan ve hiç olmayan demektir.",
+     caseTotals: "Vaka özeti",
+     caseType: "Vaka türü",

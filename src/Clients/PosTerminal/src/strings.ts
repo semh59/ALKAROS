@@ -130,7 +130,7 @@ export const managementText = {
     countCorrections: "Düzeltme sayısı",
     noSaleOpenings: "Satışsız açma",
     noSaleFailed: "Açılamayan satışsız deneme",
-    saleFailed: "Ödemede açılamayan darbe",
+    saleFailed: "Ödeme sırasında açılamayan çekmece",
     cashSessionsUnknown: "— işareti: bu oturum için kayıt yok (oturum açık ya da bu sayaçlar yazılmadan önce kapanmış). Sıfır, sayılan ve hiç olmayan demektir.",
     caseTotals: "Vaka özeti",
     caseType: "Vaka türü",

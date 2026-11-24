@@ -1,0 +1,34 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (27 tests | 1 failed) 1074ms
+     × shows each cash session's first count, corrections and drawer counters, and a dash where the server has none 52ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > shows each cash session's first count, corrections and drawer counters, and a dash where the server has none
+AssertionError: expected [ Array(5) ] to deeply equal [ Array(5) ]
+
+- Expected
++ Received
+
+  [
+    "İlk sayım",
+    "Düzeltme sayısı",
+    "Satışsız açma",
+    "Açılamayan satışsız deneme",
+-   "Ödeme sırasında açılamayan çekmece",
++   "Ödeme sırasında açılamayan çekmeceler",
+  ]
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:95:88
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 26 passed (27)
+   Start at  12:23:47
+   Duration  2.74s (transform 219ms, setup 0ms, import 325ms, tests 1.07s, environment 1.05s)
+

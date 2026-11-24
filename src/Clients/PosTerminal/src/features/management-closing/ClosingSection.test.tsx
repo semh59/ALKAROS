@@ -92,7 +92,9 @@ describe("closing and reconciliation section", () => {
     const scroll = table.parentElement!;
     expect([scroll.getAttribute("role"), scroll.getAttribute("aria-label")]).toEqual(["region", "Kasa oturumları"]);
     expect(document.body.textContent).toContain("— işareti: bu oturum için kayıt yok");
-    expect([...table.querySelectorAll("th")].map((cell) => cell.textContent).slice(4)).toEqual(["İlk sayım", "Düzeltme sayısı", "Satışsız açma", "Açılamayan satışsız deneme", "Ödemede açılamayan darbe"]);
+    expect([...table.querySelectorAll("th")].map((cell) => cell.textContent).slice(4)).toEqual(["İlk sayım", "Düzeltme sayısı", "Satışsız açma", "Açılamayan satışsız deneme", "Ödeme sırasında açılamayan çekmece"]);
+    const cashierScreen = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../../../Cashier/wwwroot/payments/cash-session/cash-session.js"), "utf8");
+    expect(cashierScreen).toContain("<span>Ödeme sırasında açılamayan çekmece</span>");
     const rows = [...table.querySelectorAll("tbody tr")].map((row) => [...row.querySelectorAll("td")].map((cell) => cell.textContent!));
     expect(rows[0]![4]).toContain("1.050");
     expect(rows[0]!.slice(5)).toEqual(["2", "1", "4", "5"]);

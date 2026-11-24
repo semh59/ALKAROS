@@ -1,7 +1,7 @@
 # V1-RMD-1188 - Çekmece sayacı tek adla anılır; iki fişin ibare farkı belgelenir
 
 - Task ID: V1-RMD-1188
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
