@@ -1,0 +1,9 @@
+B1-border-back killed (restored)
+JSDONE
+B2-movement-heading killed (restored)
+B3-movement-name-aria killed (restored)
+B4-movement-secret-aria killed (restored)
+B5-close-heading killed (restored)
+B6-close-name-aria killed (restored)
+B7-close-secret-aria killed (restored)
+JSDONE

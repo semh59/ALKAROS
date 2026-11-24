@@ -1,0 +1,5 @@
+# V1-RMD-1200 sonuc
+Kok neden: kasa oturumu sayfasinda iki ayri yonetici kutusu (kasa cikisi talebini yerinde onaylama; fark toleransini asan kapanis) baslik ve erisilebilir adda islemi soylemiyordu; tutar kutusunun 1,5 px kenarligi ic input'u kutudan 2 px kucuk (61/59) birakiyordu.
+Duzeltme: kutular birlestirilmedi. Basliklar "Kasa cikisi onayi · Yonetici burada onaylasin" ve "Kasa kapatma onayi · Yonetici girisi"; alanlarin aria-label'i islemi soyler ("Yonetici kullanici adi (kasa cikisi onayi)" vb.), gorunur etiketler ve id'ler ayni. .cs-amount-field kenarligi odeme sayfasindaki gibi ic golge (inset 1,5 px marka rengi) oldu.
+Kanit: red.log (3 kirmizi), green-static-all.log (77 dosya 880 test), live-measure.txt (Chromium: once kutu 61/input 59, sonra 59/59; .cs-input metin ve parola 48), mutations.txt B1-B7 killed (cp+cmp), plan-audit ve consistency-audit temiz, client-build-gate exit 0.
+Acik risk: Windows yuksek karsitlik modunda gölge cizilmez, tutar kutusu siniri gorunmeyebilir (odeme sayfasi da ayni); olcum tek viewport ve statik kutu (gercek sayfa degil); birden cok bekleyen talepte her kutunun aria-label'i ayni; kuralin CSS metin testi sira bagimli.

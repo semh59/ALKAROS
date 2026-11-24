@@ -385,6 +385,14 @@ describe("cash-session.js cash-out requests", () => {
       expect($(`[data-approve-here="${REQUEST}"]`).textContent).toBe("Yönetici onayı ver");
     });
 
+    it("names the box by the operation it approves, in its heading and in the accessible names of its fields", async () => {
+      await open({ capabilities: [], list: request(ME) });
+
+      expect($("#pending-requests").textContent).toContain("Kasa çıkışı onayı · Yönetici burada onaylasın");
+      expect($(`#approver-name-${REQUEST}`).getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (kasa çıkışı onayı)");
+      expect($(`#approver-secret-${REQUEST}`).getAttribute("aria-label")).toBe("Yönetici şifresi (kasa çıkışı onayı)");
+    });
+
     it("does not offer them to an approver or to someone else's request", async () => {
       await open({ capabilities: ["cash.session.override"], list: request(OTHER) });
       expect($(`#approver-name-${REQUEST}`)).toBeNull();

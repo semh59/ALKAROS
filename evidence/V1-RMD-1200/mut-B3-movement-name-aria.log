@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (73 tests | 1 failed) 13352ms
+       × names the box by the operation it approves, in its heading and in the accessible names of its fields 120ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > a manager approving at the till with their own password > names the box by the operation it approves, in its heading and in the accessible names of its fields
+AssertionError: expected null to be 'Yönetici kullanıcı adı (kasa çıkışı o…' // Object.is equality
+
+- Expected:
+"Yönetici kullanıcı adı (kasa çıkışı onayı)"
+
++ Received:
+null
+
+ ❯ cash-session-movement.test.js:392:73
+    390|
+    391|       expect($("#pending-requests").textContent).toContain("Kasa çıkış…
+    392|       expect($(`#approver-name-${REQUEST}`).getAttribute("aria-label")…
+       |                                                                         ^
+    393|       expect($(`#approver-secret-${REQUEST}`).getAttribute("aria-label…
+    394|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 15 passed (16)
+      Tests  1 failed | 245 passed (246)
+   Start at  19:36:04
+   Duration  63.82s (transform 7.17s, setup 254ms, import 367ms, tests 44.24s, environment 15.01s)
+

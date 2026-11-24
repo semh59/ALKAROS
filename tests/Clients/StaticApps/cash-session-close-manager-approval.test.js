@@ -104,6 +104,14 @@ describe("cash-session.js manager approval at the till", () => {
     expect($('[role="alert"]').textContent).toContain("yönetici yanınızda kendi kullanıcı adı ve şifresini girsin");
   });
 
+  it("names the manager box by the operation it approves, in its heading and in the accessible names of its fields", async () => {
+    await toManagerBlock();
+
+    expect(document.body.textContent).toContain("Kasa kapatma onayı · Yönetici girişi");
+    expect($("#manager-username").getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (kasa kapatma onayı)");
+    expect($("#manager-password").getAttribute("aria-label")).toBe("Yönetici şifresi (kasa kapatma onayı)");
+  });
+
   it("offers labelled manager name and password fields once the tolerance is exceeded", async () => {
     await toManagerBlock();
 

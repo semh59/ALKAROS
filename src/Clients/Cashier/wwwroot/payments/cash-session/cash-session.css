@@ -117,7 +117,9 @@ body {
 .cs-amount-field {
   display: flex;
   align-items: center;
-  border: 1.5px solid var(--color-brand);
+  /* The edge is drawn inside the box (not as a border), so the input fills all of the 48 px touch target. */
+  border: 0;
+  box-shadow: inset 0 0 0 1.5px var(--color-brand);
   border-radius: var(--radius-md);
   padding: 0 16px;
   min-height: var(--touch-target);

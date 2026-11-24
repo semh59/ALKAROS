@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (73 tests | 1 failed) 13470ms
+       × names the box by the operation it approves, in its heading and in the accessible names of its fields 123ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > a manager approving at the till with their own password > names the box by the operation it approves, in its heading and in the accessible names of its fields
+AssertionError: expected 'Onay bekleyen çıkışlarTalep Eden · 12…' to contain 'Kasa çıkışı onayı · Yönetici burada o…'
+
+Expected: "Kasa çıkışı onayı · Yönetici burada onaylasın"
+Received: "Onay bekleyen çıkışlarTalep Eden · 12:00₺800,00avansTalebi geri çekYönetici burada onaylasınYönetici kullanıcı adıYönetici şifresiYönetici onayı ver"
+
+ ❯ cash-session-movement.test.js:391:50
+    389|       await open({ capabilities: [], list: request(ME) });
+    390|
+    391|       expect($("#pending-requests").textContent).toContain("Kasa çıkış…
+       |                                                  ^
+    392|       expect($(`#approver-name-${REQUEST}`).getAttribute("aria-label")…
+    393|       expect($(`#approver-secret-${REQUEST}`).getAttribute("aria-label…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 15 passed (16)
+      Tests  1 failed | 245 passed (246)
+   Start at  19:34:58
+   Duration  63.79s (transform 7.18s, setup 251ms, import 354ms, tests 44.39s, environment 14.88s)
+

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-manager-approval.test.js (18 tests | 1 failed) 4204ms
+     × names the manager box by the operation it approves, in its heading and in the accessible names of its fields 288ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > names the manager box by the operation it approves, in its heading and in the accessible names of its fields
+AssertionError: expected null to be 'Yönetici kullanıcı adı (kasa kapatma …' // Object.is equality
+
+- Expected:
+"Yönetici kullanıcı adı (kasa kapatma onayı)"
+
++ Received:
+null
+
+ ❯ cash-session-close-manager-approval.test.js:111:63
+    109|
+    110|     expect(document.body.textContent).toContain("Kasa kapatma onayı · …
+    111|     expect($("#manager-username").getAttribute("aria-label")).toBe("Yö…
+       |                                                               ^
+    112|     expect($("#manager-password").getAttribute("aria-label")).toBe("Yö…
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 15 passed (16)
+      Tests  1 failed | 245 passed (246)
+   Start at  19:39:24
+   Duration  63.67s (transform 7.04s, setup 250ms, import 364ms, tests 44.22s, environment 14.92s)
+

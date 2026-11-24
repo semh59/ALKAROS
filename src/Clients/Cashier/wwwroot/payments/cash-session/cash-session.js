@@ -1057,13 +1057,13 @@
   function renderApproveHere(request) {
     var shown = state.approveHere.id === request.id ? state.approveHere : { name: '', error: null };
     var disabled = state.busy ? ' disabled' : '';
-    return '<div><span class="cs-field-label">Yönetici burada onaylasın</span>' +
+    return '<div><span class="cs-field-label">Kasa çıkışı onayı · Yönetici burada onaylasın</span>' +
       (shown.error ? '<div class="cs-field-hint" role="alert">' + escapeHtml(shown.error) + '</div>' : '') +
       '<label class="cs-field-label" for="approver-name-' + request.id + '">Yönetici kullanıcı adı</label>' +
-      '<input class="cs-input" type="text" id="approver-name-' + request.id + '" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
+      '<input class="cs-input" type="text" id="approver-name-' + request.id + '" aria-label="Yönetici kullanıcı adı (kasa çıkışı onayı)" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
       escapeHtml(shown.name) + '"' + disabled + '>' +
       '<label class="cs-field-label" for="approver-secret-' + request.id + '">Yönetici şifresi</label>' +
-      '<input class="cs-input" type="password" id="approver-secret-' + request.id + '" autocomplete="new-password" maxlength="256"' + disabled + '>' +
+      '<input class="cs-input" type="password" id="approver-secret-' + request.id + '" aria-label="Yönetici şifresi (kasa çıkışı onayı)" autocomplete="new-password" maxlength="256"' + disabled + '>' +
       '<button class="cs-btn cs-btn-secondary" type="button" data-approve-here="' + request.id + '"' + disabled + '>Yönetici onayı ver</button></div>';
   }
 
@@ -1453,11 +1453,12 @@
           '<div class="cs-alert-body">Devam etmek için açıklama yazın; yönetici yanınızda kendi kullanıcı adı ve şifresini girsin.</div></div></div>' +
           '<label class="cs-field-label" for="override-reason">Yönetici Açıklaması</label>' +
           '<textarea class="cs-textarea" id="override-reason" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>' +
+          '<span class="cs-field-label">Kasa kapatma onayı · Yönetici girişi</span>' +
           '<label class="cs-field-label" for="manager-username">Yönetici kullanıcı adı</label>' +
-          '<input class="cs-input" type="text" id="manager-username" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
+          '<input class="cs-input" type="text" id="manager-username" aria-label="Yönetici kullanıcı adı (kasa kapatma onayı)" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
           escapeHtml(state.drafts.managerUsername) + '">' +
           '<label class="cs-field-label" for="manager-password">Yönetici şifresi</label>' +
-          '<input class="cs-input" type="password" id="manager-password" autocomplete="new-password" maxlength="256">' +
+          '<input class="cs-input" type="password" id="manager-password" aria-label="Yönetici şifresi (kasa kapatma onayı)" autocomplete="new-password" maxlength="256">' +
           '<p class="cs-field-hint">Yönetici hesabıyla kendiniz kapatıyorsanız bu iki alanı boş bırakın.</p>'
         : hasDifference
           ? '<label class="cs-field-label" for="difference-explanation">Fark Açıklaması (zorunlu)</label>' +

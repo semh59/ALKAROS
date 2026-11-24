@@ -1,0 +1,4 @@
+Chromium (Playwright), cash-session.css + kutular (getBoundingClientRect, hesaplanmis stil)
+ONCE (HEAD css):  tutar kutusu 61, ic input 59, kenarlik 1px(1.5 yuvarlanir), golge yok; .cs-input metin 48, parola 48
+SONRA (duzeltme): tutar kutusu 59, ic input 59, kenarlik 0, golge inset 1.5px marka rengi; .cs-input metin 48, parola 48
+Not: kutu 48 px alt siniri asar (26 px yazi); onceki 61/59 farki kenarlikten, simdi kutu ve input ayni.

@@ -36,6 +36,11 @@ describe("till amount boxes", () => {
     expect(css).toMatch(/\.sp-amount-field \{[^}]*border:\s*0[;\s][^}]*box-shadow:\s*inset 0 0 0 1\.5px var\(--color-brand\)/);
   });
 
+  it("draws the cash session amount box's edge inside the box too, so its input fills all 48 px like the payment page's", () => {
+    const css = read("cash-session/cash-session.css");
+    expect(css).toMatch(/\.cs-amount-field \{[^}]*border:\s*0[;\s][^}]*box-shadow:\s*inset 0 0 0 1\.5px var\(--color-brand\)/);
+  });
+
   it.each([
     ["split-payment/split-payment.css", ".sp-amount-field"],
     ["cash-session/cash-session.css", ".cs-amount-field"],

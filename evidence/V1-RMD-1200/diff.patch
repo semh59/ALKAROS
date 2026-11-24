@@ -1,0 +1,105 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
+index 894980b4b..359b3b8e3 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
+@@ -117,7 +117,9 @@ body {
+ .cs-amount-field {
+   display: flex;
+   align-items: center;
+-  border: 1.5px solid var(--color-brand);
++  /* The edge is drawn inside the box (not as a border), so the input fills all of the 48 px touch target. */
++  border: 0;
++  box-shadow: inset 0 0 0 1.5px var(--color-brand);
+   border-radius: var(--radius-md);
+   padding: 0 16px;
+   min-height: var(--touch-target);
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 92bd72cac..a6ca029eb 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -1057,13 +1057,13 @@
+   function renderApproveHere(request) {
+     var shown = state.approveHere.id === request.id ? state.approveHere : { name: '', error: null };
+     var disabled = state.busy ? ' disabled' : '';
+-    return '<div><span class="cs-field-label">Yönetici burada onaylasın</span>' +
++    return '<div><span class="cs-field-label">Kasa çıkışı onayı · Yönetici burada onaylasın</span>' +
+       (shown.error ? '<div class="cs-field-hint" role="alert">' + escapeHtml(shown.error) + '</div>' : '') +
+       '<label class="cs-field-label" for="approver-name-' + request.id + '">Yönetici kullanıcı adı</label>' +
+-      '<input class="cs-input" type="text" id="approver-name-' + request.id + '" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
++      '<input class="cs-input" type="text" id="approver-name-' + request.id + '" aria-label="Yönetici kullanıcı adı (kasa çıkışı onayı)" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
+       escapeHtml(shown.name) + '"' + disabled + '>' +
+       '<label class="cs-field-label" for="approver-secret-' + request.id + '">Yönetici şifresi</label>' +
+-      '<input class="cs-input" type="password" id="approver-secret-' + request.id + '" autocomplete="new-password" maxlength="256"' + disabled + '>' +
++      '<input class="cs-input" type="password" id="approver-secret-' + request.id + '" aria-label="Yönetici şifresi (kasa çıkışı onayı)" autocomplete="new-password" maxlength="256"' + disabled + '>' +
+       '<button class="cs-btn cs-btn-secondary" type="button" data-approve-here="' + request.id + '"' + disabled + '>Yönetici onayı ver</button></div>';
+   }
+ 
+@@ -1453,11 +1453,12 @@
+           '<div class="cs-alert-body">Devam etmek için açıklama yazın; yönetici yanınızda kendi kullanıcı adı ve şifresini girsin.</div></div></div>' +
+           '<label class="cs-field-label" for="override-reason">Yönetici Açıklaması</label>' +
+           '<textarea class="cs-textarea" id="override-reason" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>' +
++          '<span class="cs-field-label">Kasa kapatma onayı · Yönetici girişi</span>' +
+           '<label class="cs-field-label" for="manager-username">Yönetici kullanıcı adı</label>' +
+-          '<input class="cs-input" type="text" id="manager-username" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
++          '<input class="cs-input" type="text" id="manager-username" aria-label="Yönetici kullanıcı adı (kasa kapatma onayı)" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
+           escapeHtml(state.drafts.managerUsername) + '">' +
+           '<label class="cs-field-label" for="manager-password">Yönetici şifresi</label>' +
+-          '<input class="cs-input" type="password" id="manager-password" autocomplete="new-password" maxlength="256">' +
++          '<input class="cs-input" type="password" id="manager-password" aria-label="Yönetici şifresi (kasa kapatma onayı)" autocomplete="new-password" maxlength="256">' +
+           '<p class="cs-field-hint">Yönetici hesabıyla kendiniz kapatıyorsanız bu iki alanı boş bırakın.</p>'
+         : hasDifference
+           ? '<label class="cs-field-label" for="difference-explanation">Fark Açıklaması (zorunlu)</label>' +
+diff --git a/tests/Clients/StaticApps/cash-session-close-manager-approval.test.js b/tests/Clients/StaticApps/cash-session-close-manager-approval.test.js
+index 872a2beed..85c1e0f19 100644
+--- a/tests/Clients/StaticApps/cash-session-close-manager-approval.test.js
++++ b/tests/Clients/StaticApps/cash-session-close-manager-approval.test.js
+@@ -104,6 +104,14 @@ describe("cash-session.js manager approval at the till", () => {
+     expect($('[role="alert"]').textContent).toContain("yönetici yanınızda kendi kullanıcı adı ve şifresini girsin");
+   });
+ 
++  it("names the manager box by the operation it approves, in its heading and in the accessible names of its fields", async () => {
++    await toManagerBlock();
++
++    expect(document.body.textContent).toContain("Kasa kapatma onayı · Yönetici girişi");
++    expect($("#manager-username").getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (kasa kapatma onayı)");
++    expect($("#manager-password").getAttribute("aria-label")).toBe("Yönetici şifresi (kasa kapatma onayı)");
++  });
++
+   it("offers labelled manager name and password fields once the tolerance is exceeded", async () => {
+     await toManagerBlock();
+ 
+diff --git a/tests/Clients/StaticApps/cash-session-movement.test.js b/tests/Clients/StaticApps/cash-session-movement.test.js
+index e6d4677ee..82a199e96 100644
+--- a/tests/Clients/StaticApps/cash-session-movement.test.js
++++ b/tests/Clients/StaticApps/cash-session-movement.test.js
+@@ -385,6 +385,14 @@ describe("cash-session.js cash-out requests", () => {
+       expect($(`[data-approve-here="${REQUEST}"]`).textContent).toBe("Yönetici onayı ver");
+     });
+ 
++    it("names the box by the operation it approves, in its heading and in the accessible names of its fields", async () => {
++      await open({ capabilities: [], list: request(ME) });
++
++      expect($("#pending-requests").textContent).toContain("Kasa çıkışı onayı · Yönetici burada onaylasın");
++      expect($(`#approver-name-${REQUEST}`).getAttribute("aria-label")).toBe("Yönetici kullanıcı adı (kasa çıkışı onayı)");
++      expect($(`#approver-secret-${REQUEST}`).getAttribute("aria-label")).toBe("Yönetici şifresi (kasa çıkışı onayı)");
++    });
++
+     it("does not offer them to an approver or to someone else's request", async () => {
+       await open({ capabilities: ["cash.session.override"], list: request(OTHER) });
+       expect($(`#approver-name-${REQUEST}`)).toBeNull();
+diff --git a/tests/Clients/StaticApps/cashier-amount-field-label.test.js b/tests/Clients/StaticApps/cashier-amount-field-label.test.js
+index 9214778a4..e569b891f 100644
+--- a/tests/Clients/StaticApps/cashier-amount-field-label.test.js
++++ b/tests/Clients/StaticApps/cashier-amount-field-label.test.js
+@@ -36,6 +36,11 @@ describe("till amount boxes", () => {
+     expect(css).toMatch(/\.sp-amount-field \{[^}]*border:\s*0[;\s][^}]*box-shadow:\s*inset 0 0 0 1\.5px var\(--color-brand\)/);
+   });
+ 
++  it("draws the cash session amount box's edge inside the box too, so its input fills all 48 px like the payment page's", () => {
++    const css = read("cash-session/cash-session.css");
++    expect(css).toMatch(/\.cs-amount-field \{[^}]*border:\s*0[;\s][^}]*box-shadow:\s*inset 0 0 0 1\.5px var\(--color-brand\)/);
++  });
++
+   it.each([
+     ["split-payment/split-payment.css", ".sp-amount-field"],
+     ["cash-session/cash-session.css", ".cs-amount-field"],
