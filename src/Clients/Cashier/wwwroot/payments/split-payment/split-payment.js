@@ -17,8 +17,11 @@
     Initiated: 'Başlatıldı', Pending: 'Beklemede', Approved: 'Onaylandı', Declined: 'Reddedildi', Cancelled: 'İptal edildi',
     Unknown: 'Sonucu bilinmiyor', ReconciliationRequired: 'Mutabakat bekliyor', Refunded: 'İade edildi', PartiallyRefunded: 'Kısmen iade edildi',
   };
-  var METHOD_NAMES = { Cash: 'Nakit', Card: 'Kart', Eft: 'Havale / EFT', Account: 'Cari hesap' };
-  var METHOD_LABELS = { Cash: 'Nakit', BankCard: 'Kredi/Banka Kartı', Eft: 'EFT/Havale', Account: 'Hesaba yaz (cari)' };
+  var METHOD_NAMES = { Cash: 'Nakit', Card: 'Kart', ExternalCard: 'Harici POS kartı', Eft: 'Havale / EFT', Account: 'Cari hesap' };
+  var METHOD_LABELS = { Cash: 'Nakit', BankCard: 'Kredi/Banka Kartı', ExternalCard: 'Harici POS kartı', Eft: 'EFT/Havale', Account: 'Hesaba yaz (cari)' };
+  var SLIP_PATTERN = /^[A-Za-z0-9][A-Za-z0-9\/-]{3,31}$/;
+  var SLIP_RULE_TEXT = 'Fiş numarası 4-32 karakter olmalı (harf, rakam, - ve /).';
+  var CARD_NUMBER_WARNING = 'Kart numarasını değil, yalnız POS fişindeki fiş numarasını yazın.';
 
   var MAX_SPLIT_PEOPLE = 50;
   var state = {
@@ -46,6 +49,7 @@
     resolveReason: '',
     userId: null,
     slipDraft: '',
+    externalSlipDraft: '',
     decisionNote: '',
     // V13-PUI-004: EFT/Havale onay kutusu - kasiyer tutarı işletmenin banka
     // hesap hareketinde GÖRDÜĞÜNÜ işaretlemeden "Ödemeyi Ekle" pasif kalır.
@@ -254,6 +258,11 @@
     IDEMPOTENCY_KEY_REQUIRED: 'İşlem anahtarı gerekli.',
     REFUND_INPUT_INVALID: 'İade bilgisi geçersiz.',
     CARD_TERMINAL_NOT_CONFIGURED: 'Kart terminali tanımlı değil; kartla tahsilat yapılamaz. Nakit veya EFT kullanın.',
+    REFUND_REQUEST_NOT_YOURS: 'Bu iade isteğini siz açmadınız; yönetici onayı yalnız isteği açan kasiyerin ekranından verilebilir.',
+    CARD_TERMINAL_CONFIGURED: 'Kart terminali tanımlı; harici POS kartı kullanılamaz. Kartla tahsilat için Kredi/Banka Kartı yöntemini seçin.',
+    EXTERNAL_CARD_SLIP_INVALID: 'Fiş numarası 4-32 karakter olmalı (harf, rakam, - ve /). Kart numarasını yazmayın.',
+    EXTERNAL_CARD_SLIP_IS_CARD_NUMBER: 'Bu bir kart numarasına benziyor. Kart numarasını yazmayın; yalnız POS fişindeki fiş numarasını yazın.',
+    EXTERNAL_CARD_SLIP_REUSED: 'Bu fiş numarası bu hesapta zaten kayıtlı. Aynı fişi iki kez girmeyin.',
     TENDER_METHOD_UNKNOWN: 'Tanınmayan ödeme yöntemi.',
     UNSUPPORTED_ORDER_STATE: 'Bu sipariş durumunda hesap açılamaz.',
     USE_CASH_TENDER_ENDPOINT: 'Nakit ödeme için kasa oturumunun kendi tahsilat adresi kullanılmalı.',
@@ -729,7 +738,8 @@
   // the same way, so this value is now genuinely authoritative for tendering: a discount/tip now really does
   // change what must be collected and when the bill closes, matching what this page has always shown.
   function dropUnavailableMethod() {
-    if (state.selectedMethod === 'BankCard' && state.summary && state.summary.cardTerminalConfigured === false) {
+    var terminalMissing = !!state.summary && state.summary.cardTerminalConfigured === false;
+    if ((state.selectedMethod === 'BankCard' && terminalMissing) || (state.selectedMethod === 'ExternalCard' && !terminalMissing)) {
       state.selectedMethod = state.cashState === 'open' ? 'Cash' : null;
     }
   }
@@ -1208,6 +1218,10 @@
       setError('Hesaba yazmak için bir müşteri seçin.');
       return;
     }
+    if (state.selectedMethod === 'ExternalCard' && externalSlipProblem()) {
+      setError(externalSlipProblem());
+      return;
+    }
 
     var tendered = Number(state.tenderedDraft);
     var hasTendered = state.selectedMethod === 'Cash' && String(state.tenderedDraft).trim() !== '' && tendered > 0;
@@ -1226,6 +1240,7 @@
     state.tenderIdempotencyKey = tenderKeyFor([
       state.billId, state.selectedMethod, amount.toFixed(2), hasTendered ? tendered.toFixed(2) : '',
       state.selectedMethod === 'Account' ? state.selectedCustomerId : '', state.noteDraft || '', remainingAmount().toFixed(2),
+      state.selectedMethod === 'ExternalCard' ? state.externalSlipDraft.trim().toUpperCase() : '',
     ].join('|'));
     var idempotencyKey = state.tenderIdempotencyKey.key;
 
@@ -1251,6 +1266,11 @@
             },
           };
         })
+      : state.selectedMethod === 'ExternalCard'
+      ? api(tendersBase() + 'external-card', {
+          method: 'POST',
+          body: { Amount: amount, SlipNumber: state.externalSlipDraft.trim(), IdempotencyKey: idempotencyKey },
+        })
       : api(tendersBase(), {
           method: 'POST',
           body: {
@@ -1275,7 +1295,7 @@
         // the generic error message instead of leaving the cashier with
         // only an ambiguous failure toast.
         var code = result.body && result.body.error && result.body.error.code;
-        if (code === 'CARD_TERMINAL_NOT_CONFIGURED') return refreshSummary().then(render);
+        if (code === 'CARD_TERMINAL_NOT_CONFIGURED' || code === 'CARD_TERMINAL_CONFIGURED') return refreshSummary().then(render);
         if (code === 'TENDER_UNSETTLED_PAYMENT_EXISTS') {
           state.error = null;
           return refreshSummary().then(render);
@@ -1295,6 +1315,7 @@
       state.drawerNotice = !!result.body && result.body.drawerOpened === false;
       state.tenderedDraft = '';
       state.noteDraft = '';
+      state.externalSlipDraft = '';
       state.eftConfirmed = false;
       var payer = currentPayer();
       if (payer) {
@@ -1376,8 +1397,9 @@
   // VIEWS, this is a VALUE choice) - role="radiogroup"/"radio" + aria-checked is the correct
   // pattern for "exactly one of these applies" rather than role="tab".
   function renderMethodChips() {
-    var methods = ['Cash', 'BankCard', 'Eft', 'Account'].filter(function (method) {
-      return method !== 'BankCard' || !state.summary || state.summary.cardTerminalConfigured !== false;
+    var terminalMissing = !!state.summary && state.summary.cardTerminalConfigured === false;
+    var methods = ['Cash', 'BankCard', 'ExternalCard', 'Eft', 'Account'].filter(function (method) {
+      return method === 'BankCard' ? !terminalMissing : method === 'ExternalCard' ? terminalMissing : true;
     });
     return (
       '<div class="sp-method-chips" role="radiogroup" aria-label="Ödeme yöntemi">' +
@@ -2028,6 +2050,7 @@
             disabled + '>Havale gönderildi</button>' + renderCancelApproved(row, id, disabled);
         } else if (row.status === 'AwaitingManualRefund') {
           actions =
+            (row.method === 'ExternalCard' ? '<span class="sp-alert-body">Kart iadesi banka POS cihazında yapılır; çıkan iade fişinin numarasını yazın.</span>' : '') +
             '<label class="sp-field"><span class="sp-field-label">İade fiş numarası</span>' +
             '<input class="sp-input" type="text" maxlength="50" data-refund-slip="' + id + '" aria-label="İade fiş numarası" ' +
             'value="' + escapeHtml(state.refundSlips[row.requestId] || '') + '"></label>' +
@@ -2344,7 +2367,28 @@
       && tendered < Number(state.amountDraft) - 0.004;
   }
 
+  // Mirrors the server rule (4-32 letters, digits, - and /; never a card number): the server stays the judge, this only says why the button is off.
+  function externalSlipProblem() {
+    var slip = state.externalSlipDraft.trim();
+    if (!slip) return 'Devam etmek için POS fiş numarasını yazın.';
+    if (!SLIP_PATTERN.test(slip)) return SLIP_RULE_TEXT;
+    var digits = slip.replace(/[-\/]/g, '');
+    if (/^\d{13,19}$/.test(digits) && luhnValid(digits)) return 'Bu bir kart numarasına benziyor. ' + CARD_NUMBER_WARNING;
+    return '';
+  }
+
+  function luhnValid(digits) {
+    var sum = 0;
+    for (var i = 0; i < digits.length; i++) {
+      var digit = Number(digits.charAt(digits.length - 1 - i));
+      if (i % 2 === 1 && (digit *= 2) > 9) digit -= 9;
+      sum += digit;
+    }
+    return sum % 10 === 0;
+  }
+
   function submitTenderHint() {
+    if (state.selectedMethod === 'ExternalCard') return externalSlipProblem();
     if (state.selectedMethod === 'Eft' && !state.eftConfirmed) return 'Devam etmek için tutarı banka hesap hareketinde gördüğünüzü işaretleyin.';
     if (state.selectedMethod === 'Account' && !selectedCustomer()) return 'Devam etmek için bir müşteri seçin.';
     return '';
@@ -2352,6 +2396,7 @@
 
   function submitTenderDisabled() {
     return !!(state.busy || state.summaryStale || !state.selectedMethod || tenderedIsShort() || (state.selectedMethod === 'Eft' && !state.eftConfirmed)
+      || (state.selectedMethod === 'ExternalCard' && !!externalSlipProblem())
       || (state.selectedMethod === 'Account' && !selectedCustomer()));
   }
 
@@ -2373,7 +2418,7 @@
   }
 
   // Bilgi fişi: mali olmayan hesap özeti; sunucudan okunur, #receipt-print içine yazılır ve tarayıcı yazdırma penceresi açılır.
-  var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Card: 'Banka kartı', Eft: 'Havale / EFT' };
+  var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Card: 'Banka kartı', ExternalCard: 'Harici POS kartı', Eft: 'Havale / EFT' };
   var RECEIPT_ADJUSTMENTS = {
     DiscountPercentage: 'İndirim', DiscountAmount: 'İndirim', ServiceFee: 'Hizmet bedeli',
     Kuver: 'Kuver', Tip: 'Bahşiş',
@@ -2605,6 +2650,11 @@
             '<input class="sp-input" type="text" id="note-draft" aria-label="Ödeme notu (opsiyonel)" value="' + escapeHtml(state.noteDraft) + '"></div>'
           : '') +
         (state.selectedMethod === 'Account' ? renderCustomerPicker() : '') +
+        (state.selectedMethod === 'ExternalCard'
+          ? '<div class="sp-field"><label class="sp-field-label" for="external-slip">POS fiş numarası</label>' +
+            '<input class="sp-input" type="text" id="external-slip" maxlength="32" autocomplete="off" aria-describedby="external-slip-warning" value="' + escapeHtml(state.externalSlipDraft) + '">' +
+            '<p class="sp-hint" id="external-slip-warning">' + CARD_NUMBER_WARNING + '</p></div>'
+          : '') +
         (state.selectedMethod === 'Eft'
           ? '<div class="sp-confirm-row"><input type="checkbox" id="eft-confirm"' + (state.eftConfirmed ? ' checked' : '') + '>' +
             '<label for="eft-confirm">Tutarı işletmenin banka hesap hareketinde gördüm</label></div>'
@@ -2685,6 +2735,15 @@
       // V1-RMD-314: a hand-edited amount is a genuinely different tender attempt - never replay the
       // previous amount's in-flight key onto this one.
       state.tenderIdempotencyKey = null;
+    });
+    var externalSlipInput = document.getElementById('external-slip');
+    if (externalSlipInput) externalSlipInput.addEventListener('input', function () {
+      state.externalSlipDraft = this.value;
+      state.tenderIdempotencyKey = null;
+      var submit = document.getElementById('submit-tender');
+      if (submit) submit.disabled = submitTenderDisabled();
+      var hint = document.getElementById('submit-hint');
+      if (hint) { hint.textContent = submitTenderHint(); hint.hidden = !hint.textContent; }
     });
     var noteInput = document.getElementById('note-draft');
     if (noteInput) noteInput.addEventListener('input', function () { state.noteDraft = this.value; });

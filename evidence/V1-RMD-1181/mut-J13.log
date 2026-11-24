@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (9 tests | 1 failed) 2004ms
+     × asks for the refund slip of a bank POS card payment and says the refund is made on that POS 158ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > asks for the refund slip of a bank POS card payment and says the refund is made on that POS
+AssertionError: expected '\n  ← Kasaya dön\n  …Tahsilat Tamam, …' to contain 'Kart iadesi banka POS cihazında yapıl…'
+
+- Expected
++ Received
+
+- Kart iadesi banka POS cihazında yapılır; çıkan iade fişinin numarasını yazın.
++
++   ← Kasaya dön
++   …Tahsilat Tamam, Hesap Açıkİade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.Fişi yazdırBekleyen hesaplara dönİadeİade istekleri₺100,00 · Harici POS kartıElle iade bekliyorYanlış tutarİade fiş numarasıİadeyi tamamlaİadeyi tamamlamak için fiş numarasını yazın.Orijinal fişi sıfırla (yönetici onayıyla)Orijinal hakkını geri ver
++   
++   
++
+
+ ❯ split-payment-external-card.test.js:172:39
+    170|
+    171|     await vi.waitFor(() => expect(document.querySelector('[data-refund…
+    172|     expect(document.body.textContent).toContain("Kart iadesi banka POS…
+       |                                       ^
+    173|     expect(document.body.textContent).toContain("Harici POS kartı");
+    174|     expect(document.body.textContent).not.toContain("ExternalCard");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 36 passed (37)
+   Start at  08:42:45
+   Duration  8.86s (transform 2.35s, setup 71ms, import 102ms, tests 6.14s, environment 2.02s)
+

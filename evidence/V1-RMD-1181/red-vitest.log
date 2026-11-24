@@ -1,0 +1,128 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 8 failed) 1209ms
+     × offers the method only while no card terminal is defined, in place of the connected card 227ms
+     × shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid 134ms
+     × sends the trimmed slip to the external-card endpoint and clears the field after success 142ms
+     × replays the same key for a repeated attempt of the same slip and a new key for another slip 141ms
+     × answers EXTERNAL_CARD_SLIP_REUSED with its Turkish sentence and never the raw code 141ms
+     × answers EXTERNAL_CARD_SLIP_INVALID with its Turkish sentence and never the raw code 155ms
+     × answers EXTERNAL_CARD_SLIP_IS_CARD_NUMBER with its Turkish sentence and never the raw code 125ms
+     × drops the selection and shows the connected card when the server says a terminal is now defined 141ms
+ ❯ error-dictionary-lock.test.js (4 tests | 1 failed) 15ms
+     × has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server
+AssertionError: expected [ 'CARD_TERMINAL_CONFIGURED', …(4) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "CARD_TERMINAL_CONFIGURED",
++   "REFUND_REQUEST_NOT_YOURS",
++   "EXTERNAL_CARD_SLIP_REUSED",
++   "EXTERNAL_CARD_SLIP_INVALID",
++   "EXTERNAL_CARD_SLIP_IS_CARD_NUMBER",
++ ]
+
+ ❯ error-dictionary-lock.test.js:100:21
+     98|       else if (entries.get(code) !== message) different.push(code);
+     99|     }
+    100|     expect(missing).toEqual([]);
+       |                     ^
+    101|     expect(different).toEqual([]);
+    102|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > offers the method only while no card terminal is defined, in place of the connected card
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ split-payment-external-card.test.js:70:32
+     68|     install(world);
+     69|     await visit();
+     70|     expect(chip("ExternalCard").textContent).toBe("Harici POS kartı");
+       |                                ^
+     71|     expect(chip("BankCard")).toBeNull();
+     72|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ chooseExternalCard split-payment-external-card.test.js:51:23
+     49|
+     50| async function chooseExternalCard() {
+     51|   chip("ExternalCard").click();
+       |                       ^
+     52|   await vi.waitFor(() => expect($("#external-slip")).not.toBeNull());
+     53| }
+ ❯ split-payment-external-card.test.js:84:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > sends the trimmed slip to the external-card endpoint and clears the field after success
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ chooseExternalCard split-payment-external-card.test.js:51:23
+     49|
+     50| async function chooseExternalCard() {
+     51|   chip("ExternalCard").click();
+       |                       ^
+     52|   await vi.waitFor(() => expect($("#external-slip")).not.toBeNull());
+     53| }
+ ❯ split-payment-external-card.test.js:108:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > replays the same key for a repeated attempt of the same slip and a new key for another slip
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ chooseExternalCard split-payment-external-card.test.js:51:23
+     49|
+     50| async function chooseExternalCard() {
+     51|   chip("ExternalCard").click();
+       |                       ^
+     52|   await vi.waitFor(() => expect($("#external-slip")).not.toBeNull());
+     53| }
+ ❯ split-payment-external-card.test.js:122:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > answers EXTERNAL_CARD_SLIP_REUSED with its Turkish sentence and never the raw code
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > answers EXTERNAL_CARD_SLIP_INVALID with its Turkish sentence and never the raw code
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > answers EXTERNAL_CARD_SLIP_IS_CARD_NUMBER with its Turkish sentence and never the raw code
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ chooseExternalCard split-payment-external-card.test.js:51:23
+     49|
+     50| async function chooseExternalCard() {
+     51|   chip("ExternalCard").click();
+       |                       ^
+     52|   await vi.waitFor(() => expect($("#external-slip")).not.toBeNull());
+     53| }
+ ❯ split-payment-external-card.test.js:146:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > drops the selection and shows the connected card when the server says a terminal is now defined
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ chooseExternalCard split-payment-external-card.test.js:51:23
+     49|
+     50| async function chooseExternalCard() {
+     51|   chip("ExternalCard").click();
+       |                       ^
+     52|   await vi.waitFor(() => expect($("#external-slip")).not.toBeNull());
+     53| }
+ ❯ split-payment-external-card.test.js:160:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  9 failed | 3 passed (12)
+   Start at  08:26:10
+   Duration  4.02s (transform 569ms, setup 68ms, import 61ms, tests 1.22s, environment 2.13s)
+
+exit=1

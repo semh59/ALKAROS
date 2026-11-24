@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 1960ms
+     × sends the trimmed slip to the external-card endpoint and clears the field after success 187ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > sends the trimmed slip to the external-card endpoint and clears the field after success
+AssertionError: expected { Amount: 100, …(2) } to match object { Amount: 100, SlipNumber: 'pos-4471' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "Amount": 100,
+-   "SlipNumber": "pos-4471",
++   "SlipNumber": "  pos-4471 ",
+  }
+
+ ❯ split-payment-external-card.test.js:113:22
+    111|     await vi.waitFor(() => expect(posts).toHaveLength(1));
+    112|
+    113|     expect(posts[0]).toMatchObject({ Amount: 100, SlipNumber: "pos-447…
+       |                      ^
+    114|     expect(posts[0].IdempotencyKey).toMatch(/\S/);
+    115|     await vi.waitFor(() => expect($("#external-slip")?.value ?? "").to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 38 passed (39)
+   Start at  08:33:00
+   Duration  10.35s (transform 2.56s, setup 69ms, import 105ms, tests 6.21s, environment 3.11s)
+

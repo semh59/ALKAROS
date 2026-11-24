@@ -1,0 +1,61 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 2965ms
+     × answers EXTERNAL_CARD_SLIP_REUSED with its Turkish sentence and never the raw code 1217ms
+ ❯ error-dictionary-lock.test.js (4 tests | 1 failed) 27ms
+     × has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server
+AssertionError: expected [ 'EXTERNAL_CARD_SLIP_REUSED' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "EXTERNAL_CARD_SLIP_REUSED",
++ ]
+
+ ❯ error-dictionary-lock.test.js:100:21
+     98|       else if (entries.get(code) !== message) different.push(code);
+     99|     }
+    100|     expect(missing).toEqual([]);
+       |                     ^
+    101|     expect(different).toEqual([]);
+    102|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > answers EXTERNAL_CARD_SLIP_REUSED with its Turkish sentence and never the raw code
+AssertionError: expected '\n  ← Kasaya dön\n  Tahsilat!Hataİşle…' to contain 'Bu fiş numarası bu hesapta zaten kayı…'
+
+- Expected
++ Received
+
+- Bu fiş numarası bu hesapta zaten kayıtlı. Aynı fişi iki kez girmeyin.
++
++   ← Kasaya dön
++   Tahsilat!Hataİşlem, hesabın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Hesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitHarici POS kartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiPOS fiş numarasıKart numarasını değil, yalnız POS fişindeki fiş numarasını yazın.Ödemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleMüşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)İndirim uygulaGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et
++   
++   
++
+
+ ❯ split-payment-external-card.test.js:151:62
+    149|     await vi.waitFor(() => expect(posts).toHaveLength(1));
+    150|
+    151|     await vi.waitFor(() => expect(document.body.textContent).toContain…
+       |                                                              ^
+    152|     expect(document.body.textContent).not.toContain(code);
+    153|     expect(document.body.textContent).not.toContain("raw server text");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 37 passed (39)
+   Start at  08:33:42
+   Duration  11.95s (transform 2.80s, setup 73ms, import 112ms, tests 7.56s, environment 3.29s)
+

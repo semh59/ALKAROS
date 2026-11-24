@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 1900ms
+     × shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid 173ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid
+AssertionError: separators do not hide a card number: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-external-card.test.js:98:82
+     96|     expect($("#external-slip").getAttribute("autocomplete")).toBe("off…
+     97|     await typeSlip("4111-1111-1111-1111");
+     98|     expect($("#submit-tender").disabled, "separators do not hide a car…
+       |                                                                                  ^
+     99|     await typeSlip("4111111111111111");
+    100|     expect($("#submit-tender").disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  08:39:48
+   Duration  3.31s (transform 605ms, setup 38ms, import 40ms, tests 1.90s, environment 1.05s)
+

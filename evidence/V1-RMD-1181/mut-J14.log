@@ -1,0 +1,59 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (9 tests | 1 failed) 2025ms
+     × asks for the refund slip of a bank POS card payment and says the refund is made on that POS 169ms
+ ❯ split-payment-display-binding.test.js (28 tests | 1 failed) 5067ms
+     × names the ExternalCard way on the applied payment line 1087ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > names the ExternalCard way on the applied payment line
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-display-binding.test.js:182:119
+    180|       await loadApp(htmlPath, scriptPath);
+    181|
+    182|       await vi.waitFor(() => expect(document.querySelector(".sp-line-m…
+       |                                                                                                                       ^
+    183|     },
+    184|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > asks for the refund slip of a bank POS card payment and says the refund is made on that POS
+AssertionError: expected '\n  ← Kasaya dön\n  …Tahsilat Tamam, …' to contain 'Harici POS kartı'
+
+- Expected
++ Received
+
+- Harici POS kartı
++
++   ← Kasaya dön
++   …Tahsilat Tamam, Hesap Açıkİade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.Fişi yazdırBekleyen hesaplara dönİadeİade istekleri₺100,00 · BilinmiyorElle iade bekliyorYanlış tutarKart iadesi banka POS cihazında yapılır; çıkan iade fişinin numarasını yazın.İade fiş numarasıİadeyi tamamlaİadeyi tamamlamak için fiş numarasını yazın.Orijinal fişi sıfırla (yönetici onayıyla)Orijinal hakkını geri ver
++   
++   
++
+
+ ❯ split-payment-external-card.test.js:173:39
+    171|     await vi.waitFor(() => expect(document.querySelector('[data-refund…
+    172|     expect(document.body.textContent).toContain("Kart iadesi banka POS…
+    173|     expect(document.body.textContent).toContain("Harici POS kartı");
+       |                                       ^
+    174|     expect(document.body.textContent).not.toContain("ExternalCard");
+    175|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 35 passed (37)
+   Start at  08:42:57
+   Duration  9.69s (transform 2.38s, setup 52ms, import 72ms, tests 7.09s, environment 1.95s)
+

@@ -130,10 +130,10 @@ describe("split-payment.js card method availability", () => {
 
   const methods = () => [...document.querySelectorAll(".sp-method-chip")].map((chip) => chip.getAttribute("data-method"));
 
-  it("does not draw the card method when the server reports no card terminal", async () => {
+  it("draws the bank POS card method instead of the card method when the server reports no card terminal", async () => {
     await openLinkPage({ ...linkUnpaid, cardTerminalConfigured: false });
 
-    expect(methods()).toEqual(["Cash", "Eft", "Account"]);
+    expect(methods()).toEqual(["Cash", "ExternalCard", "Eft", "Account"]);
   });
 
   it("draws the card method when a card terminal is configured", async () => {
@@ -167,11 +167,11 @@ describe("split-payment.js card method availability", () => {
     document.getElementById("submit-tender").click();
 
     await vi.waitFor(() => expect(document.body.textContent).toContain("Kart terminali tanımlı değil; kartla tahsilat yapılamaz."));
-    expect(methods()).toEqual(["Cash", "Eft", "Account"]);
+    expect(methods()).toEqual(["Cash", "ExternalCard", "Eft", "Account"]);
     expect(document.getElementById("method-hint")).not.toBeNull();
   });
 
-  it.each([["Cash", "Nakit"], ["Card", "Kart"], ["Eft", "Havale / EFT"], ["Account", "Cari hesap"], ["", "Tahsilat"]])(
+  it.each([["Cash", "Nakit"], ["Card", "Kart"], ["ExternalCard", "Harici POS kartı"], ["Eft", "Havale / EFT"], ["Account", "Cari hesap"], ["", "Tahsilat"]])(
     "names the %s way on the applied payment line",
     async (method, label) => {
       const paid = { ...summary, allocatedTotal: 40, remainingAmount: 60, allocations: [{ allocationId: "a1", paymentId: "p1", amount: 40, paymentStatus: "Approved", method }] };

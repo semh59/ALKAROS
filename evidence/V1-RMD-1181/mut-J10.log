@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 1962ms
+     × shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid 163ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid
+AssertionError: expected '50' to be '32' // Object.is equality
+
+Expected: "32"
+Received: "50"
+
+ ❯ split-payment-external-card.test.js:86:59
+     84|     await chooseExternalCard();
+     85|
+     86|     expect($("#external-slip").getAttribute("maxlength")).toBe("32");
+       |                                                           ^
+     87|     expect($("#external-slip-warning").textContent).toBe("Kart numaras…
+     88|     expect($("#submit-tender").disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 38 passed (39)
+   Start at  08:34:11
+   Duration  10.83s (transform 2.92s, setup 74ms, import 101ms, tests 6.60s, environment 3.20s)
+

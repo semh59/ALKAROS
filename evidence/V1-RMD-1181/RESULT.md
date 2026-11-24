@@ -1,0 +1,7 @@
+# V1-RMD-1181 sonuc
+- Kirmizi: red-vitest.log, red-limit.log. Yesil: green-vitest.log (37), green-regress-vitest.log (split-payment*, touch-targets, error-dictionary: 447 gecti), client-build-gate.log exit 0, green-limit.log (ClientLimitLockTests: yeni test gecti).
+- Bilinen onceden kirik (bu gorevden bagimsiz, HEAD'de de kirmizi): ClientLimitLockTests uc test (TheCashScreenNoteLimit..., TheRefundScreens... x2) sunucu kaynaginda "request.Username.Length > N" desenini bulamiyor. Kapsam disi; ayri gorev gerekir. Hariç tutma filtresi (external-slip, SLIP_RULE_TEXT) bu yuzden o testle degil, ayni regex'in elle taranmasiyla dogrulandi (32 karakterlik satir kalmadi).
+- Ek duzeltme: sozluk kilit testi onceden REFUND_REQUEST_NOT_YOURS eksik diye kirmiziydi; cumle sunucuyla birebir sozluge eklendi.
+- Plan duzeltmesi: 4ffe116b7 (terminal yokken yontem listesi degistigi icin split-payment-display-binding.test.js sahipligi).
+- Mutantlar (mutants.txt, hepsi KILLED): J1 chip kosulu ters; J2 terminal gelince secim dusmez; J3 desen kontrolu yok; J4/J4b Luhn kontrolu yok; J5 fis kirpilmaz; J6 basarida alan temizlenmez; J7 anahtar fisi icermez; J8 REUSED cumlesi yok; J9 CARD_TERMINAL_CONFIGURED yenilemez; J10 maxlength 50; J11 disabled kosulu yok; J12 ayracli kart numarasi gecer; J13 iade ipucu yok; J14 yontem adi yok; L1 maxlength 40, L2 desen 40 (sunucu sabit kilidi).
+- Bilinen sinir: bilgi fisi etiketi (RECEIPT_METHODS.ExternalCard) icin ayri test yok; #submit-hint ogesi yoksa (gecerli fisten bozulunca) gerekce yazisi dogmaz, dugme yine pasif olur.

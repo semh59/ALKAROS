@@ -81,6 +81,21 @@ public sealed class ClientLimitLockTests
     }
 
     [Fact]
+    public void TheBankPosSlipFieldAndPatternOnThePaymentScreenAreTheServerSlipRule()
+    {
+        var script = File.ReadAllText(Path.Combine(
+            Root, "src", "Clients", "Cashier", "wwwroot", "payments", "split-payment", "split-payment.js"));
+
+        Assert.Equal(
+            ExternalCardTenderStore.MaxSlipLength.ToString(CultureInfo.InvariantCulture),
+            Regex.Match(script, @"id=""external-slip"" maxlength=""(\d+)""").Groups[1].Value);
+        var pattern = Regex.Match(script, @"SLIP_PATTERN = /\^\[A-Za-z0-9\]\[A-Za-z0-9\\/-\]\{(\d+),(\d+)\}\$/;");
+        Assert.True(pattern.Success, "The slip pattern of the payment screen is no longer the server pattern.");
+        Assert.Equal(ExternalCardTenderStore.MinSlipLength - 1, int.Parse(pattern.Groups[1].Value, CultureInfo.InvariantCulture));
+        Assert.Equal(ExternalCardTenderStore.MaxSlipLength - 1, int.Parse(pattern.Groups[2].Value, CultureInfo.InvariantCulture));
+    }
+
+    [Fact]
     public void TheTillItemNoteInputLimitIsTheServerLineNoteLimit()
     {
         var screen = File.ReadAllText(Path.Combine(
@@ -121,7 +136,8 @@ public sealed class ClientLimitLockTests
         // The card-charged claim slip of the payment screen has its own rule, locked next to the endpoint that enforces it.
         // An error dictionary entry is a server sentence copied word for word (error-dictionary-lock.test.js compares it), so its numbers are the server's own.
         var source = string.Join(Environment.NewLine, File.ReadAllLines(Path.Combine(Root, screen.Replace('/', Path.DirectorySeparatorChar)))
-            .Where(line => !line.Contains("claim-slip", StringComparison.Ordinal) && !DictionaryEntry.IsMatch(line)));
+            .Where(line => !line.Contains("claim-slip", StringComparison.Ordinal) && !line.Contains("external-slip", StringComparison.Ordinal) && !line.Contains("SLIP_RULE_TEXT", StringComparison.Ordinal)
+                && !DictionaryEntry.IsMatch(line)));
         var limits = Limits(source);
 
         Assert.Contains(PaymentRefundStore.MaxTextLength, limits);

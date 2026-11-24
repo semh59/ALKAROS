@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 1944ms
+     × shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid 174ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid
+AssertionError: a long number that is not a card number is a slip: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ split-payment-external-card.test.js:101:95
+     99|
+    100|     await typeSlip("1234567890123456");
+    101|     expect($("#submit-tender").disabled, "a long number that is not a …
+       |                                                                                               ^
+    102|     await typeSlip("POS-4471");
+    103|     expect($("#submit-tender").disabled).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  08:34:45
+   Duration  3.33s (transform 674ms, setup 48ms, import 41ms, tests 1.94s, environment 1.01s)
+

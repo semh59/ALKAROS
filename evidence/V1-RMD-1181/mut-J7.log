@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 1950ms
+     × replays the same key for a repeated attempt of the same slip and a new key for another slip 305ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > replays the same key for a repeated attempt of the same slip and a new key for another slip
+AssertionError: expected 'ac17dec4-e2d1-4058-9b92-67f1471ac900' not to be 'ac17dec4-e2d1-4058-9b92-67f1471ac900' // Object.is equality
+ ❯ split-payment-external-card.test.js:135:41
+    133|
+    134|     expect(posts[1].IdempotencyKey).toBe(posts[0].IdempotencyKey);
+    135|     expect(posts[2].IdempotencyKey).not.toBe(posts[0].IdempotencyKey);
+       |                                         ^
+    136|   });
+    137|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 38 passed (39)
+   Start at  08:33:28
+   Duration  10.53s (transform 2.52s, setup 70ms, import 100ms, tests 6.17s, environment 3.29s)
+

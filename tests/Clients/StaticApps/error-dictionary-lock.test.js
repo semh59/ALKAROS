@@ -13,6 +13,7 @@ const SERVER_SOURCES = [
   "src/Host/DualScreen/DualScreenApplication.Payments.cs",
   "src/Host/Experience/Billing/BillingSplitApplication.cs",
   "src/Host/Experience/Billing/PaymentRefunds.cs",
+  "src/Host/Experience/Billing/ExternalCardTender.cs",
   "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs",
 ];
 // Exceptions that carry the code, an English log message and the sentence shown to the cashier as separate arguments.

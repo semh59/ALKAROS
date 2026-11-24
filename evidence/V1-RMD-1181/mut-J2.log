@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 1964ms
+     × drops the selection and shows the connected card when the server says a terminal is now defined 218ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > drops the selection and shows the connected card when the server says a terminal is now defined
+AssertionError: expected <input class="sp-input" …(5)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-describedby="external-slip-warning"
+  class="sp-input"
+  id="external-slip"
+  maxlength="32"
+  type="text"
+  value="POS-4471"
+/>
+
+ ❯ split-payment-external-card.test.js:168:33
+    166|     await vi.waitFor(() => expect(chip("ExternalCard")).toBeNull());
+    167|     expect(chip("BankCard")).not.toBeNull();
+    168|     expect($("#external-slip")).toBeNull();
+       |                                 ^
+    169|     expect(document.body.textContent).toContain("Kart terminali tanıml…
+    170|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 38 passed (39)
+   Start at  08:32:21
+   Duration  9.80s (transform 2.23s, setup 67ms, import 87ms, tests 5.85s, environment 3.00s)
+

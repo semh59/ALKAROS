@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 2907ms
+     × drops the selection and shows the connected card when the server says a terminal is now defined 1180ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > drops the selection and shows the connected card when the server says a terminal is now defined
+AssertionError: expected <button type="button" …(4)></button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  aria-checked="true"
+  class="sp-method-chip is-active"
+  data-method="ExternalCard"
+  role="radio"
+  type="button"
+>
+  Harici POS kartı
+</button>
+
+ ❯ split-payment-external-card.test.js:166:57
+    164|     await vi.waitFor(() => expect(posts).toHaveLength(1));
+    165|
+    166|     await vi.waitFor(() => expect(chip("ExternalCard")).toBeNull());
+       |                                                         ^
+    167|     expect(chip("BankCard")).not.toBeNull();
+    168|     expect($("#external-slip")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 38 passed (39)
+   Start at  08:33:57
+   Duration  11.52s (transform 2.71s, setup 71ms, import 155ms, tests 7.34s, environment 3.12s)
+

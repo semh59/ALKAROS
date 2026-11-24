@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-external-card.test.js (8 tests | 1 failed) 1871ms
+     × shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid 171ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-external-card.test.js > split-payment.js bank POS card method > shows a 32-character slip field with the card-number warning, and the button stays off until the slip is valid
+AssertionError: "AB1" is not a valid slip: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-external-card.test.js:92:77
+     90|     for (const slip of ["   ", "AB1", "AB 12", "AB#12", "-AB12"]) {
+     91|       await typeSlip(slip);
+     92|       expect($("#submit-tender").disabled, `"${slip}" is not a valid s…
+       |                                                                             ^
+     93|     }
+     94|     await typeSlip("4111 1111 1111 1111");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 38 passed (39)
+   Start at  08:32:34
+   Duration  10.29s (transform 2.48s, setup 71ms, import 105ms, tests 6.16s, environment 3.11s)
+

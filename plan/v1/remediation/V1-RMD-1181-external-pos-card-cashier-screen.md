@@ -1,7 +1,7 @@
 # V1-RMD-1181 - Harici POS kartı: kasiyer ödeme ekranında yöntem düğmesi, zorunlu fiş numarası alanı, Türkçe hata cümleleri
 
 - Task ID: V1-RMD-1181
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Planned
