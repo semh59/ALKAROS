@@ -1,7 +1,7 @@
 # V1-RMD-1186 - Günlük raporda ödeme yöntemi adedi tamamen iade edilen ödemeyi düşer
 
 - Task ID: V1-RMD-1186
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

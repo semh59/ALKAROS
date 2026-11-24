@@ -1,0 +1,60 @@
+D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\bin\Debug\net8.0\ALKAROS.Reporting.Payments.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.02]     ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.APaymentRefundedInFullOnALaterDayLowersCountAndAmountOnTheRefundDayOnly [FAIL]
+[xUnit.net 00:00:01.03]     ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.ARefundOnALaterDayLowersThatDayAndLeavesTheOriginalDayWhole [FAIL]
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.APaymentRefundedInFullOnALaterDayLowersCountAndAmountOnTheRefundDayOnly [220 ms]
+  Hata İletisi:
+   Expected refundDay.PaymentMix to contain a single item matching (e.Method == "ExternalCard") AndAlso (e.ApprovedAmount == -120) AndAlso (e.ApprovedCount == -1), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.APaymentRefundedInFullOnALaterDayLowersCountAndAmountOnTheRefundDayOnly() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentSettlementReportTests.cs:line 116
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.ARefundOnALaterDayLowersThatDayAndLeavesTheOriginalDayWhole [218 ms]
+  Hata İletisi:
+   Expected refundDay to contain a single item matching (e.Method == "Eft") AndAlso (e.ApprovedAmount == -100) AndAlso (e.ApprovedCount == -1), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.ARefundOnALaterDayLowersThatDayAndLeavesTheOriginalDayWhole() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentRefundNettingTests.cs:line 49
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:03.13]     ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.SeveralPaymentsRefundedInFullTheSameDayEachLowerTheCountAndAPaymentFinishedEarlierIsNotCountedAgain [FAIL]
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.SeveralPaymentsRefundedInFullTheSameDayEachLowerTheCountAndAPaymentFinishedEarlierIsNotCountedAgain [61 ms]
+  Hata İletisi:
+   Expected result.PaymentMix to contain a single item matching (e.Method == "ExternalCard") AndAlso (e.ApprovedAmount == -50) AndAlso (e.ApprovedCount == -2), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.SeveralPaymentsRefundedInFullTheSameDayEachLowerTheCountAndAPaymentFinishedEarlierIsNotCountedAgain() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentSettlementReportTests.cs:line 152
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:04.63]     ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce [FAIL]
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce [57 ms]
+  Hata İletisi:
+   Expected refundDay.PaymentMix to contain a single item matching (e.Method == "ExternalCard") AndAlso (e.ApprovedAmount == -60) AndAlso (e.ApprovedCount == -1), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentSettlementReportTests.cs:line 133
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     4, Başarılı:    21, Atlanan:     0, Toplam:    25, Süre: 8 s - ALKAROS.Reporting.Payments.Tests.dll (net8.0)

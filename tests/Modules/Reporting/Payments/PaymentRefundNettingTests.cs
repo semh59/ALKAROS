@@ -46,7 +46,7 @@ public sealed class PaymentRefundNettingTests : IAsyncLifetime
         var refundDay = (await _service.GetReportAsync(new PaymentSettlementReportFilter(RefundDay))).PaymentMix;
 
         paidDay.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 100m && e.ApprovedCount == 1);
-        refundDay.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == -100m && e.ApprovedCount == 0);
+        refundDay.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == -100m && e.ApprovedCount == -1);
     }
 
     [Fact]

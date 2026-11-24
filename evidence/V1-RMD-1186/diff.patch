@@ -1,0 +1,183 @@
+diff --git a/plan/v1/remediation/V1-RMD-1186-payment-mix-count-matches-refunded-amount.md b/plan/v1/remediation/V1-RMD-1186-payment-mix-count-matches-refunded-amount.md
+index 591f8cbe5..d56b65090 100644
+--- a/plan/v1/remediation/V1-RMD-1186-payment-mix-count-matches-refunded-amount.md
++++ b/plan/v1/remediation/V1-RMD-1186-payment-mix-count-matches-refunded-amount.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1186 - Günlük raporda ödeme yöntemi adedi tamamen iade edilen ödemeyi düşer
+ 
+ - Task ID: V1-RMD-1186
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Modules/Reporting/Payments/PostgresPaymentSettlementReportRepository.cs b/src/Modules/Reporting/Payments/PostgresPaymentSettlementReportRepository.cs
+index 4030e6684..d712371d0 100644
+--- a/src/Modules/Reporting/Payments/PostgresPaymentSettlementReportRepository.cs
++++ b/src/Modules/Reporting/Payments/PostgresPaymentSettlementReportRepository.cs
+@@ -69,14 +69,22 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
+                 reader.GetDecimal(2)));
+         }
+ 
+-        // A refund lowers the method's amount on the day it was paid back, not on the day of the original payment.
++        // A refund lowers the method's amount on the day it was paid back, not on the day of the original payment; the count
++        // drops by one on the day the refunds reach the whole approved amount, so count and amount stay net of the same payments.
+         await using var refunds = _dataSource.CreateCommand(
+             $"""
+-            SELECT {MethodSql} AS method, COALESCE(SUM(r.amount), 0) AS refunded_amount
+-            FROM payments.payment_reversals r
+-            JOIN payments.payments p ON p.payment_id = r.payment_id
+-            WHERE r.occurred_at >= $1 AND r.occurred_at < $2
+-            GROUP BY 1
++            SELECT method, COALESCE(SUM(refunded), 0) AS refunded_amount, COUNT(*) FILTER (WHERE completed) AS completed_count
++            FROM (
++                SELECT {MethodSql} AS method,
++                       SUM(r.amount) FILTER (WHERE r.occurred_at >= $1) AS refunded,
++                       SUM(r.amount) >= p.approved_amount AS completed
++                FROM payments.payment_reversals r
++                JOIN payments.payments p ON p.payment_id = r.payment_id
++                WHERE r.occurred_at < $2
++                  AND r.payment_id IN (SELECT payment_id FROM payments.payment_reversals WHERE occurred_at >= $1 AND occurred_at < $2)
++                GROUP BY p.payment_id
++            ) per_payment
++            GROUP BY method
+             LIMIT {MethodCount};
+             """);
+         refunds.Parameters.AddWithValue(windowStart.UtcDateTime);
+@@ -87,11 +95,12 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
+             {
+                 var method = refundReader.GetString(0);
+                 var refunded = refundReader.GetDecimal(1);
++                var wholly = (int)refundReader.GetInt64(2);
+                 var index = results.FindIndex(entry => entry.Method == method);
+                 if (index >= 0)
+-                    results[index] = results[index] with { ApprovedAmount = results[index].ApprovedAmount - refunded };
++                    results[index] = results[index] with { ApprovedCount = results[index].ApprovedCount - wholly, ApprovedAmount = results[index].ApprovedAmount - refunded };
+                 else
+-                    results.Add(new PaymentMixEntry(method, 0, -refunded));
++                    results.Add(new PaymentMixEntry(method, -wholly, -refunded));
+             }
+         }
+ 
+diff --git a/src/Modules/Reporting/Payments/ReportingModels.cs b/src/Modules/Reporting/Payments/ReportingModels.cs
+index 841bbd93f..69b31763a 100644
+--- a/src/Modules/Reporting/Payments/ReportingModels.cs
++++ b/src/Modules/Reporting/Payments/ReportingModels.cs
+@@ -40,7 +40,9 @@ public sealed record PaymentSettlementReportFilter(
+ 
+ /// <summary>
+ /// One tender method's real totals for the reporting window (the sum of
+-/// the allocated amounts per method; methods sum to the paid amount). The
++/// the allocated amounts per method; methods sum to the paid amount), net of
++/// refunds: the amount drops by what was paid back in the window, the count by
++/// each payment whose refunds reached its whole amount in the window. The
+ /// method is not a stored column on <c>payments.payments</c>; it is read from
+ /// the records each way leaves behind: <c>CustomerAccount</c> (an account
+ /// charge), <c>Cash</c> (a cash sale), <c>BankCard</c> (an approved card
+diff --git a/tests/Modules/Reporting/Payments/PaymentRefundNettingTests.cs b/tests/Modules/Reporting/Payments/PaymentRefundNettingTests.cs
+index 3fd8c9a38..c661e7137 100644
+--- a/tests/Modules/Reporting/Payments/PaymentRefundNettingTests.cs
++++ b/tests/Modules/Reporting/Payments/PaymentRefundNettingTests.cs
+@@ -46,7 +46,7 @@ public sealed class PaymentRefundNettingTests : IAsyncLifetime
+         var refundDay = (await _service.GetReportAsync(new PaymentSettlementReportFilter(RefundDay))).PaymentMix;
+ 
+         paidDay.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 100m && e.ApprovedCount == 1);
+-        refundDay.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == -100m && e.ApprovedCount == 0);
++        refundDay.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == -100m && e.ApprovedCount == -1);
+     }
+ 
+     [Fact]
+diff --git a/tests/Modules/Reporting/Payments/PaymentSettlementReportTests.cs b/tests/Modules/Reporting/Payments/PaymentSettlementReportTests.cs
+index fa44c76b5..997755243 100644
+--- a/tests/Modules/Reporting/Payments/PaymentSettlementReportTests.cs
++++ b/tests/Modules/Reporting/Payments/PaymentSettlementReportTests.cs
+@@ -86,6 +86,89 @@ public sealed class PaymentSettlementReportTests : IAsyncLifetime
+         result.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 40m && e.ApprovedCount == 1);
+     }
+ 
++    [Fact]
++    public async Task APaymentRefundedInFullTheSameDayLeavesTheMethodsCountAndAmountTogether()
++    {
++        var bill = await _database.SeedBillAsync(500m);
++        var refunded = await _database.SeedPaymentAsync(bill, "Approved", 170m, InWindow);
++        await _database.SeedExternalCardReceiptAsync(refunded, bill, 170m);
++        var kept = await _database.SeedPaymentAsync(bill, "Approved", 50m, InWindow);
++        await _database.SeedExternalCardReceiptAsync(kept, bill, 50m);
++        await _database.SeedReversalAsync(refunded, 170m, InWindow.AddHours(1));
++
++        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
++
++        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 50m && e.ApprovedCount == 1);
++    }
++
++    [Fact]
++    public async Task APaymentRefundedInFullOnALaterDayLowersCountAndAmountOnTheRefundDayOnly()
++    {
++        var bill = await _database.SeedBillAsync(500m);
++        var payment = await _database.SeedPaymentAsync(bill, "Approved", 120m, InWindow);
++        await _database.SeedExternalCardReceiptAsync(payment, bill, 120m);
++        await _database.SeedReversalAsync(payment, 120m, OutsideWindow);
++
++        var payDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
++        var refundDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate.AddDays(1)));
++
++        payDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 120m && e.ApprovedCount == 1);
++        refundDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == -120m && e.ApprovedCount == -1);
++    }
++
++    [Fact]
++    public async Task PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce()
++    {
++        var bill = await _database.SeedBillAsync(500m);
++        var payment = await _database.SeedPaymentAsync(bill, "Approved", 100m, InWindow);
++        await _database.SeedExternalCardReceiptAsync(payment, bill, 100m);
++        await _database.SeedReversalAsync(payment, 40m, InWindow.AddHours(1));
++        await _database.SeedReversalAsync(payment, 30m, OutsideWindow);
++        await _database.SeedReversalAsync(payment, 30m, OutsideWindow.AddHours(1));
++
++        var payDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
++        var refundDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate.AddDays(1)));
++
++        payDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 60m && e.ApprovedCount == 1);
++        refundDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == -60m && e.ApprovedCount == -1);
++    }
++
++    [Fact]
++    public async Task SeveralPaymentsRefundedInFullTheSameDayEachLowerTheCountAndAPaymentFinishedEarlierIsNotCountedAgain()
++    {
++        var bill = await _database.SeedBillAsync(900m);
++        var early = await _database.SeedPaymentAsync(bill, "Approved", 80m, InWindow.AddDays(-2));
++        await _database.SeedExternalCardReceiptAsync(early, bill, 80m);
++        await _database.SeedReversalAsync(early, 80m, InWindow.AddDays(-1));
++        foreach (var amount in new[] { 30m, 20m })
++        {
++            var payment = await _database.SeedPaymentAsync(bill, "Approved", amount, InWindow.AddDays(-1));
++            await _database.SeedExternalCardReceiptAsync(payment, bill, amount);
++            await _database.SeedReversalAsync(payment, amount, InWindow);
++        }
++
++        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
++
++        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == -50m && e.ApprovedCount == -2);
++    }
++
++    [Fact]
++    public async Task RefundsAreNettedPerMethodAndAMethodWhollyRefundedTheSameDayStaysAsAZeroLine()
++    {
++        var bill = await _database.SeedBillAsync(500m);
++        var eft = await _database.SeedPaymentAsync(bill, "Approved", 60m, InWindow);
++        await _database.SeedReversalAsync(eft, 60m, InWindow.AddHours(1));
++        var external = await _database.SeedPaymentAsync(bill, "Approved", 100m, InWindow);
++        await _database.SeedExternalCardReceiptAsync(external, bill, 100m);
++        await _database.SeedReversalAsync(external, 10m, InWindow.AddHours(1));
++
++        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
++
++        result.PaymentMix.Should().HaveCount(2);
++        result.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 0m && e.ApprovedCount == 0);
++        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 90m && e.ApprovedCount == 1);
++    }
++
+     [Fact]
+     public async Task APaymentWithSeveralCardAttemptsIsCountedOnceAndADeclinedAttemptAloneDoesNotMakeItACardPayment()
+     {

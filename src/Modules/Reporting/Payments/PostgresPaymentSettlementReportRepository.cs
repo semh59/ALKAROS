@@ -69,14 +69,22 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
                 reader.GetDecimal(2)));
         }
 
-        // A refund lowers the method's amount on the day it was paid back, not on the day of the original payment.
+        // A refund lowers the method's amount on the day it was paid back, not on the day of the original payment; the count
+        // drops by one on the day the refunds reach the whole approved amount, so count and amount stay net of the same payments.
         await using var refunds = _dataSource.CreateCommand(
             $"""
-            SELECT {MethodSql} AS method, COALESCE(SUM(r.amount), 0) AS refunded_amount
-            FROM payments.payment_reversals r
-            JOIN payments.payments p ON p.payment_id = r.payment_id
-            WHERE r.occurred_at >= $1 AND r.occurred_at < $2
-            GROUP BY 1
+            SELECT method, COALESCE(SUM(refunded), 0) AS refunded_amount, COUNT(*) FILTER (WHERE completed) AS completed_count
+            FROM (
+                SELECT {MethodSql} AS method,
+                       SUM(r.amount) FILTER (WHERE r.occurred_at >= $1) AS refunded,
+                       SUM(r.amount) >= p.approved_amount AS completed
+                FROM payments.payment_reversals r
+                JOIN payments.payments p ON p.payment_id = r.payment_id
+                WHERE r.occurred_at < $2
+                  AND r.payment_id IN (SELECT payment_id FROM payments.payment_reversals WHERE occurred_at >= $1 AND occurred_at < $2)
+                GROUP BY p.payment_id
+            ) per_payment
+            GROUP BY method
             LIMIT {MethodCount};
             """);
         refunds.Parameters.AddWithValue(windowStart.UtcDateTime);
@@ -87,11 +95,12 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
             {
                 var method = refundReader.GetString(0);
                 var refunded = refundReader.GetDecimal(1);
+                var wholly = (int)refundReader.GetInt64(2);
                 var index = results.FindIndex(entry => entry.Method == method);
                 if (index >= 0)
-                    results[index] = results[index] with { ApprovedAmount = results[index].ApprovedAmount - refunded };
+                    results[index] = results[index] with { ApprovedCount = results[index].ApprovedCount - wholly, ApprovedAmount = results[index].ApprovedAmount - refunded };
                 else
-                    results.Add(new PaymentMixEntry(method, 0, -refunded));
+                    results.Add(new PaymentMixEntry(method, -wholly, -refunded));
             }
         }
 

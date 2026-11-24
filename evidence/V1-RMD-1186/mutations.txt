@@ -1,0 +1,6 @@
+M1-partial-counted-as-complete killed (restored)
+M2-count-not-subtracted killed (restored)
+M3-future-reversals-included killed (restored)
+M4-new-entry-count-zero killed (restored)
+M5-all-time-reversals killed (restored)
+done

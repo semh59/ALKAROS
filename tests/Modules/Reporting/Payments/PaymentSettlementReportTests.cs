@@ -87,6 +87,89 @@ public sealed class PaymentSettlementReportTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APaymentRefundedInFullTheSameDayLeavesTheMethodsCountAndAmountTogether()
+    {
+        var bill = await _database.SeedBillAsync(500m);
+        var refunded = await _database.SeedPaymentAsync(bill, "Approved", 170m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(refunded, bill, 170m);
+        var kept = await _database.SeedPaymentAsync(bill, "Approved", 50m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(kept, bill, 50m);
+        await _database.SeedReversalAsync(refunded, 170m, InWindow.AddHours(1));
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 50m && e.ApprovedCount == 1);
+    }
+
+    [Fact]
+    public async Task APaymentRefundedInFullOnALaterDayLowersCountAndAmountOnTheRefundDayOnly()
+    {
+        var bill = await _database.SeedBillAsync(500m);
+        var payment = await _database.SeedPaymentAsync(bill, "Approved", 120m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(payment, bill, 120m);
+        await _database.SeedReversalAsync(payment, 120m, OutsideWindow);
+
+        var payDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+        var refundDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate.AddDays(1)));
+
+        payDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 120m && e.ApprovedCount == 1);
+        refundDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == -120m && e.ApprovedCount == -1);
+    }
+
+    [Fact]
+    public async Task PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce()
+    {
+        var bill = await _database.SeedBillAsync(500m);
+        var payment = await _database.SeedPaymentAsync(bill, "Approved", 100m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(payment, bill, 100m);
+        await _database.SeedReversalAsync(payment, 40m, InWindow.AddHours(1));
+        await _database.SeedReversalAsync(payment, 30m, OutsideWindow);
+        await _database.SeedReversalAsync(payment, 30m, OutsideWindow.AddHours(1));
+
+        var payDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+        var refundDay = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate.AddDays(1)));
+
+        payDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 60m && e.ApprovedCount == 1);
+        refundDay.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == -60m && e.ApprovedCount == -1);
+    }
+
+    [Fact]
+    public async Task SeveralPaymentsRefundedInFullTheSameDayEachLowerTheCountAndAPaymentFinishedEarlierIsNotCountedAgain()
+    {
+        var bill = await _database.SeedBillAsync(900m);
+        var early = await _database.SeedPaymentAsync(bill, "Approved", 80m, InWindow.AddDays(-2));
+        await _database.SeedExternalCardReceiptAsync(early, bill, 80m);
+        await _database.SeedReversalAsync(early, 80m, InWindow.AddDays(-1));
+        foreach (var amount in new[] { 30m, 20m })
+        {
+            var payment = await _database.SeedPaymentAsync(bill, "Approved", amount, InWindow.AddDays(-1));
+            await _database.SeedExternalCardReceiptAsync(payment, bill, amount);
+            await _database.SeedReversalAsync(payment, amount, InWindow);
+        }
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == -50m && e.ApprovedCount == -2);
+    }
+
+    [Fact]
+    public async Task RefundsAreNettedPerMethodAndAMethodWhollyRefundedTheSameDayStaysAsAZeroLine()
+    {
+        var bill = await _database.SeedBillAsync(500m);
+        var eft = await _database.SeedPaymentAsync(bill, "Approved", 60m, InWindow);
+        await _database.SeedReversalAsync(eft, 60m, InWindow.AddHours(1));
+        var external = await _database.SeedPaymentAsync(bill, "Approved", 100m, InWindow);
+        await _database.SeedExternalCardReceiptAsync(external, bill, 100m);
+        await _database.SeedReversalAsync(external, 10m, InWindow.AddHours(1));
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().HaveCount(2);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 0m && e.ApprovedCount == 0);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "ExternalCard" && e.ApprovedAmount == 90m && e.ApprovedCount == 1);
+    }
+
+    [Fact]
     public async Task APaymentWithSeveralCardAttemptsIsCountedOnceAndADeclinedAttemptAloneDoesNotMakeItACardPayment()
     {
         var bill = await _database.SeedBillAsync(300m);

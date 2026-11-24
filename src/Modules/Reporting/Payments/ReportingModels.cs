@@ -40,7 +40,9 @@ public sealed record PaymentSettlementReportFilter(
 
 /// <summary>
 /// One tender method's real totals for the reporting window (the sum of
-/// the allocated amounts per method; methods sum to the paid amount). The
+/// the allocated amounts per method; methods sum to the paid amount), net of
+/// refunds: the amount drops by what was paid back in the window, the count by
+/// each payment whose refunds reached its whole amount in the window. The
 /// method is not a stored column on <c>payments.payments</c>; it is read from
 /// the records each way leaves behind: <c>CustomerAccount</c> (an account
 /// charge), <c>Cash</c> (a cash sale), <c>BankCard</c> (an approved card

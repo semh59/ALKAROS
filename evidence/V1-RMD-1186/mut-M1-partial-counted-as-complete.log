@@ -1,0 +1,60 @@
+D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\bin\Debug\net8.0\ALKAROS.Reporting.Payments.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.56]     ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.ARefundOfABankPosCardPaymentLowersTheExternalCardLineOnly [FAIL]
+[xUnit.net 00:00:01.56]     ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.ARefundOfAPaymentWithSeveralCardAttemptsIsSubtractedOnce [FAIL]
+[xUnit.net 00:00:02.00]     ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.APartialRefundOnTheSameDayLowersTheMethodAmountAndKeepsTheCount [FAIL]
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.ARefundOfABankPosCardPaymentLowersTheExternalCardLineOnly [151 ms]
+  Hata İletisi:
+   Expected result.PaymentMix to contain a single item matching (e.Method == "ExternalCard") AndAlso (e.ApprovedAmount == 100) AndAlso (e.ApprovedCount == 1), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.ARefundOfABankPosCardPaymentLowersTheExternalCardLineOnly() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentSettlementReportTests.cs:line 85
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.ARefundOfAPaymentWithSeveralCardAttemptsIsSubtractedOnce [150 ms]
+  Hata İletisi:
+   Expected mix to contain a single item matching (e.Method == "BankCard") AndAlso (e.ApprovedAmount == 70) AndAlso (e.ApprovedCount == 1), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.ARefundOfAPaymentWithSeveralCardAttemptsIsSubtractedOnce() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentRefundNettingTests.cs:line 63
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.APartialRefundOnTheSameDayLowersTheMethodAmountAndKeepsTheCount [48 ms]
+  Hata İletisi:
+   Expected mix to contain a single item matching (e.Method == "Eft") AndAlso (e.ApprovedAmount == 70) AndAlso (e.ApprovedCount == 1), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentRefundNettingTests.APartialRefundOnTheSameDayLowersTheMethodAmountAndKeepsTheCount() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentRefundNettingTests.cs:line 35
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:04.72]     ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce [FAIL]
+  Başarısız ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce [71 ms]
+  Hata İletisi:
+   Expected payDay.PaymentMix to contain a single item matching (e.Method == "ExternalCard") AndAlso (e.ApprovedAmount == 60) AndAlso (e.ApprovedCount == 1), but no such item was found.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at ALKAROS.Reporting.Payments.Tests.PaymentSettlementReportTests.PartialRefundsKeepTheCountUntilTheyAddUpToThePaymentAndThenLowerItOnce() in D:\PROJECT\ALKAROS\tests\Modules\Reporting\Payments\PaymentSettlementReportTests.cs:line 132
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     4, Başarılı:    21, Atlanan:     0, Toplam:    25, Süre: 8 s - ALKAROS.Reporting.Payments.Tests.dll (net8.0)
