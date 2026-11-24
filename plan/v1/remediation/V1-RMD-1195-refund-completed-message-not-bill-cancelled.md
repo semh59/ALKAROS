@@ -1,8 +1,8 @@
 # V1-RMD-1195 - İade tamamlanınca iade sonucu gösterilir, "Hesap İptal Edildi" gösterilmez
 
 - Task ID: V1-RMD-1195
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
