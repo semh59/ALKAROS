@@ -1,8 +1,8 @@
 # V1-RMD-1192 - Seçenek adları ve ek ücretleri kasiyer ekranlarında görünür
 
 - Task ID: V1-RMD-1192
-- Status: InProgress
-- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+- Status: Planned
+- Assignee: Unassigned
 - Work type: implementation
 - Surface state: Existing
 
