@@ -1,8 +1,8 @@
 # V1-RMD-1198 - Müşteri ekranı iade ile kapanan hesapta "Hesap iptal edildi" yazmaz
 
 - Task ID: V1-RMD-1198
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
