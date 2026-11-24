@@ -18,6 +18,7 @@ Kasiyer "Hesap Ödeme" ekranında (`split-payment.js`) kart terminali TANIMLI DE
   - tests/Clients/StaticApps/error-dictionary-lock.test.js
   - tests/Host/Experience/CashSession/ClientLimitLockTests.cs
   - tests/Clients/StaticApps/split-payment-external-card.test.js
+  - tests/Clients/StaticApps/split-payment-display-binding.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
