@@ -1,0 +1,62 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (23 tests | 1 failed) 67ms
+     × approves under the key of the waiting void request, then applies that void under the same key 9ms
+ ❯ src/routes/TableOrderBridge.test.tsx (70 tests | 1 failed) 640ms
+       × approves under the waiting request's own key, then asks for the void again under that key and reports it applied 43ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > api.approveVoidSentInPlace > approves under the key of the waiting void request, then applies that void under the same key
+AssertionError: expected { …(3) } to deeply equal { …(3) }
+
+- Expected
++ Received
+
+  {
+-   "idempotencyKey": "323b0ec9-fad8-4f50-be6e-23e056be87e7",
++   "idempotencyKey": "c70648e8-ccd7-4d65-96ee-158b9e316a85",
+    "password": "sifre",
+    "username": "mudur",
+  }
+
+ ❯ src/api.test.ts:292:27
+    290|       "/api/v1/terminals/t1/orders/v9/items/i1/void-sent",
+    291|     ]);
+    292|     expect(calls[1].body).toEqual({ idempotencyKey: calls[0].body.idem…
+       |                           ^
+    293|     expect(calls[2].body.idempotencyKey).toBe(calls[0].body.idempotenc…
+    294|     expect(applied).toMatchObject({ status: "Applied", stockRestored: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > approves under the waiting request's own key, then asks for the void again under that key and reports it applied
+AssertionError: expected { …(3) } to deeply equal { …(3) }
+
+- Expected
++ Received
+
+  {
+-   "idempotencyKey": "c2d6aabb-8b8b-4683-9302-0dce7ad895ac",
++   "idempotencyKey": "f48cdaeb-03e6-48a0-9b0c-0168f18e9f77",
+    "password": "Mudur-Sifre-1",
+    "username": "mudur1",
+  }
+
+ ❯ src/routes/TableOrderBridge.test.tsx:801:53
+    799|       expect(approveUrl).toBe("/api/v1/terminals/t-1/orders/o-1/items/…
+    800|       const keys = voidCalls(mock).map(([, init]) => (JSON.parse(Strin…
+    801|       expect(JSON.parse(String(approveInit!.body))).toEqual({ idempote…
+       |                                                     ^
+    802|       expect(keys).toHaveLength(2);
+    803|       expect(keys[1]).toBe(keys[0]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 91 passed (93)
+   Start at  11:21:11
+   Duration  2.30s (transform 316ms, setup 0ms, import 471ms, tests 707ms, environment 1.02s)
+

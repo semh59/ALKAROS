@@ -748,20 +748,93 @@ describe("TableOrderBridge mutfaktaki ürünü iptal et", () => {
     expect(document.querySelector("[role=status]")?.textContent).toBe("Ürün iptal edildi, stok geri alındı.");
   });
 
-  it("tells a manager approval is pending, does not report the line as voided, and resends the same key on the next try", async () => {
-    const mock = stubFetch(() => reply(202, { status: "Pending", grantId: "g-1" }), sentOrder);
-    const { onSent } = render();
-    await flush();
-    await chooseAndConfirm("Yanlış girdim");
+  describe("when the void waits for a manager", () => {
+    const type = (input: HTMLInputElement, value: string) => act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, value);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    const field = (label: string) => [...document.querySelectorAll("label")].find((node) => node.textContent === label)!.querySelector("input")!;
+    const approveCalls = (mock: ReturnType<typeof vi.fn>) => mock.mock.calls.filter(([url]) => String(url).includes("/approvals/"));
+    const stubWaiting = (approve: () => Response) => {
+      const mock = vi.fn(async (url: string) => {
+        if (String(url).includes("/approvals/")) return approve();
+        if (String(url).includes("/void-sent")) return voidAnswers.shift()!();
+        return reply(200, sentOrder);
+      });
+      vi.stubGlobal("fetch", mock);
+      return mock;
+    };
+    let voidAnswers: Array<() => Response> = [];
+    const fillAndApprove = async () => {
+      await type(field("Yönetici kullanıcı adı"), "mudur1");
+      await type(field("Yönetici parolası"), "Mudur-Sifre-1");
+      await press(button("Onayla ve iptal et"));
+      await flush();
+    };
 
-    expect(onSent).not.toHaveBeenCalled();
-    expect(document.querySelector("[role=status]")?.textContent).toBe("İptal yönetici onayına gönderildi. Onaylandıktan sonra aynı gerekçeyle yeniden isteyin.");
-    expect(document.querySelector(".table-order-bridge__void")).toBeNull();
+    it("opens the manager's name and password on the same line and does not report the line as voided", async () => {
+      voidAnswers = [() => reply(202, { status: "Pending", grantId: "g-1" })];
+      stubWaiting(() => reply(200, {}));
+      const { onSent } = render();
+      await flush();
+      await chooseAndConfirm("Yanlış girdim");
 
-    await chooseAndConfirm("Yanlış girdim");
-    const keys = voidCalls(mock).map(([, init]) => (JSON.parse(String(init!.body)) as { idempotencyKey: string }).idempotencyKey);
-    expect(keys).toHaveLength(2);
-    expect(keys[1]).toBe(keys[0]);
+      expect(onSent).not.toHaveBeenCalled();
+      expect(document.querySelector(".table-order-bridge__lines li")?.textContent).toContain("Bu iptal için yönetici onayı gerekir");
+      expect(field("Yönetici kullanıcı adı").maxLength).toBe(64);
+      expect(field("Yönetici parolası").type).toBe("password");
+      expect(field("Yönetici parolası").maxLength).toBe(256);
+      expect(button("Onayla ve iptal et")?.disabled).toBe(true);
+      expect(field("Yönetici kullanıcı adı").getAttribute("autocapitalize")).toBe("none");
+      expect(field("Yönetici kullanıcı adı").getAttribute("spellcheck")).toBe("false");
+    });
+
+    it("approves under the waiting request's own key, then asks for the void again under that key and reports it applied", async () => {
+      voidAnswers = [() => reply(202, { status: "Pending", grantId: "g-1" }), () => reply(200, { status: "Applied", stockRestored: false })];
+      const mock = stubWaiting(() => reply(200, { grantId: "g-1" }));
+      const { onSent } = render();
+      await flush();
+      await chooseAndConfirm("Yanlış girdim");
+      await fillAndApprove();
+
+      const [approveUrl, approveInit] = approveCalls(mock)[0];
+      expect(approveUrl).toBe("/api/v1/terminals/t-1/orders/o-1/items/i1/approvals/g-1/approve");
+      const keys = voidCalls(mock).map(([, init]) => (JSON.parse(String(init!.body)) as { idempotencyKey: string }).idempotencyKey);
+      expect(JSON.parse(String(approveInit!.body))).toEqual({ idempotencyKey: keys[0], username: "mudur1", password: "Mudur-Sifre-1" });
+      expect(keys).toHaveLength(2);
+      expect(keys[1]).toBe(keys[0]);
+      expect(onSent).toHaveBeenCalledTimes(1);
+      expect(document.querySelector("[role=status]")?.textContent).toBe("Ürün iptal edildi.");
+      expect(document.querySelector("input[type=password]")).toBeNull();
+    });
+
+    it("shows the server's refusal, empties the password and keeps the name and the fields open", async () => {
+      voidAnswers = [() => reply(202, { status: "Pending", grantId: "g-1" })];
+      const mock = stubWaiting(() => reply(403, { error: { code: "MANAGER_CREDENTIAL_INVALID", message: "Yönetici adı veya şifre hatalı." } }));
+      const { onSent } = render();
+      await flush();
+      await chooseAndConfirm("Yanlış girdim");
+      await fillAndApprove();
+
+      expect(document.querySelector("[role=alert]")?.textContent).toBe("Yönetici adı veya şifre hatalı.");
+      expect(field("Yönetici parolası").value).toBe("");
+      expect(field("Yönetici kullanıcı adı").value).toBe("mudur1");
+      expect(voidCalls(mock)).toHaveLength(1);
+      expect(onSent).not.toHaveBeenCalled();
+    });
+
+    it("Vazgeç closes the manager fields without sending anything more", async () => {
+      voidAnswers = [() => reply(202, { status: "Pending", grantId: "g-1" })];
+      const mock = stubWaiting(() => reply(200, {}));
+      render();
+      await flush();
+      await chooseAndConfirm("Yanlış girdim");
+      await press(button("Vazgeç"));
+
+      expect(document.querySelector("input[type=password]")).toBeNull();
+      expect(approveCalls(mock)).toHaveLength(0);
+      expect(button(action)).toBeDefined();
+    });
   });
 
   it("shows the server's Turkish refusal and keeps the line and the table list as they were", async () => {

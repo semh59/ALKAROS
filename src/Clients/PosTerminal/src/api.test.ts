@@ -264,6 +264,62 @@ describe("api.voidSentItem idempotency key", () => {
   });
 });
 
+describe("api.approveVoidSentInPlace", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("approves under the key of the waiting void request, then applies that void under the same key", async () => {
+    const calls: Array<{ path: string; body: Record<string, unknown> }> = [];
+    const answers = [
+      jsonResponse({ status: "Pending", grantId: "g1" }, 202),
+      jsonResponse({ grantId: "g1" }),
+      jsonResponse({ status: "Applied", stockRestored: true }),
+    ];
+    vi.stubGlobal("fetch", vi.fn(async (path: string, init: RequestInit) => {
+      calls.push({ path, body: JSON.parse(String(init.body)) as Record<string, unknown> });
+      return answers.shift()!;
+    }));
+
+    const pending = await api.voidSentItem("t1", "v9", "i1", 7, "OperatorError");
+    const applied = await api.approveVoidSentInPlace("t1", "v9", "i1", pending.grantId!, 7, "OperatorError", "mudur", "sifre");
+
+    expect(calls.map((call) => call.path)).toEqual([
+      "/api/v1/terminals/t1/orders/v9/items/i1/void-sent",
+      "/api/v1/terminals/t1/orders/v9/items/i1/approvals/g1/approve",
+      "/api/v1/terminals/t1/orders/v9/items/i1/void-sent",
+    ]);
+    expect(calls[1].body).toEqual({ idempotencyKey: calls[0].body.idempotencyKey, username: "mudur", password: "sifre" });
+    expect(calls[2].body.idempotencyKey).toBe(calls[0].body.idempotencyKey);
+    expect(applied).toMatchObject({ status: "Applied", stockRestored: true });
+  });
+});
+
+describe("api.approveVoidSentInPlace after an earlier try", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("asks for the void again when the request was already answered, and still refuses a wrong password", async () => {
+    const answers = [
+      jsonResponse({ status: "Pending", grantId: "g1" }, 202),
+      jsonResponse({ error: { code: "ALREADY_RESOLVED", message: "Bu talep zaten yanıtlanmış." } }, 409),
+      jsonResponse({ status: "Applied" }),
+      jsonResponse({ status: "Pending", grantId: "g2" }, 202),
+      jsonResponse({ error: { code: "MANAGER_CREDENTIAL_INVALID", message: "Yönetici adı veya şifre hatalı." } }, 403),
+    ];
+    const fetchMock = vi.fn(async () => answers.shift()!);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.voidSentItem("t1", "v10", "i1", 7, "OperatorError");
+    expect(await api.approveVoidSentInPlace("t1", "v10", "i1", "g1", 7, "OperatorError", "mudur", "sifre")).toMatchObject({ status: "Applied" });
+
+    await api.voidSentItem("t1", "v11", "i1", 7, "OperatorError");
+    await expect(api.approveVoidSentInPlace("t1", "v11", "i1", "g2", 7, "OperatorError", "mudur", "yanlis")).rejects.toMatchObject({ status: 403 });
+    expect(fetchMock).toHaveBeenCalledTimes(5);
+  });
+});
+
 describe("addItem line note", () => {
   afterEach(() => {
     vi.unstubAllGlobals();

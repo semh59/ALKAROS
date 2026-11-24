@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (70 tests | 1 failed) 664ms
+       × approves under the waiting request's own key, then asks for the void again under that key and reports it applied 47ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > approves under the waiting request's own key, then asks for the void again under that key and reports it applied
+AssertionError: expected <input …(5)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Yönetici parolası"
+  autocomplete="new-password"
+  maxlength="256"
+  type="password"
+  value="Mudur-Sifre-1"
+/>
+
+ ❯ src/routes/TableOrderBridge.test.tsx:806:62
+    804|       expect(onSent).toHaveBeenCalledTimes(1);
+    805|       expect(document.querySelector("[role=status]")?.textContent).toB…
+    806|       expect(document.querySelector("input[type=password]")).toBeNull(…
+       |                                                              ^
+    807|     });
+    808|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 92 passed (93)
+   Start at  11:21:21
+   Duration  2.31s (transform 312ms, setup 0ms, import 462ms, tests 726ms, environment 988ms)
+

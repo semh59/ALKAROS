@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -767,6 +768,137 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
 
     private static string VoidSentPath(Guid terminalId, Guid orderId, Guid itemId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/items/{itemId:D}/void-sent";
+
+    private static HttpRequestMessage ApproveInPlace(
+        Guid terminalId, Guid orderId, Guid itemId, Guid grantId, string cookie, string key, string username, string password)
+    {
+        var request = new HttpRequestMessage(
+            HttpMethod.Post, $"{OrderPath(terminalId, orderId)}/items/{itemId:D}/approvals/{grantId:D}/approve")
+        { Content = JsonContent.Create(new ApproveGrantInPlaceRequestV1(key, username, password)) };
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return request;
+    }
+
+    private async Task<(Guid TerminalId, string Cookie, Guid RequesterId, string RequesterName, Guid OrderId, Guid ItemId, Guid GrantId, VoidSentItemRequestV1 Body)> PendingVoidAsync(HttpClient client)
+    {
+        var terminalId = Guid.NewGuid();
+        var (requesterId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing, requesterId);
+        var body = new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange");
+        using var response = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, body));
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var pending = await response.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        return (terminalId, cookie, requesterId, "iam027-waiter-" + requesterId.ToString("N"), orderId, itemId, pending!.GrantId!.Value, body);
+    }
+
+    [Fact]
+    public async Task AManagerApprovesAWaitingVoidAtTheTillAndItIsAppliedWithTheManagerNamedInTheAudit()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingVoidAsync(client);
+        var (managerId, username) = await _database.SeedSignInUserAsync("bills.void");
+
+        using var approved = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.OrderId, waiting.ItemId, waiting.GrantId, waiting.Cookie, waiting.Body.IdempotencyKey, username, OrderManagementVoidSentTestDatabase.Password));
+
+        Assert.Equal(HttpStatusCode.OK, approved.StatusCode);
+        Assert.Equal(("granted", managerId), await _database.ReadGrantAsync(waiting.GrantId));
+        Assert.Equal(1L, await _database.AuditCountAsync("authorization.grant.approved", managerId));
+        using var applied = await client.SendAsync(JsonRequest(VoidSentPath(waiting.TerminalId, waiting.OrderId, waiting.ItemId), waiting.Cookie, waiting.Body));
+        Assert.Equal(HttpStatusCode.OK, applied.StatusCode);
+        Assert.Equal("Applied", (await applied.Content.ReadFromJsonAsync<VoidSentItemResultV1>())!.Status);
+    }
+
+    [Fact]
+    public async Task TheRequesterCannotApproveTheirOwnWaitingVoid()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingVoidAsync(client);
+        await _database.SetPasswordAsync(waiting.RequesterId);
+
+        using var refused = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.OrderId, waiting.ItemId, waiting.GrantId, waiting.Cookie, waiting.Body.IdempotencyKey, waiting.RequesterName, OrderManagementVoidSentTestDatabase.Password));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Contains("SELF_APPROVAL_NOT_ALLOWED", await refused.Content.ReadAsStringAsync());
+        Assert.Equal(("pending", (Guid?)null), await _database.ReadGrantAsync(waiting.GrantId));
+    }
+
+    [Fact]
+    public async Task AWrongPasswordIsRefusedAndRecordedWithoutApproving()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingVoidAsync(client);
+        var (_, username) = await _database.SeedSignInUserAsync("bills.void");
+
+        using var refused = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.OrderId, waiting.ItemId, waiting.GrantId, waiting.Cookie, waiting.Body.IdempotencyKey, username, "yanlis"));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Contains("MANAGER_CREDENTIAL_INVALID", await refused.Content.ReadAsStringAsync());
+        Assert.Equal(("pending", (Guid?)null), await _database.ReadGrantAsync(waiting.GrantId));
+        Assert.Equal(1L, await _database.AuditCountAsync("order-item.void-sent.approval_in_place_failed", waiting.RequesterId));
+    }
+
+    [Fact]
+    public async Task AManagerWithoutBillsVoidCannotApproveIt()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingVoidAsync(client);
+        var (_, username) = await _database.SeedSignInUserAsync("reports.view");
+
+        using var refused = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.OrderId, waiting.ItemId, waiting.GrantId, waiting.Cookie, waiting.Body.IdempotencyKey, username, OrderManagementVoidSentTestDatabase.Password));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Contains("APPROVER_LACKS_PERMISSION", await refused.Content.ReadAsStringAsync());
+        Assert.Equal(("pending", (Guid?)null), await _database.ReadGrantAsync(waiting.GrantId));
+    }
+
+    [Fact]
+    public async Task AnotherCashiersRequestAnotherItemOrAnotherKeyIsNotFound()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingVoidAsync(client);
+        var (_, username) = await _database.SeedSignInUserAsync("bills.void");
+        var (_, otherCookie) = await _database.SeedRealWaiterSessionAsync(waiting.TerminalId);
+
+        foreach (var (cookie, orderId, itemId, key) in new[]
+        {
+            (otherCookie, waiting.OrderId, waiting.ItemId, waiting.Body.IdempotencyKey),
+            (waiting.Cookie, waiting.OrderId, Guid.NewGuid(), waiting.Body.IdempotencyKey),
+            (waiting.Cookie, waiting.OrderId, waiting.ItemId, Guid.NewGuid().ToString()),
+            (waiting.Cookie, Guid.NewGuid(), waiting.ItemId, waiting.Body.IdempotencyKey),
+        })
+        {
+            using var refused = await client.SendAsync(ApproveInPlace(
+                waiting.TerminalId, orderId, itemId, waiting.GrantId, cookie, key, username, OrderManagementVoidSentTestDatabase.Password));
+            Assert.Equal(HttpStatusCode.NotFound, refused.StatusCode);
+        }
+
+        Assert.Equal(("pending", (Guid?)null), await _database.ReadGrantAsync(waiting.GrantId));
+    }
+
+    [Fact]
+    public async Task AnAlreadyAnsweredRequestIsConflict()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingVoidAsync(client);
+        var (_, username) = await _database.SeedSignInUserAsync("bills.void");
+        await _database.ApproveGrantAsync(waiting.GrantId, Guid.NewGuid());
+
+        using var refused = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.OrderId, waiting.ItemId, waiting.GrantId, waiting.Cookie, waiting.Body.IdempotencyKey, username, OrderManagementVoidSentTestDatabase.Password));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Contains("ALREADY_RESOLVED", await refused.Content.ReadAsStringAsync());
+    }
 
     private static string OrderPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}";

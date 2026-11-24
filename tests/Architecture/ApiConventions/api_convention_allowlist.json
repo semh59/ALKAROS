@@ -397,6 +397,10 @@
       "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
       "task": "V1-RMD-431"
     },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/approvals/{grantId:guid}/approve": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-1185"
+    },
     "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void": {
       "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
       "task": "V1-RMD-431"

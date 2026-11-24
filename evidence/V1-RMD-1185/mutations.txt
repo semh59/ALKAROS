@@ -1,0 +1,13 @@
+S-M1-requester-check-dropped killed (restored)
+S-M2-subject-item-check-dropped killed (restored)
+S-M3-key-check-dropped killed (restored)
+done
+
+C1-password-kept-after-failure killed (restored)
+C2-approve-new-key killed (restored)
+C3-password-shown-as-text killed (restored)
+C4-fields-stay-after-success killed (restored)
+C5-no-reapply killed (restored)
+C6-409-not-tolerated killed (restored)
+S-M4-order-check-dropped killed (restored)
+C7-no-autocapitalize killed (restored)

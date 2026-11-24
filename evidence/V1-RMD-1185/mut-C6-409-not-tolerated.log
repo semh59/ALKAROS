@@ -1,0 +1,28 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (24 tests | 1 failed) 64ms
+     × asks for the void again when the request was already answered, and still refuses a wrong password 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > api.approveVoidSentInPlace after an earlier try > asks for the void again when the request was already answered, and still refuses a wrong password
+Error: Bu talep zaten yanıtlanmış.
+ ❯ request src/api.ts:141:11
+    139|     // already is in that case.
+    140|     if (response.status === 401 && !keepSessionOn401) onSessionExpired…
+    141|     throw new ApiError(
+       |           ^
+    142|       response.status,
+    143|       body?.error?.code ?? "REQUEST_FAILED",
+ ❯ Object.approveVoidSentInPlace src/api.ts:311:7
+ ❯ src/api.test.ts:315:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  11:31:01
+   Duration  429ms (transform 71ms, setup 0ms, import 99ms, tests 64ms, environment 0ms)
+

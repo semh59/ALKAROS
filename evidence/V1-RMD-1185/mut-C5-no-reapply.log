@@ -1,0 +1,57 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (23 tests | 1 failed) 73ms
+     × approves under the key of the waiting void request, then applies that void under the same key 8ms
+ ❯ src/routes/TableOrderBridge.test.tsx (70 tests | 1 failed) 673ms
+       × approves under the waiting request's own key, then asks for the void again under that key and reports it applied 40ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > api.approveVoidSentInPlace > approves under the key of the waiting void request, then applies that void under the same key
+AssertionError: expected [ …(2) ] to deeply equal [ …(3) ]
+
+- Expected
++ Received
+
+  [
+    "/api/v1/terminals/t1/orders/v9/items/i1/void-sent",
+    "/api/v1/terminals/t1/orders/v9/items/i1/approvals/g1/approve",
+-   "/api/v1/terminals/t1/orders/v9/items/i1/void-sent",
+  ]
+
+ ❯ src/api.test.ts:287:44
+    285|     const applied = await api.approveVoidSentInPlace("t1", "v9", "i1",…
+    286|
+    287|     expect(calls.map((call) => call.path)).toEqual([
+       |                                            ^
+    288|       "/api/v1/terminals/t1/orders/v9/items/i1/void-sent",
+    289|       "/api/v1/terminals/t1/orders/v9/items/i1/approvals/g1/approve",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > approves under the waiting request's own key, then asks for the void again under that key and reports it applied
+AssertionError: expected [ Array(1) ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ src/routes/TableOrderBridge.test.tsx:802:20
+    800|       const keys = voidCalls(mock).map(([, init]) => (JSON.parse(Strin…
+    801|       expect(JSON.parse(String(approveInit!.body))).toEqual({ idempote…
+    802|       expect(keys).toHaveLength(2);
+       |                    ^
+    803|       expect(keys[1]).toBe(keys[0]);
+    804|       expect(onSent).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 91 passed (93)
+   Start at  11:21:26
+   Duration  2.34s (transform 323ms, setup 0ms, import 484ms, tests 746ms, environment 1.01s)
+

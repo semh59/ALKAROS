@@ -1,0 +1,14 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:29.70]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnotherCashiersRequestAnotherItemOrAnotherKeyIsNotFound [FAIL]
+  Başarısız ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnotherCashiersRequestAnotherItemOrAnotherKeyIsNotFound [537 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: NotFound
+Actual:   OK
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnotherCashiersRequestAnotherItemOrAnotherKeyIsNotFound() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 880
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnotherCashiersRequestAnotherItemOrAnotherKeyIsNotFound() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 883
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:    40, Atlanan:     0, Toplam:    41, Süre: 31 s - ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll (net8.0)

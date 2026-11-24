@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (70 tests | 1 failed) 637ms
+       × opens the manager's name and password on the same line and does not report the line as voided 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > opens the manager's name and password on the same line and does not report the line as voided
+AssertionError: expected null to be 'none' // Object.is equality
+
+- Expected:
+"none"
+
++ Received:
+null
+
+ ❯ src/routes/TableOrderBridge.test.tsx:788:78
+    786|       expect(field("Yönetici parolası").maxLength).toBe(256);
+    787|       expect(button("Onayla ve iptal et")?.disabled).toBe(true);
+    788|       expect(field("Yönetici kullanıcı adı").getAttribute("autocapital…
+       |                                                                              ^
+    789|       expect(field("Yönetici kullanıcı adı").getAttribute("spellcheck"…
+    790|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 69 passed (70)
+   Start at  11:35:42
+   Duration  2.33s (transform 296ms, setup 0ms, import 424ms, tests 637ms, environment 1.01s)
+

@@ -108,6 +108,39 @@ public sealed class OrderManagementVoidSentTestDatabase : PgTestDatabase
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
     }
 
+    public const string Password = "Mudur-Sifre-1";
+
+    /// <summary>A user who can sign in with <see cref="Password"/> and holds exactly the given permissions.</summary>
+    public async Task<(Guid UserId, string Username)> SeedSignInUserAsync(params string[] permissionCodes)
+    {
+        var (userId, _) = await SeedCashierSessionAsync(Guid.NewGuid(), "manager", permissionCodes);
+        await SetPasswordAsync(userId);
+        return (userId, "iam027-api-" + userId.ToString("N"));
+    }
+
+    public Task SetPasswordAsync(Guid userId)
+        => ExecuteAsync(
+            "UPDATE identity.users SET password_hash = @hash WHERE user_id = @user_id;",
+            ("user_id", userId),
+            ("hash", new ALKAROS.Identity.Authentication.PasswordHasher().Hash(Password)));
+
+    public async Task<long> AuditCountAsync(string eventName, Guid actorId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM audit.audit_events WHERE event_name = @name AND actor_id = @actor;");
+        command.Parameters.AddWithValue("name", eventName);
+        command.Parameters.AddWithValue("actor", actorId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<(string Status, Guid? ApproverUserId)> ReadGrantAsync(Guid grantId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT status, approver_user_id FROM identity.authorization_grants WHERE grant_id = @id;");
+        command.Parameters.AddWithValue("id", grantId);
+        await using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        return (reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetGuid(1));
+    }
+
     /// <summary>Simulates a manager approving a pending grant out of band.</summary>
     public async Task ApproveGrantAsync(Guid grantId, Guid approverUserId)
     {

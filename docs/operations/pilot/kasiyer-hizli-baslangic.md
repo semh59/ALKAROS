@@ -53,6 +53,8 @@ Harici POS kartı iadesi:
 ## 5. Ürüne not yaz
 Satış ekranında **Not ekle**'ye bas, "Sıradaki ürüne not" kutusuna yaz (örnek: soğansız), sonra o ürüne dokun. Not mutfak fişine yazılır. Müşterinin kişisel bilgisini yazma.
 
+**Mutfağa giden ürünü iptal etme.** Masanın hesap listesinde ürünün yanındaki **Mutfaktaki ürünü iptal et**'e bas, gerekçeyi seç, **iptal et**'e bas. Yetkin yoksa "Bu iptal için yönetici onayı gerekir" yazar ve iki alan açılır: yönetici o anda kendi **Yönetici kullanıcı adı** ve **Yönetici parolası**nı yazıp **Onayla ve iptal et**'e basar; ürün iptal edilir. Kendi iptalini kendin onaylayamazsın; onay yönetici adıyla kayda geçer.
+
 ## 6. İade iste
 1. **Son satışlar**'a bas (Diğer ▾ menüsünde de var), satışa dokun.
 2. **İade** bölümünde gerekçeyi seç, **İade iste**'ye bas. "İade isteği gönderildi; onay bekliyor." yazar.

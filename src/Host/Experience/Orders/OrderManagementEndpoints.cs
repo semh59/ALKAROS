@@ -2,6 +2,8 @@ using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Composition.Errors;
+using ALKAROS.Host.Experience.Authorization;
+using ALKAROS.Identity.Authentication;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Orders.KitchenlessAdd;
@@ -143,6 +145,13 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
         services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
+        // A manager answering a waiting void at the till signs in like at the management screen.
+        services.TryAddTransient<IUserStore, PostgresUserStore>();
+        services.TryAddTransient<AuthenticationService>();
+        services.TryAddScoped<IBehaviouralTighteningService, BehaviouralTighteningService>();
+        services.TryAddScoped<AuthorizationDecisionStore>();
+        services.TryAddSingleton<InPlaceApprovalThrottle>();
+        services.TryAddTransient<InPlaceManagerApproval>();
         // V1-IAM-027: codes the V0-DOM-006 amendment (Semih, 2026-09-04) — a
         // sent-but-unserved item may now be voided under the bills.void
         // grant. Lives at the Host layer (SentItemVoidStore) rather than
@@ -910,6 +919,46 @@ public static class OrderManagementEndpoints
             return Results.Ok(applied);
         });
 
+        // A void-sent request waiting for a manager is answered at the till: the manager types their own username and
+        // password, the cashier asks again under the same key and the void applies. The request must be this cashier's own
+        // for this item and key; the decision itself (approver permission, audit naming the manager) is the management screen's.
+        group.MapPost("/{orderId:guid}/items/{itemId:guid}/approvals/{grantId:guid}/approve", async (
+            Guid terminalId,
+            Guid orderId,
+            Guid itemId,
+            Guid grantId,
+            ApproveGrantInPlaceRequestV1 request,
+            IAuthorizationGrantRepository grants,
+            IOrderRepository orders,
+            InPlaceManagerApproval approval,
+            AuthorizationDecisionStore decisions,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+                throw new ArgumentException("IdempotencyKey is required.", nameof(request));
+
+            var grant = await grants.GetAsync(grantId, cancellationToken);
+            if (grant is null
+                || grant.SubjectType != "OrderItem" || grant.SubjectId != itemId
+                || grant.RequesterUserId != userId
+                || !string.Equals(grant.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal))
+                throw new OrderItemNotFoundException(orderId, itemId);
+            if ((await orders.GetByIdAsync(orderId, cancellationToken))?.Items.Any(i => i.Id == itemId) != true)
+                throw new OrderItemNotFoundException(orderId, itemId);
+            if (!grant.IsPending)
+                throw new AuthorizationGrantAlreadyResolvedException(grantId);
+
+            var manager = await approval.VerifyAsync(
+                request.Username, request.Password, userId, ApplicationPermissions.BillsVoid, "order-item.void-sent.approval_in_place_failed",
+                "Order", orderId, context.TraceIdentifier, cancellationToken);
+            await decisions.ApproveAsync(grantId, manager.UserId, context.TraceIdentifier, cancellationToken);
+            approval.Confirm(userId, request.Username);
+            return Results.Ok(new GrantApprovedInPlaceV1(grantId, manager.UserId, manager.DisplayName));
+        });
+
         // The whole order is taken back: its lines (stock and portions of lines the kitchen had not started go
         // back, started lines are waste), open bills and table, with a mandatory reason. bills.cancel gates it, as
         // it gates cancelling a bill.
@@ -1419,6 +1468,13 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         GarsonFeatureDisabledException => (403, "FEATURE_DISABLED",
             "Bu özellik bu işletme için kapatılmış."),
         OrderQuantityNotAllowedException => (400, "ORDER_QUANTITY_NOT_ALLOWED", ApiErrorCatalog.OrderQuantityMessage),
+        // A manager answering a waiting void at the till (same codes and wording as the other in-place approvals).
+        ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."),
+        ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
+        InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."),
+        InPlaceSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
+        ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
+        AuthorizationGrantAlreadyResolvedException => (409, "ALREADY_RESOLVED", "Bu talep zaten yanıtlanmış."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         // V1-RMD-162: found by the 2026-09-10 Garson audit — every
         // PostgresException used to fall straight through to the generic

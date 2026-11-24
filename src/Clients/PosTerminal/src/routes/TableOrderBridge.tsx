@@ -76,6 +76,10 @@ export function TableOrderBridge({
   const [voiding, setVoiding] = useState(false);
   const [voidError, setVoidError] = useState<string>();
   const [voidNotice, setVoidNotice] = useState<string>();
+  // A void the cashier may not make alone: the manager answers it here, with their own name and password.
+  const [waiting, setWaiting] = useState<{ itemId: string; grantId: string; reason: string } | null>(null);
+  const [managerName, setManagerName] = useState("");
+  const [managerPassword, setManagerPassword] = useState("");
   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
   const sentCheck = hasCheck || !canCollect ? undefined : awaitingCheck;
@@ -116,6 +120,12 @@ export function TableOrderBridge({
     }
   };
   const closeVoid = () => { setVoidingId(null); setVoidReason(null); };
+  const closeWaiting = () => { setWaiting(null); setManagerName(""); setManagerPassword(""); };
+  const voidApplied = (result: { stockRestored?: boolean }) => {
+    setVoidNotice(result.stockRestored ? voidSentText.appliedRestored : voidSentText.applied);
+    setSentCount((count) => count + 1);
+    onSent();
+  };
   const voidLine = async (itemId: string) => {
     if (!read || read === "failed" || !voidReason) return;
     setVoiding(true);
@@ -125,16 +135,33 @@ export function TableOrderBridge({
       const result = await api.voidSentItem(terminalId, read.orderId, itemId, read.rowVersion, voidReason);
       closeVoid();
       if (result.status === "Pending") {
-        setVoidNotice(voidSentText.pending);
+        setWaiting({ itemId, grantId: result.grantId!, reason: voidReason });
         return;
       }
-      setVoidNotice(result.stockRestored ? voidSentText.appliedRestored : voidSentText.applied);
-      setSentCount((count) => count + 1);
-      onSent();
+      voidApplied(result);
     } catch (reason) {
       setVoidError(reason instanceof ApiError ? reason.message : voidSentText.failed);
       if (reason instanceof ApiError && reason.status === 409) {
         closeVoid();
+        setSentCount((count) => count + 1);
+      }
+    } finally {
+      setVoiding(false);
+    }
+  };
+  const approveLine = async () => {
+    if (!read || read === "failed" || !waiting) return;
+    setVoiding(true);
+    setVoidError(undefined);
+    try {
+      const result = await api.approveVoidSentInPlace(terminalId, read.orderId, waiting.itemId, waiting.grantId, read.rowVersion, waiting.reason, managerName, managerPassword);
+      closeWaiting();
+      voidApplied(result);
+    } catch (reason) {
+      setVoidError(reason instanceof ApiError ? reason.message : voidSentText.failed);
+      setManagerPassword("");
+      if (reason instanceof ApiError && reason.status === 409) {
+        closeWaiting();
         setSentCount((count) => count + 1);
       }
     } finally {
@@ -220,6 +247,14 @@ export function TableOrderBridge({
                 <button data-telemetry-id="b.routes.tableorderbridge.void-confirm" className="table-order-bridge__void-confirm" type="button" disabled={!voidReason || voiding} aria-busy={voiding} onClick={() => void voidLine(line.itemId)}>{voiding ? voidSentText.busy : voidSentText.confirm(table.tableNumber, line.quantity, line.productName, formatMoney(line.totalPrice))}</button>
                 <button data-telemetry-id="b.routes.tableorderbridge.void-dismiss" type="button" disabled={voiding} onClick={closeVoid}>{voidSentText.dismiss}</button>
               </div>
+              : waiting?.itemId === line.itemId
+                ? <form className="table-order-bridge__void" aria-label={voidSentText.approve} onSubmit={(event) => { event.preventDefault(); void approveLine(); }}>
+                  <p>{voidSentText.pending}</p>
+                  <label>{voidSentText.managerName}<input autoComplete="off" autoCapitalize="none" spellCheck={false} maxLength={64} value={managerName} disabled={voiding} onChange={(event) => setManagerName(event.target.value)} /></label>
+                  <label>{voidSentText.managerPassword}<input type="password" autoComplete="new-password" maxLength={256} value={managerPassword} disabled={voiding} onChange={(event) => setManagerPassword(event.target.value)} /></label>
+                  <button data-telemetry-id="b.routes.tableorderbridge.void-approve" className="table-order-bridge__void-confirm" type="submit" disabled={!managerName.trim() || !managerPassword || voiding} aria-busy={voiding}>{voiding ? voidSentText.approving : voidSentText.approve}</button>
+                  <button data-telemetry-id="b.routes.tableorderbridge.void-approve-dismiss" type="button" disabled={voiding} onClick={closeWaiting}>{voidSentText.dismiss}</button>
+                </form>
               : <button data-telemetry-id="b.routes.tableorderbridge.void-open" className="table-order-bridge__void-open" type="button" disabled={busy || voiding || sending || collecting || printing || otherTill} aria-label={`${voidSentText.open}: ${line.productName}`} title={otherTill ? billOnOtherTillText : undefined} onClick={() => { setVoidNotice(undefined); setVoidError(undefined); setVoidReason(null); setVoidingId(line.itemId); }}>{voidSentText.open}</button>)}
           </li>)}
         </ul>

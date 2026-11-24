@@ -1441,7 +1441,11 @@ export const voidSentText = {
   busy: "İptal ediliyor…",
   applied: "Ürün iptal edildi.",
   appliedRestored: "Ürün iptal edildi, stok geri alındı.",
-  pending: "İptal yönetici onayına gönderildi. Onaylandıktan sonra aynı gerekçeyle yeniden isteyin.",
+  pending: "Bu iptal için yönetici onayı gerekir. Yönetici kendi kullanıcı adı ve parolasını buraya yazsın; kendi talebinizi kendiniz onaylayamazsınız.",
+  managerName: "Yönetici kullanıcı adı",
+  managerPassword: "Yönetici parolası",
+  approve: "Onayla ve iptal et",
+  approving: "Onaylanıyor…",
   failed: "Ürün iptal edilemedi.",
 } as const;
 

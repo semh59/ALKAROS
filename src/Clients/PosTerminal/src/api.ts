@@ -284,7 +284,7 @@ export const api = {
     const idempotencyKey = pendingSubmissions.get(attempt) ?? crypto.randomUUID();
     pendingSubmissions.set(attempt, idempotencyKey);
     try {
-      const result = await request<{ status: "Applied" | "Pending"; stockRestored?: boolean }>(
+      const result = await request<{ status: "Applied" | "Pending"; stockRestored?: boolean; grantId?: string }>(
         `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}/void-sent`,
         { method: "POST", body: JSON.stringify({ idempotencyKey, expectedRowVersion, reasonCode }) },
       );
@@ -294,6 +294,29 @@ export const api = {
       if (error instanceof ApiError && error.status >= 400 && error.status < 500) pendingSubmissions.delete(attempt);
       throw error;
     }
+  },
+  /** A manager answers the waiting void at the till; the void is then asked for again under the same key and applies. */
+  approveVoidSentInPlace: async (
+    terminalId: string,
+    orderId: string,
+    itemId: string,
+    grantId: string,
+    expectedRowVersion: number,
+    reasonCode: string,
+    username: string,
+    password: string,
+  ) => {
+    const idempotencyKey = pendingSubmissions.get(`void-sent:${orderId}:${itemId}:${reasonCode}`)!;
+    try {
+      await request(
+        `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}/approvals/${grantId}/approve`,
+        { method: "POST", body: JSON.stringify({ idempotencyKey, username, password }) },
+      );
+    } catch (error) {
+      // Already answered: an earlier try approved it and only the void itself was lost, so that void is asked for again.
+      if (!(error instanceof ApiError && error.status === 409)) throw error;
+    }
+    return api.voidSentItem(terminalId, orderId, itemId, expectedRowVersion, reasonCode);
   },
   submitOrder: async (terminalId: string, orderId: string, expectedRevision: number) => {
     // A retry after a timeout must carry the key of the attempt that may have reached the server.

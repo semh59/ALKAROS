@@ -195,6 +195,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .table-order-bridge__void, .table-order-bridge__void-open { flex-basis: 100%; }
 .table-order-bridge__void { display: grid; gap: 1rem; padding: .5rem 0 1rem; }
 .table-order-bridge__void button, .table-order-bridge__void-open { min-height: 48px; border: 1px solid var(--ds-color-line); border-radius: 12px; padding: .5rem 1rem; color: var(--ds-color-ink); background: var(--ds-color-surface); font-size: 1rem; font-weight: 700; }
+.table-order-bridge__void input { min-height: 48px; border: 1px solid var(--ds-color-line); border-radius: 12px; padding: .5rem 1rem; color: var(--ds-color-ink); background: var(--ds-color-surface); font-size: 1rem; }
 .table-order-bridge__void [aria-pressed="true"] { border-color: var(--ds-color-brand); background: var(--ds-color-accent); }
 .table-order-bridge__void-open { border-color: var(--ds-color-danger); color: var(--ds-color-danger); }
 .table-order-bridge__void .table-order-bridge__void-confirm { border-color: var(--ds-color-danger); color: var(--ds-color-surface); background: var(--ds-color-danger); }

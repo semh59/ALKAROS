@@ -1,0 +1,96 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (23 tests | 1 failed) 80ms
+     × approves under the key of the waiting void request, then applies that void under the same key 7ms
+ ❯ src/routes/TableOrderBridge.test.tsx (70 tests | 4 failed) 706ms
+       × opens the manager's name and password on the same line and does not report the line as voided 27ms
+       × approves under the waiting request's own key, then asks for the void again under that key and reports it applied 20ms
+       × shows the server's refusal, empties the password and keeps the name and the fields open 19ms
+       × Vazgeç closes the manager fields without sending anything more 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > api.approveVoidSentInPlace > approves under the key of the waiting void request, then applies that void under the same key
+TypeError: api.approveVoidSentInPlace is not a function
+ ❯ src/api.test.ts:285:31
+    283|
+    284|     const pending = await api.voidSentItem("t1", "v9", "i1", 7, "Opera…
+    285|     const applied = await api.approveVoidSentInPlace("t1", "v9", "i1",…
+       |                               ^
+    286|
+    287|     expect(calls.map((call) => call.path)).toEqual([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > opens the manager's name and password on the same line and does not report the line as voided
+AssertionError: expected '2 × Çay₺50,00Mutfaktaki ürünü iptal et' to contain 'Bu iptal için yönetici onayı gerekir'
+
+Expected: "Bu iptal için yönetici onayı gerekir"
+Received: "2 × Çay₺50,00Mutfaktaki ürünü iptal et"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:783:84
+    781|
+    782|       expect(onSent).not.toHaveBeenCalled();
+    783|       expect(document.querySelector(".table-order-bridge__lines li")?.…
+       |                                                                                    ^
+    784|       expect(field("Yönetici kullanıcı adı").maxLength).toBe(64);
+    785|       expect(field("Yönetici parolası").type).toBe("password");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > approves under the waiting request's own key, then asks for the void again under that key and reports it applied
+TypeError: 'set value' called on an object that is not a valid instance of HTMLInputElement.
+ ❯ set value node_modules/.pnpm/jsdom@26.1.0/node_modules/jsdom/lib/jsdom/living/generated/HTMLInputElement.js:1558:15
+ ❯ src/routes/TableOrderBridge.test.tsx:753:82
+    751|   describe("when the void waits for a manager", () => {
+    752|     const type = (input: HTMLInputElement, value: string) => act(async…
+    753|       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "val…
+       |                                                                                  ^
+    754|       input.dispatchEvent(new Event("input", { bubbles: true }));
+    755|     });
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ type src/routes/TableOrderBridge.test.tsx:752:62
+ ❯ fillAndApprove src/routes/TableOrderBridge.test.tsx:769:13
+ ❯ src/routes/TableOrderBridge.test.tsx:796:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > shows the server's refusal, empties the password and keeps the name and the fields open
+TypeError: 'set value' called on an object that is not a valid instance of HTMLInputElement.
+ ❯ set value node_modules/.pnpm/jsdom@26.1.0/node_modules/jsdom/lib/jsdom/living/generated/HTMLInputElement.js:1558:15
+ ❯ src/routes/TableOrderBridge.test.tsx:753:82
+    751|   describe("when the void waits for a manager", () => {
+    752|     const type = (input: HTMLInputElement, value: string) => act(async…
+    753|       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "val…
+       |                                                                                  ^
+    754|       input.dispatchEvent(new Event("input", { bubbles: true }));
+    755|     });
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ type src/routes/TableOrderBridge.test.tsx:752:62
+ ❯ fillAndApprove src/routes/TableOrderBridge.test.tsx:769:13
+ ❯ src/routes/TableOrderBridge.test.tsx:815:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > when the void waits for a manager > Vazgeç closes the manager fields without sending anything more
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/TableOrderBridge.test.tsx:660:76
+    658|   const action = "Mutfaktaki ürünü iptal et";
+    659|   const flush = () => act(async () => { await Promise.resolve(); });
+    660|   const press = (target: Element | undefined) => act(async () => { tar…
+       |                                                                            ^
+    661|   const reasonButton = (label: string) => [...document.querySelectorAl…
+    662|   const confirmButton = () => document.querySelector<HTMLButtonElement…
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ press src/routes/TableOrderBridge.test.tsx:660:50
+ ❯ src/routes/TableOrderBridge.test.tsx:830:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  5 failed | 88 passed (93)
+   Start at  11:15:45
+   Duration  2.78s (transform 345ms, setup 0ms, import 520ms, tests 786ms, environment 1.34s)
+
