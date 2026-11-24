@@ -1,0 +1,8 @@
+M1-original-rule killed (restored)
+M2-name-hidden killed (restored)
+M3-qty-hidden killed (restored)
+M4-calm-hides-modifiers killed (restored)
+M5-modifiers-opacity killed (restored)
+M6-media-line-clamp killed (restored)
+M7-color-transparent killed (restored)
+M8-height-zero killed (restored)

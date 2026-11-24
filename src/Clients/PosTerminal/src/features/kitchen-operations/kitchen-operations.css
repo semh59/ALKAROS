@@ -91,8 +91,6 @@
 .kitchen-held-badge { font-size: .875rem; font-weight: 800; color: var(--ds-color-warning); border: 1px solid var(--ds-color-warning); border-radius: 999px; padding: .05rem .5rem; white-space: nowrap; }
 .kitchen-item-row__detail { color: var(--ds-color-muted); font-size: .875rem; }
 .kitchen-item-row__detail--note { color: var(--ds-color-warning); font-weight: 700; }
-/* Yoğun mod: seçenek ayrıntısı gizlenir, ekran "white-out" olmasın; aşçı notu (soğansız, alerji) hiçbir modda gizlenmez. */
-.kitchen-workspace.is-dense .kitchen-item-row__detail:not(.kitchen-item-row__detail--note) { display: none; }
 
 .kitchen-stepper { display: flex; gap: .35rem; flex-wrap: wrap; }
 .kitchen-step { flex: 1 1 auto; white-space: nowrap; min-height: 48px; border: 1.5px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); background: var(--ds-color-surface); color: var(--ds-color-muted); font: inherit; font-size: .875rem; font-weight: 800; cursor: default; padding: .2rem .5rem; }

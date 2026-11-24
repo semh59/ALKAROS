@@ -1,0 +1,81 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts (6 tests | 4 failed) 63ms
+     × shows the cook's note in the dense mode the board enters on its own 34ms
+     × shows the note in the calm mode too 7ms
+     × shows quantity, product name, option and note in mode 'is-dense' 10ms
+     × shows quantity, product name, option and note in mode '' 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/kitchenDenseNote.test.ts > kitchen line note in every density mode > shows the cook's note in the dense mode the board enters on its own
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts:33:39
+     31|
+     32|   it("shows the cook's note in the dense mode the board enters on its …
+     33|     expect(hiddenIn("is-dense").note).toBe(false);
+       |                                       ^
+     34|   });
+     35|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/features/kitchen-operations/kitchenDenseNote.test.ts > kitchen line note in every density mode > shows the note in the calm mode too
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts:37:31
+     35|
+     36|   it("shows the note in the calm mode too", () => {
+     37|     expect(hiddenIn("").note).toBe(false);
+       |                               ^
+     38|   });
+     39|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/kitchen-operations/kitchenDenseNote.test.ts > kitchen line note in every density mode > shows quantity, product name, option and note in mode 'is-dense'
+ FAIL  src/features/kitchen-operations/kitchenDenseNote.test.ts > kitchen line note in every density mode > shows quantity, product name, option and note in mode ''
+AssertionError: expected { qty: false, name: false, …(2) } to deeply equal { qty: false, name: false, …(2) }
+
+- Expected
++ Received
+
+  {
+-   "modifiers": false,
++   "modifiers": true,
+    "name": false,
+-   "note": false,
++   "note": true,
+    "qty": false,
+  }
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts:41:28
+     39|
+     40|   it.each(["is-dense", ""] as const)("shows quantity, product name, op…
+     41|     expect(hiddenIn(mode)).toEqual({ qty: false, name: false, modifier…
+       |                            ^
+     42|   });
+     43| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 2 passed (6)
+   Start at  12:53:45
+   Duration  1.43s (transform 34ms, setup 0ms, import 57ms, tests 63ms, environment 996ms)
+

@@ -1,0 +1,6 @@
+# V1-RMD-1189 sonuc
+Kok neden: kitchen-operations.css yogun modda seceneklerin (Ekstra peynir, az acili, porsiyon) metnini display:none yapiyordu; pano 18 acik kalemde kendiliginden yogun moda girdigi icin asci seceneği gormeden yanlis yemek cikarabilirdi (V1-RMD-1184 yalniz notu acmisti).
+Duzeltme: yogun mod gizleme kurali kaldirildi; urun adi, adet, secenek, not, rozetler her modda gorunur, 14 px (.875rem) alt siniri korunur. docs/CASHIER_UI_RULES.md mutfak kurali secenegi de kapsar; yogun mod yalniz ikincil bilgiyi (fiyat, kasiyer adi) saklar.
+Fis: EscPosTicketFormatter.cs:82-89 secenegi ("+ ...") ve notu ("NOT: ...") zaten basiyor; degisiklik gerekmedi. Baska mutfak istemcisi yok (qa 2 dogruladi).
+Kanit: red.log (yogun modda secenek gizli, 1 kirmizi); green.log mutfak dizini 8 dosya 116 test; mutations.txt M1-M8 killed (cp+cmp); client-build-gate exit 0; plan-audit ve consistency-audit temiz.
+Acik risk: (1) "Tum Gun" ozet gorunumu (KitchenOperationsWorkspace.tsx:249-257) kalemleri yalniz urune gore toplar; secenek ve not gostermez (farkli seceneklı kalemler tek satirda birlesir). Kart gorunumunde her sey var; ozet gorunumu ayri karar, kapsam disi. (2) Test jsdom'da kural eslesmesini olcer, kaskadi degil. (3) Gercek tarayicida gorsel olcum yapilmadi.

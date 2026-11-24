@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts (6 tests | 1 failed) 35ms
+     × shows quantity, product name, option and note in mode 'is-dense' 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/kitchenDenseNote.test.ts > kitchen line note in every density mode > shows quantity, product name, option and note in mode 'is-dense'
+AssertionError: expected { qty: true, name: false, …(2) } to deeply equal { qty: false, name: false, …(2) }
+
+- Expected
++ Received
+
+  {
+    "modifiers": false,
+    "name": false,
+    "note": false,
+-   "qty": false,
++   "qty": true,
+  }
+
+ ❯ src/features/kitchen-operations/kitchenDenseNote.test.ts:41:28
+     39|
+     40|   it.each(["is-dense", ""] as const)("shows quantity, product name, op…
+     41|     expect(hiddenIn(mode)).toEqual({ qty: false, name: false, modifier…
+       |                            ^
+     42|   });
+     43| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  12:53:42
+   Duration  1.39s (transform 32ms, setup 0ms, import 53ms, tests 35ms, environment 1.02s)
+

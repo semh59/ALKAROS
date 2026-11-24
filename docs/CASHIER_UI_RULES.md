@@ -34,7 +34,7 @@ durumlarını kapsar; diğer ekranlar aynı jetonları kullanır.
 
 ## 2. Punto
 
-- En küçük yazı 14px (`0.875rem`): rozet, alt not, kart altı, etiket, uyarı. 14px'ten küçük yazı yoktur. Mutfak panosu (`kitchen-operations.css`) aynı 14px alt sınırına bağlıdır; kalem notu (soğansız, alerji) yoğun dahil hiçbir modda gizlenmez.
+- En küçük yazı 14px (`0.875rem`): rozet, alt not, kart altı, etiket, uyarı. 14px'ten küçük yazı yoktur. Mutfak panosu (`kitchen-operations.css`) aynı 14px alt sınırına bağlıdır; ürün adı, adet, seçenek (ekstra peynir, az acılı, porsiyon) ve kalem notu (soğansız, alerji) yoğun dahil hiçbir modda gizlenmez; yoğun mod yalnız ikincil bilgiyi (fiyat, kasiyer adı) saklar.
 - Gövde ve düğme yazısı 16px, tutar ve ana değer 20px ve üstü, ekran başlığı 22px ve üstü.
 - Rozet ve etiketler kalın (700) yazılır; renk tek başına anlam taşımaz.
 
