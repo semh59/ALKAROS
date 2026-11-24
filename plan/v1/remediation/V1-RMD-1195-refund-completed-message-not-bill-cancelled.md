@@ -23,6 +23,17 @@ Kasiyer denemesi 18 (bulgu 4): tam iade tamamlanınca (sunucu `billCancelled: tr
   - tests/Clients/StaticApps/split-payment-refunds.test.js
   - tests/Clients/StaticApps/split-payment-refund-approve-here.test.js
   - tests/Clients/StaticApps/split-payment-cancel-order.test.js
+  - tests/Clients/StaticApps/split-payment-allowance.test.js
+  - tests/Clients/StaticApps/split-payment-cashier-rules.test.js
+  - tests/Clients/StaticApps/split-payment-external-card.test.js
+  - tests/Clients/StaticApps/split-payment-failures.test.js
+  - tests/Clients/StaticApps/split-payment-item-refund.test.js
+  - tests/Clients/StaticApps/split-payment-item-refund-single-payment.test.js
+  - tests/Clients/StaticApps/split-payment-open-refund-fold.test.js
+  - tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+  - tests/Clients/StaticApps/split-payment-paid-refund-fold.test.js
+  - tests/Clients/StaticApps/split-payment-refund-rules.test.js
+  - tests/Clients/StaticApps/split-payment-reasons.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

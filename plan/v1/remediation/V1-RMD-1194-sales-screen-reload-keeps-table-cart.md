@@ -22,6 +22,10 @@ Kasiyer denemesi 18 (bulgu 2): masadan "Sipariş al" ile açılan satış ekran�
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.kitchenless.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.send-and-collect.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.single-notice.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.ticket-footer.test.tsx
   - src/Clients/PosTerminal/src/storage.ts
   - docs/CASHIER_UI_RULES.md
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
