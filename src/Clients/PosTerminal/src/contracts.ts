@@ -276,5 +276,6 @@ export interface TableOrder {
     kitchenState?: string;
     canVoidSent?: boolean;
     addedWithoutKitchenReason?: string | null;
+    specialInstructions?: string | null;
   }[];
 }

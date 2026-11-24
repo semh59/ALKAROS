@@ -668,6 +668,16 @@ describe("TableOrderBridge mutfaktaki ürünü iptal et", () => {
     await flush();
   };
 
+  it("shows the line's note under it on the table panel, and none for a line without a note", async () => {
+    stubFetch(undefined, { ...sentOrder, items: sentOrder.items.map((item) => item.itemId === "i1" ? { ...item, specialInstructions: "az pişmiş" } : item) });
+    render();
+    await flush();
+
+    const lines = [...document.querySelectorAll(".table-order-bridge__lines li")];
+    expect(lines[0].querySelector(".table-order-bridge__line-note")?.textContent).toBe("Not: az pişmiş");
+    expect(document.querySelectorAll(".table-order-bridge__line-note")).toHaveLength(1);
+  });
+
   it("offers the action only on a line the server marks voidable, once per line", async () => {
     stubFetch(undefined, sentOrder);
     render();

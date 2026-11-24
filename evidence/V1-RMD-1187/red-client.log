@@ -1,0 +1,57 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (14 tests | 1 failed) 178ms
+     × writes a line's note right under that line as text, and nothing for a line without one 17ms
+ ❯ src/routes/TableOrderBridge.test.tsx (71 tests | 1 failed) 715ms
+     × shows the line's note under it on the table panel, and none for a line without a note 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > shows the line's note under it on the table panel, and none for a line without a note
+AssertionError: expected undefined to be 'Not: az pişmiş' // Object.is equality
+
+- Expected:
+"Not: az pişmiş"
+
++ Received:
+undefined
+
+ ❯ src/routes/TableOrderBridge.test.tsx:677:78
+    675|
+    676|     const lines = [...document.querySelectorAll(".table-order-bridge__…
+    677|     expect(lines[0].querySelector(".table-order-bridge__note")?.textCo…
+       |                                                                              ^
+    678|     expect(document.querySelectorAll(".table-order-bridge__note")).toH…
+    679|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > writes a line's note right under that line as text, and nothing for a line without one
+AssertionError: expected [ '2 × Köfte <b>₺200,00', …(1) ] to deeply equal [ '2 × Köfte <b>₺200,00', …(2) ]
+
+- Expected
++ Received
+
+  [
+    "2 × Köfte <b>₺200,00",
+-   "Not: soğansız <i>",
+    "1 × Ayran₺30,00",
+  ]
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:48:18
+     46|
+     47|     const rows = [...document.querySelectorAll("#pre-receipt-print tab…
+     48|     expect(rows).toEqual(["2 × Köfte <b>₺200,00", "Not: soğansız <i>",…
+       |                  ^
+     49|     expect(document.querySelector("#pre-receipt-print i")).toBeNull();
+     50|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 83 passed (85)
+   Start at  11:53:41
+   Duration  2.63s (transform 449ms, setup 0ms, import 660ms, tests 893ms, environment 2.34s)
+

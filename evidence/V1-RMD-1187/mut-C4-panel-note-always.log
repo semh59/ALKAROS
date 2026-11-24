@@ -1,0 +1,102 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (71 tests | 4 failed) 738ms
+     × names an unsent line that was also added at the till only once 16ms
+     × names a line the kitchen has marked ready or served, and leaves preparing and sent lines unmarked 11ms
+     × reads the lines again while the panel stays open, so a line the kitchen marks ready appears without reselecting the table 12ms
+     × shows the line's note under it on the table panel, and none for a line without a note 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > names an unsent line that was also added at the till only once
+AssertionError: expected <small …(1)></small>
+…(1) to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/routes/TableOrderBridge.test.tsx:403:44
+    401|
+    402|     const line = document.querySelector(".table-order-bridge__lines li…
+    403|     expect(line.querySelectorAll("small")).toHaveLength(1);
+       |                                            ^
+    404|     expect(line.textContent).toContain("Mutfağa gönderilmedi");
+    405|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > names a line the kitchen has marked ready or served, and leaves preparing and sent lines unmarked
+AssertionError: expected [ ' · Hazır', 'Not: undefined', …(4) ] to deeply equal [ ' · Hazır', ' · Servis edildi' ]
+
+- Expected
++ Received
+
+  [
+    " · Hazır",
++   "Not: undefined",
+    " · Servis edildi",
++   "Not: undefined",
++   "Not: undefined",
++   "Not: undefined",
+  ]
+
+ ❯ src/routes/TableOrderBridge.test.tsx:417:115
+    415|     await flush();
+    416|
+    417|     expect([...document.querySelectorAll(".table-order-bridge__lines l…
+       |                                                                                                                   ^
+    418|   });
+    419|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > reads the lines again while the panel stays open, so a line the kitchen marks ready appears without reselecting the table
+AssertionError: expected <small …(1)></small>
+…(1) to have a length of +0 but got 2
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ src/routes/TableOrderBridge.test.tsx:426:78
+    424|     render();
+    425|     await flush();
+    426|     expect(document.querySelectorAll(".table-order-bridge__lines li sm…
+       |                                                                              ^
+    427|
+    428|     order = { ...tableOrder, items: [{ ...tableOrder.items[0], kitchen…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > shows the line's note under it on the table panel, and none for a line without a note
+AssertionError: expected <small …(1)></small>
+…(2) to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/routes/TableOrderBridge.test.tsx:678:73
+    676|     const lines = [...document.querySelectorAll(".table-order-bridge__…
+    677|     expect(lines[0].querySelector(".table-order-bridge__line-note")?.t…
+    678|     expect(document.querySelectorAll(".table-order-bridge__line-note")…
+       |                                                                         ^
+    679|   });
+    680|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 81 passed (85)
+   Start at  12:11:22
+   Duration  2.64s (transform 404ms, setup 0ms, import 644ms, tests 880ms, environment 2.34s)
+

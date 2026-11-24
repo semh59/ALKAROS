@@ -1,0 +1,290 @@
+diff --git a/docs/domain/bill-pre-receipt.md b/docs/domain/bill-pre-receipt.md
+index 1c61bf557..32130cbb5 100644
+--- a/docs/domain/bill-pre-receipt.md
++++ b/docs/domain/bill-pre-receipt.md
+@@ -4,7 +4,7 @@ Karar sahibi: ürün sahibi (2026-11-18). Kayıt: V1-RMD-1151.
+ 
+ ## Ne olduğu
+ 
+-Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmayan bir bilgi fişidir; fişin başlığı "BİLGİ FİŞİ", ibaresi "MALİ DEĞERİ YOKTUR" olur (ürün sahibi kararı; ÖKC bilgi fişlerinde kullanılan ibareler, başlığın ön hesap için kullanımı doğrulanmamıştır, aşağıdaki teyit notuna bakın; "Bu belge mali fiş değildir." hiçbir kaynakta zorunlu değildi, V1-RMD-1177 ile bu ibareye alındı). Fiş "HESAP NO: N" (ÖKC fişindeki "FİŞ NO" ile karışmaz), masa, basım tarihi ("Tarih") ve saati ("Saat", işletme saat diliminde, saat:dakika) taşır; mali sembol, sicil, Z no, KDV dökümü, fiş sıra numarası ya da ödeme belgesi iddiası taşımaz. Ödenmiş hesabın fişindeki ibare ayrıdır ve bu karardan etkilenmez.
++Kasiyerin ödeme almadan önce müşteriye verdiği "Hesap" fişidir. Mali olmayan bir bilgi fişidir; fişin başlığı "BİLGİ FİŞİ", ibaresi "MALİ DEĞERİ YOKTUR" olur (ürün sahibi kararı; ÖKC bilgi fişlerinde kullanılan ibareler, başlığın ön hesap için kullanımı doğrulanmamıştır, aşağıdaki teyit notuna bakın; "Bu belge mali fiş değildir." hiçbir kaynakta zorunlu değildi, V1-RMD-1177 ile bu ibareye alındı). Fiş "HESAP NO: N" (ÖKC fişindeki "FİŞ NO" ile karışmaz), masa, basım tarihi ("Tarih") ve saati ("Saat", işletme saat diliminde, saat:dakika) taşır; mali sembol, sicil, Z no, KDV dökümü, fiş sıra numarası ya da ödeme belgesi iddiası taşımaz. Kalemin hazırlama notu ("soğansız") kalemin altında "Not: ..." satırı olarak yazılır; not en çok 200 karakterdir (kasa ve NFC yolları zaten 200'ü aşan notu reddeder; başka yoldan gelen uzun notu sunucu 200'de kırpar), serbest metindir (kişisel bilgi yazılmaz, KVKK); hesap birden çok siparişin kalemlerini taşıyorsa her kalemin notu yazılır. Ödenmiş hesabın fişindeki ibare ayrıdır ve bu karardan etkilenmez.
+ 
+ ## Ödenmiş hesabın fişinden farkı
+ 
+diff --git a/plan/v1/remediation/V1-RMD-1187-line-note-on-table-panel-and-pre-receipt.md b/plan/v1/remediation/V1-RMD-1187-line-note-on-table-panel-and-pre-receipt.md
+index ccf765163..df15016b9 100644
+--- a/plan/v1/remediation/V1-RMD-1187-line-note-on-table-panel-and-pre-receipt.md
++++ b/plan/v1/remediation/V1-RMD-1187-line-note-on-table-panel-and-pre-receipt.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1187 - Kalem notu masa detay panelinde ve ön hesap fişinde görünür
+ 
+ - Task ID: V1-RMD-1187
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/PosTerminal/src/contracts.ts b/src/Clients/PosTerminal/src/contracts.ts
+index 5a5b4f981..c74502479 100644
+--- a/src/Clients/PosTerminal/src/contracts.ts
++++ b/src/Clients/PosTerminal/src/contracts.ts
+@@ -276,5 +276,6 @@ export interface TableOrder {
+     kitchenState?: string;
+     canVoidSent?: boolean;
+     addedWithoutKitchenReason?: string | null;
++    specialInstructions?: string | null;
+   }[];
+ }
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts
+index 05244720b..7f19286d1 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts
++++ b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.test.ts
+@@ -40,6 +40,16 @@ describe("printPreReceipt", () => {
+     expect(text()).not.toMatch(/FİŞ NO|Hesap fişi no|mali fiş değildir/i);
+   });
+ 
++  it("writes a line's note under its name, in the cell that wraps, as text, and nothing for a line without one", async () => {
++    const noted = { ...sheet, lines: [{ ...sheet.lines[0], note: "soğansız <i>" }, sheet.lines[1]] };
++    await printPreReceipt("t-1", "o-1", (async () => reply(200, noted)) as typeof fetch, vi.fn());
++
++    const rows = [...document.querySelectorAll("#pre-receipt-print table:nth-of-type(1) tr")].map((row) => row.textContent);
++    expect(rows).toEqual(["2 × Köfte <b>Not: soğansız <i>₺200,00", "1 × Ayran₺30,00"]);
++    expect(document.querySelector("#pre-receipt-print tr td:first-child br")).not.toBeNull();
++    expect(document.querySelector("#pre-receipt-print i")).toBeNull();
++  });
++
+   it("states the date and the time of the print in the venue's clock", async () => {
+     await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)) as typeof fetch, vi.fn());
+ 
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts
+index 47f6abaeb..bc2b9f555 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts
++++ b/src/Clients/PosTerminal/src/features/pending-checks/preReceipt.ts
+@@ -1,6 +1,6 @@
+ import { notifySessionExpired } from "../../api";
+ import { formatClockMinutes, formatDate, formatMoney, formatQuantity } from "../../format";
+-import { preReceiptText } from "../../strings";
++import { lineNoteText, preReceiptText } from "../../strings";
+ import "./pre-receipt.css";
+ 
+ interface PreReceiptSheet {
+@@ -9,7 +9,7 @@ interface PreReceiptSheet {
+   printedAt: string;
+   tableNumber: string | null;
+   currencyCode: string;
+-  lines: readonly { name: string; quantity: number; unitPrice: number; amount: number }[];
++  lines: readonly { name: string; quantity: number; unitPrice: number; amount: number; note?: string | null }[];
+   adjustments: readonly { type: string; amount: number; isDeduction: boolean }[];
+   total: number;
+   paidAmount: number;
+@@ -45,7 +45,11 @@ function drawSheet(sheet: PreReceiptSheet): void {
+     preReceiptText.time(formatClockMinutes(sheet.printedAt)),
+   );
+   const lines = document.createElement("table");
+-  for (const line of sheet.lines) lines.appendChild(row(`${formatQuantity(line.quantity)} × ${line.name}`, money(line.amount)));
++  for (const line of sheet.lines) {
++    // The note sits in the line's own name cell: the amount cell is the one that never wraps and is right-aligned.
++    const lineRow = lines.appendChild(row(`${formatQuantity(line.quantity)} × ${line.name}`, money(line.amount)));
++    if (line.note) lineRow.cells[0].append(document.createElement("br"), lineNoteText(line.note));
++  }
+   const totals = document.createElement("table");
+   for (const adjustment of sheet.adjustments) {
+     totals.appendChild(row(preReceiptText.adjustments[adjustment.type] ?? preReceiptText.adjustmentFallback, `${adjustment.isDeduction ? "-" : ""}${money(adjustment.amount)}`));
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index 3bc83ea96..5feda6768 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -668,6 +668,16 @@ describe("TableOrderBridge mutfaktaki ürünü iptal et", () => {
+     await flush();
+   };
+ 
++  it("shows the line's note under it on the table panel, and none for a line without a note", async () => {
++    stubFetch(undefined, { ...sentOrder, items: sentOrder.items.map((item) => item.itemId === "i1" ? { ...item, specialInstructions: "az pişmiş" } : item) });
++    render();
++    await flush();
++
++    const lines = [...document.querySelectorAll(".table-order-bridge__lines li")];
++    expect(lines[0].querySelector(".table-order-bridge__line-note")?.textContent).toBe("Not: az pişmiş");
++    expect(document.querySelectorAll(".table-order-bridge__line-note")).toHaveLength(1);
++  });
++
+   it("offers the action only on a line the server marks voidable, once per line", async () => {
+     stubFetch(undefined, sentOrder);
+     render();
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index a1b49dcf2..be8cb1dd3 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -6,7 +6,7 @@ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
+ import { collectionHref } from "../features/pending-checks/pendingChecksApi";
+ import { printPreReceipt, PreReceiptError } from "../features/pending-checks/preReceipt";
+-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, preReceiptText, servedBillNote, voidSentText } from "../strings";
++import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, lineNoteText, preReceiptText, servedBillNote, voidSentText } from "../strings";
+ 
+ interface BridgeTable {
+   tableId: string;
+@@ -238,6 +238,7 @@ export function TableOrderBridge({
+       : read && <>
+         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+           {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span>
++            {line.specialInstructions && <small className="table-order-bridge__line-note">{lineNoteText(line.specialInstructions)}</small>}
+             {line.canVoidSent && (voidingId === line.itemId
+               ? <div className="table-order-bridge__void" role="group" aria-label={voidSentText.pickReason}>
+                 <strong>{voidSentText.pickReason}</strong>
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 32f9af676..113b1fc4b 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1449,6 +1449,9 @@ export const voidSentText = {
+   failed: "Ürün iptal edilemedi.",
+ } as const;
+ 
++/** A line's preparation note as the table panel and the pre-payment slip show it. */
++export const lineNoteText = (note: string) => `Not: ${note}`;
++
+ /** The "Hesap fişi" slip printed before payment: a non-fiscal information slip with its own print counter. */
+ export const preReceiptText = {
+   action: "Hesap fişi",
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index b0b825a96..d381fe50a 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -205,6 +205,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
+ .table-order-bridge__total strong { font-size: 1.15rem; }
+ .table-order-bridge__lines-note { margin: 0; }
+ .table-order-bridge__unsent { color: var(--ds-color-warning); font-weight: 750; }
++.table-order-bridge__line-note { flex-basis: 100%; color: var(--ds-color-muted); font-size: .875rem; overflow-wrap: anywhere; }
+ .table-order-bridge p { margin: .25rem 0 0; color: var(--muted); font-size: .875rem; }
+ .table-order-bridge__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+ .table-order-bridge__actions .primary { grid-column: 1 / -1; }
+diff --git a/src/Host/DualScreen/DualScreenApplication.Receipt.cs b/src/Host/DualScreen/DualScreenApplication.Receipt.cs
+index db5082069..1597d31c5 100644
+--- a/src/Host/DualScreen/DualScreenApplication.Receipt.cs
++++ b/src/Host/DualScreen/DualScreenApplication.Receipt.cs
+@@ -43,7 +43,8 @@ public sealed record BillReceiptV1(
+     bool IsCopy = false,
+     string? TableNumber = null);
+ 
+-public sealed record BillPreReceiptLineV1(string Name, decimal Quantity, decimal UnitPrice, decimal Amount);
++/// <remarks><paramref name="Note"/> is the line's preparation note, cut at the length a note may be typed with.</remarks>
++public sealed record BillPreReceiptLineV1(string Name, decimal Quantity, decimal UnitPrice, decimal Amount, string? Note = null);
+ 
+ /// <summary>The slip printed before payment; <paramref name="PrintNumber"/> counts these prints only, never the paid bill's original or copy.</summary>
+ public sealed record BillPreReceiptV1(
+@@ -292,18 +293,21 @@ public static partial class DualScreenApplication
+                     sheet = new BillPreReceiptV1(
+                         orderId, 0, DateTimeOffset.UtcNow, await BillOrderNotes.TableNumberAsync(dataSource, order.TableId, cancellationToken), order.CurrencyCode,
+                         order.Items.Where(i => i.CountsInOrderTotals)
+-                            .Select(i => new BillPreReceiptLineV1(i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount)).ToList(),
++                            .Select(i => new BillPreReceiptLineV1(i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, SlipNote(i.Notes))).ToList(),
+                         [], order.Total, 0m);
+                 }
+                 else
+                 {
+                     await billAccess.RequireAsync(context, terminalId, bill.Value.BillId, cancellationToken, claim: false);
++                    var openBill = (await billRepository.GetByIdAsync(bill.Value.BillId, cancellationToken))!;
+                     var receipt = await BuildReceiptAsync(
+-                        (await billRepository.GetByIdAsync(bill.Value.BillId, cancellationToken))!,
+-                        adjustmentRepository, paymentRepository, dataSource, null, false, cancellationToken);
++                        openBill, adjustmentRepository, paymentRepository, dataSource, null, false, cancellationToken);
++                    var orderItemOfBillItem = openBill.Items.ToDictionary(i => i.Id, i => i.OrderItemId);
++                    var noteOfOrderItem = await LineNotesAsync(dataSource, openBill.Items.Select(i => i.OrderItemId), cancellationToken);
+                     sheet = new BillPreReceiptV1(
+                         orderId, 0, DateTimeOffset.UtcNow, receipt.TableNumber, receipt.CurrencyCode,
+-                        receipt.Items.Select(i => new BillPreReceiptLineV1(i.Name, i.Quantity, i.UnitPrice, i.Amount)).ToList(),
++                        receipt.Items.Select(i => new BillPreReceiptLineV1(
++                            i.Name, i.Quantity, i.UnitPrice, i.Amount, SlipNote(noteOfOrderItem.GetValueOrDefault(orderItemOfBillItem[i.BillItemId])))).ToList(),
+                         receipt.Adjustments, receipt.PayableAmount, receipt.Payments.Sum(p => p.Amount - p.RefundedAmount));
+                 }
+ 
+@@ -328,6 +332,28 @@ public static partial class DualScreenApplication
+             .RequireRateLimiting("terminal-write");
+     }
+ 
++    // The bill's lines may come from several orders, so the notes are read for the lines themselves, not from the order asked for.
++    private static async Task<Dictionary<Guid, string>> LineNotesAsync(
++        NpgsqlDataSource dataSource, IEnumerable<Guid> orderItemIds, CancellationToken cancellationToken)
++    {
++        var notes = new Dictionary<Guid, string>();
++        await using var command = dataSource.CreateCommand("SELECT order_item_id, notes FROM orders.order_items WHERE order_item_id = ANY(@ids) AND notes IS NOT NULL;");
++        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderItemIds.ToArray();
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        while (await reader.ReadAsync(cancellationToken))
++            notes[reader.GetGuid(0)] = reader.GetString(1);
++        return notes;
++    }
++
++    // Cut at the length a note may be typed with, never between the two halves of a character.
++    private static string? SlipNote(string? note)
++    {
++        if (string.IsNullOrWhiteSpace(note))
++            return null;
++        const int max = DualScreenStore.MaxSpecialInstructionsLength;
++        return note.Length <= max ? note : note[..(char.IsHighSurrogate(note[max - 1]) ? max - 1 : max)];
++    }
++
+     private static async Task<(Guid BillId, string Status)?> FindOrderBillAsync(
+         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
+     {
+diff --git a/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs b/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
+index 2d4176950..71759013d 100644
+--- a/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
++++ b/tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
+@@ -783,6 +783,56 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
+         Assert.Equal(0m, body.GetProperty("total").GetDecimal());
+     }
+ 
++    private async Task SetLineNoteAsync(Guid orderId, string note)
++    {
++        await using var command = _database.DataSource.CreateCommand("UPDATE orders.order_items SET notes = @note WHERE order_id = @o;");
++        command.Parameters.AddWithValue("note", note);
++        command.Parameters.AddWithValue("o", orderId);
++        await command.ExecuteNonQueryAsync();
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task APreReceiptCarriesTheLineNoteWhetherOrNotABillIsOpen(bool billOpen)
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-note-" + billOpen, true, "bills.split");
++        var billId = await _database.SeedBillAsync(payable: 100m);
++        var orderId = await SubmittedOrderOfAsync(billId);
++        await SetLineNoteAsync(orderId, "soğansız");
++        if (!billOpen)
++            await _database.SetBillStatusAsync(billId, "Cancelled");
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        var body = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
++
++        Assert.Equal("soğansız", Assert.Single(body.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString());
++    }
++
++    [Fact]
++    public async Task APreReceiptCutsALongLineNoteAtTheSlipLimitAndLeavesALineWithoutOneEmpty()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-long-note", true, "bills.split");
++        var billId = await _database.SeedBillAsync(payable: 100m);
++        var orderId = await SubmittedOrderOfAsync(billId);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        var plain = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
++        await SetLineNoteAsync(orderId, new string('n', 250));
++        var longNote = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
++
++        Assert.Equal(JsonValueKind.Null, Assert.Single(plain.GetProperty("lines").EnumerateArray()).GetProperty("note").ValueKind);
++        Assert.Equal(200, Assert.Single(longNote.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString()!.Length);
++
++        await SetLineNoteAsync(orderId, new string('n', 199) + "😀" + new string('x', 50));
++        var emoji = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
++        Assert.Equal(new string('n', 199), Assert.Single(emoji.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString());
++    }
++
+     [Fact]
+     public async Task APreReceiptOfAnOrderWithABillCarriesTheAdjustmentsTheTotalAndWhatWasPaid()
+     {

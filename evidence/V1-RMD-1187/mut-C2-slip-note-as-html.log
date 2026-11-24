@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (14 tests | 1 failed) 131ms
+     × writes a line's note under its name, in the cell that wraps, as text, and nothing for a line without one 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > writes a line's note under its name, in the cell that wraps, as text, and nothing for a line without one
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "2 × Köfte <b>Not: soğansız <i>₺200,00",
++   "2 × Köfte <b>Not: soğansız ₺200,00",
+    "1 × Ayran₺30,00",
+  ]
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:48:18
+     46|
+     47|     const rows = [...document.querySelectorAll("#pre-receipt-print tab…
+     48|     expect(rows).toEqual(["2 × Köfte <b>Not: soğansız <i>₺200,00", "1 …
+       |                  ^
+     49|     expect(document.querySelector("#pre-receipt-print tr td:first-chil…
+     50|     expect(document.querySelector("#pre-receipt-print i")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  12:21:52
+   Duration  1.64s (transform 120ms, setup 0ms, import 163ms, tests 131ms, environment 1.07s)
+

@@ -1449,6 +1449,9 @@ export const voidSentText = {
   failed: "Ürün iptal edilemedi.",
 } as const;
 
+/** A line's preparation note as the table panel and the pre-payment slip show it. */
+export const lineNoteText = (note: string) => `Not: ${note}`;
+
 /** The "Hesap fişi" slip printed before payment: a non-fiscal information slip with its own print counter. */
 export const preReceiptText = {
   action: "Hesap fişi",

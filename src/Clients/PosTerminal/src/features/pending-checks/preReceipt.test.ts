@@ -40,6 +40,16 @@ describe("printPreReceipt", () => {
     expect(text()).not.toMatch(/FİŞ NO|Hesap fişi no|mali fiş değildir/i);
   });
 
+  it("writes a line's note under its name, in the cell that wraps, as text, and nothing for a line without one", async () => {
+    const noted = { ...sheet, lines: [{ ...sheet.lines[0], note: "soğansız <i>" }, sheet.lines[1]] };
+    await printPreReceipt("t-1", "o-1", (async () => reply(200, noted)) as typeof fetch, vi.fn());
+
+    const rows = [...document.querySelectorAll("#pre-receipt-print table:nth-of-type(1) tr")].map((row) => row.textContent);
+    expect(rows).toEqual(["2 × Köfte <b>Not: soğansız <i>₺200,00", "1 × Ayran₺30,00"]);
+    expect(document.querySelector("#pre-receipt-print tr td:first-child br")).not.toBeNull();
+    expect(document.querySelector("#pre-receipt-print i")).toBeNull();
+  });
+
   it("states the date and the time of the print in the venue's clock", async () => {
     await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)) as typeof fetch, vi.fn());
 

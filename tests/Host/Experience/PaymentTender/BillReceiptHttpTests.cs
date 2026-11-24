@@ -783,6 +783,56 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal(0m, body.GetProperty("total").GetDecimal());
     }
 
+    private async Task SetLineNoteAsync(Guid orderId, string note)
+    {
+        await using var command = _database.DataSource.CreateCommand("UPDATE orders.order_items SET notes = @note WHERE order_id = @o;");
+        command.Parameters.AddWithValue("note", note);
+        command.Parameters.AddWithValue("o", orderId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task APreReceiptCarriesTheLineNoteWhetherOrNotABillIsOpen(bool billOpen)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-note-" + billOpen, true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await SetLineNoteAsync(orderId, "soğansız");
+        if (!billOpen)
+            await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var body = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("soğansız", Assert.Single(body.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString());
+    }
+
+    [Fact]
+    public async Task APreReceiptCutsALongLineNoteAtTheSlipLimitAndLeavesALineWithoutOneEmpty()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-long-note", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var plain = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
+        await SetLineNoteAsync(orderId, new string('n', 250));
+        var longNote = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(JsonValueKind.Null, Assert.Single(plain.GetProperty("lines").EnumerateArray()).GetProperty("note").ValueKind);
+        Assert.Equal(200, Assert.Single(longNote.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString()!.Length);
+
+        await SetLineNoteAsync(orderId, new string('n', 199) + "😀" + new string('x', 50));
+        var emoji = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(new string('n', 199), Assert.Single(emoji.GetProperty("lines").EnumerateArray()).GetProperty("note").GetString());
+    }
+
     [Fact]
     public async Task APreReceiptOfAnOrderWithABillCarriesTheAdjustmentsTheTotalAndWhatWasPaid()
     {

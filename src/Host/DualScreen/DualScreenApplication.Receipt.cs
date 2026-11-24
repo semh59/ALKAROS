@@ -43,7 +43,8 @@ public sealed record BillReceiptV1(
     bool IsCopy = false,
     string? TableNumber = null);
 
-public sealed record BillPreReceiptLineV1(string Name, decimal Quantity, decimal UnitPrice, decimal Amount);
+/// <remarks><paramref name="Note"/> is the line's preparation note, cut at the length a note may be typed with.</remarks>
+public sealed record BillPreReceiptLineV1(string Name, decimal Quantity, decimal UnitPrice, decimal Amount, string? Note = null);
 
 /// <summary>The slip printed before payment; <paramref name="PrintNumber"/> counts these prints only, never the paid bill's original or copy.</summary>
 public sealed record BillPreReceiptV1(
@@ -292,18 +293,21 @@ public static partial class DualScreenApplication
                     sheet = new BillPreReceiptV1(
                         orderId, 0, DateTimeOffset.UtcNow, await BillOrderNotes.TableNumberAsync(dataSource, order.TableId, cancellationToken), order.CurrencyCode,
                         order.Items.Where(i => i.CountsInOrderTotals)
-                            .Select(i => new BillPreReceiptLineV1(i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount)).ToList(),
+                            .Select(i => new BillPreReceiptLineV1(i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, SlipNote(i.Notes))).ToList(),
                         [], order.Total, 0m);
                 }
                 else
                 {
                     await billAccess.RequireAsync(context, terminalId, bill.Value.BillId, cancellationToken, claim: false);
+                    var openBill = (await billRepository.GetByIdAsync(bill.Value.BillId, cancellationToken))!;
                     var receipt = await BuildReceiptAsync(
-                        (await billRepository.GetByIdAsync(bill.Value.BillId, cancellationToken))!,
-                        adjustmentRepository, paymentRepository, dataSource, null, false, cancellationToken);
+                        openBill, adjustmentRepository, paymentRepository, dataSource, null, false, cancellationToken);
+                    var orderItemOfBillItem = openBill.Items.ToDictionary(i => i.Id, i => i.OrderItemId);
+                    var noteOfOrderItem = await LineNotesAsync(dataSource, openBill.Items.Select(i => i.OrderItemId), cancellationToken);
                     sheet = new BillPreReceiptV1(
                         orderId, 0, DateTimeOffset.UtcNow, receipt.TableNumber, receipt.CurrencyCode,
-                        receipt.Items.Select(i => new BillPreReceiptLineV1(i.Name, i.Quantity, i.UnitPrice, i.Amount)).ToList(),
+                        receipt.Items.Select(i => new BillPreReceiptLineV1(
+                            i.Name, i.Quantity, i.UnitPrice, i.Amount, SlipNote(noteOfOrderItem.GetValueOrDefault(orderItemOfBillItem[i.BillItemId])))).ToList(),
                         receipt.Adjustments, receipt.PayableAmount, receipt.Payments.Sum(p => p.Amount - p.RefundedAmount));
                 }
 
@@ -326,6 +330,28 @@ public static partial class DualScreenApplication
             })
             .WithTags("BillReceipt")
             .RequireRateLimiting("terminal-write");
+    }
+
+    // The bill's lines may come from several orders, so the notes are read for the lines themselves, not from the order asked for.
+    private static async Task<Dictionary<Guid, string>> LineNotesAsync(
+        NpgsqlDataSource dataSource, IEnumerable<Guid> orderItemIds, CancellationToken cancellationToken)
+    {
+        var notes = new Dictionary<Guid, string>();
+        await using var command = dataSource.CreateCommand("SELECT order_item_id, notes FROM orders.order_items WHERE order_item_id = ANY(@ids) AND notes IS NOT NULL;");
+        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderItemIds.ToArray();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            notes[reader.GetGuid(0)] = reader.GetString(1);
+        return notes;
+    }
+
+    // Cut at the length a note may be typed with, never between the two halves of a character.
+    private static string? SlipNote(string? note)
+    {
+        if (string.IsNullOrWhiteSpace(note))
+            return null;
+        const int max = DualScreenStore.MaxSpecialInstructionsLength;
+        return note.Length <= max ? note : note[..(char.IsHighSurrogate(note[max - 1]) ? max - 1 : max)];
     }
 
     private static async Task<(Guid BillId, string Status)?> FindOrderBillAsync(

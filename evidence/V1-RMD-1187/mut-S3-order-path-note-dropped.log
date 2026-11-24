@@ -1,0 +1,14 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:19.55]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.APreReceiptCarriesTheLineNoteWhetherOrNotABillIsOpen(billOpen: False) [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.APreReceiptCarriesTheLineNoteWhetherOrNotABillIsOpen(billOpen: False) [5 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+Expected: "soğansız"
+Actual:   null
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.APreReceiptCarriesTheLineNoteWhetherOrNotABillIsOpen(Boolean billOpen) in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 811
+   at ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.APreReceiptCarriesTheLineNoteWhetherOrNotABillIsOpen(Boolean billOpen) in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\BillReceiptHttpTests.cs:line 811
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 27 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)

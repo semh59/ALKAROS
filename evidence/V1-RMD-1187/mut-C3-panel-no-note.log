@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (71 tests | 1 failed) 692ms
+     × shows the line's note under it on the table panel, and none for a line without a note 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge mutfaktaki ürünü iptal et > shows the line's note under it on the table panel, and none for a line without a note
+AssertionError: expected undefined to be 'Not: az pişmiş' // Object.is equality
+
+- Expected:
+"Not: az pişmiş"
+
++ Received:
+undefined
+
+ ❯ src/routes/TableOrderBridge.test.tsx:677:83
+    675|
+    676|     const lines = [...document.querySelectorAll(".table-order-bridge__…
+    677|     expect(lines[0].querySelector(".table-order-bridge__line-note")?.t…
+       |                                                                                   ^
+    678|     expect(document.querySelectorAll(".table-order-bridge__line-note")…
+    679|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 84 passed (85)
+   Start at  12:11:16
+   Duration  2.60s (transform 404ms, setup 0ms, import 664ms, tests 823ms, environment 2.32s)
+
