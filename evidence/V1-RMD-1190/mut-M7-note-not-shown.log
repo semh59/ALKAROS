@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (68 tests | 1 failed) 1788ms
+       × keeps a note-free item and an item with a note on separate rows, each with its own count and the note visible 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product, options and note > keeps a note-free item and an item with a note on separate rows, each with its own count and the note visible
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:207:69
+    205|       const rows = await allDayRows([{ quantity: 1, modifiers: null, n…
+    206|       expect(rows.length).toBe(2);
+    207|       expect(rows.filter((row) => row.includes("soğansız")).length).to…
+       |                                                                     ^
+    208|       expect(rows.every((row) => row.startsWith("1×"))).toBe(true);
+    209|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 67 passed (68)
+   Start at  14:14:35
+   Duration  3.47s (transform 254ms, setup 0ms, import 427ms, tests 1.79s, environment 998ms)
+

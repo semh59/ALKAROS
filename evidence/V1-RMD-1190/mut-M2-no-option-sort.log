@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (68 tests | 1 failed) 1800ms
+       × sums identical product, options and note, whatever order the options arrive in 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product, options and note > sums identical product, options and note, whatever order the options arrive in
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:222:27
+    220|         { quantity: 2, modifiers: "Az acılı, Ekstra peynir", notes: " …
+    221|       ]);
+    222|       expect(rows.length).toBe(1);
+       |                           ^
+    223|       expect(rows[0].startsWith("3×")).toBe(true);
+    224|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 67 passed (68)
+   Start at  14:14:09
+   Duration  3.50s (transform 256ms, setup 0ms, import 428ms, tests 1.80s, environment 1.02s)
+

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (68 tests | 1 failed) 1686ms
+       × keeps different options on separate rows and shows them 31ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product, options and note > keeps different options on separate rows and shows them
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:214:89
+    212|       const rows = await allDayRows([{ quantity: 2, modifiers: "Ekstra…
+    213|       expect(rows.length).toBe(2);
+    214|       expect(rows.some((row) => row.startsWith("2×") && row.includes("…
+       |                                                                                         ^
+    215|     });
+    216|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 67 passed (68)
+   Start at  14:14:29
+   Duration  3.32s (transform 253ms, setup 0ms, import 423ms, tests 1.69s, environment 950ms)
+

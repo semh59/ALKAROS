@@ -1,0 +1,53 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (68 tests | 2 failed) 1792ms
+       × keeps a note-free item and an item with a note on separate rows, each with its own count and the note visible 31ms
+       × keeps different options on separate rows and shows them 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product, options and note > keeps a note-free item and an item with a note on separate rows, each with its own count and the note visible
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:206:27
+    204|     it("keeps a note-free item and an item with a note on separate row…
+    205|       const rows = await allDayRows([{ quantity: 1, modifiers: null, n…
+    206|       expect(rows.length).toBe(2);
+       |                           ^
+    207|       expect(rows.filter((row) => row.includes("soğansız")).length).to…
+    208|       expect(rows.every((row) => row.startsWith("1×"))).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product, options and note > keeps different options on separate rows and shows them
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:213:27
+    211|     it("keeps different options on separate rows and shows them", asyn…
+    212|       const rows = await allDayRows([{ quantity: 2, modifiers: "Ekstra…
+    213|       expect(rows.length).toBe(2);
+       |                           ^
+    214|       expect(rows.some((row) => row.startsWith("2×") && row.includes("…
+    215|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 66 passed (68)
+   Start at  14:11:27
+   Duration  3.56s (transform 256ms, setup 0ms, import 430ms, tests 1.79s, environment 1.06s)
+

@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (69 tests | 1 failed) 1779ms
+       × treats empty options and note like none, collapses inner spaces, lists the larger group first 34ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > Tüm Gün Görünümü groups by product, options and note > treats empty options and note like none, collapses inner spaces, lists the larger group first
+AssertionError: expected [ '2×', '5×' ] to deeply equal [ '5×', '2×' ]
+
+- Expected
++ Received
+
+  [
+-   "5×",
+    "2×",
++   "5×",
+  ]
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:225:50
+    223|         { quantity: 9, modifiers: "Ekstra peynir", notes: null, status…
+    224|       ]);
+    225|       expect(rows.map((row) => row.slice(0, 2))).toEqual(["5×", "2×"]);
+       |                                                  ^
+    226|     });
+    227|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 68 passed (69)
+   Start at  14:15:51
+   Duration  3.41s (transform 248ms, setup 0ms, import 420ms, tests 1.78s, environment 959ms)
+

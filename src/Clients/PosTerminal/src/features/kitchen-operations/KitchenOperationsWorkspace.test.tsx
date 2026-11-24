@@ -192,6 +192,49 @@ describe("kitchen operations workspace", () => {
     expect(rows[0].textContent).toContain("Mercimek çorbası");
   });
 
+  describe("Tüm Gün Görünümü groups by product, options and note", () => {
+    async function allDayRows(items: Array<{ quantity: number; modifiers: string | null; notes: string | null; status?: "Cancelled" }>) {
+      const base = data.tickets[0].items[0];
+      const ticket = { ...data.tickets[0], items: items.map((item, index) => ({ ...base, status: "Queued" as const, ...item, id: `item-${index}` })) };
+      await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, tickets: [ticket] } })} />);
+      await click([...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent?.includes("Tüm Gün"))!);
+      return [...document.querySelectorAll(".kitchen-allday-row")].map((row) => row.textContent ?? "");
+    }
+
+    it("keeps a note-free item and an item with a note on separate rows, each with its own count and the note visible", async () => {
+      const rows = await allDayRows([{ quantity: 1, modifiers: null, notes: null }, { quantity: 1, modifiers: null, notes: "soğansız" }]);
+      expect(rows.length).toBe(2);
+      expect(rows.filter((row) => row.includes("soğansız")).length).toBe(1);
+      expect(rows.every((row) => row.startsWith("1×"))).toBe(true);
+    });
+
+    it("keeps different options on separate rows and shows them", async () => {
+      const rows = await allDayRows([{ quantity: 2, modifiers: "Ekstra peynir", notes: null }, { quantity: 1, modifiers: null, notes: null }]);
+      expect(rows.length).toBe(2);
+      expect(rows.some((row) => row.startsWith("2×") && row.includes("Ekstra peynir"))).toBe(true);
+    });
+
+    it("treats empty options and note like none, collapses inner spaces, lists the larger group first", async () => {
+      const rows = await allDayRows([
+        { quantity: 1, modifiers: "", notes: "az   tuz" },
+        { quantity: 1, modifiers: null, notes: "az tuz" },
+        { quantity: 1, modifiers: " , ", notes: "   " },
+        { quantity: 4, modifiers: null, notes: null },
+        { quantity: 9, modifiers: "Ekstra peynir", notes: null, status: "Cancelled" },
+      ]);
+      expect(rows.map((row) => row.slice(0, 2))).toEqual(["5×", "2×"]);
+    });
+
+    it("sums identical product, options and note, whatever order the options arrive in", async () => {
+      const rows = await allDayRows([
+        { quantity: 1, modifiers: "Ekstra peynir, Az acılı", notes: "soğansız" },
+        { quantity: 2, modifiers: "Az acılı, Ekstra peynir", notes: " soğansız " },
+      ]);
+      expect(rows.length).toBe(1);
+      expect(rows[0].startsWith("3×")).toBe(true);
+    });
+  });
+
   it("shows the undo affordance right after a transition, even for a kitchen.advance-only (Mutfak Personeli) session", async () => {
     const onUndoItem = vi.fn();
     const fresh: KitchenData = {

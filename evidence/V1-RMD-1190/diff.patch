@@ -1,0 +1,111 @@
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+index b01efa0c2..b40c1a345 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+@@ -192,6 +192,49 @@ describe("kitchen operations workspace", () => {
+     expect(rows[0].textContent).toContain("Mercimek çorbası");
+   });
+ 
++  describe("Tüm Gün Görünümü groups by product, options and note", () => {
++    async function allDayRows(items: Array<{ quantity: number; modifiers: string | null; notes: string | null; status?: "Cancelled" }>) {
++      const base = data.tickets[0].items[0];
++      const ticket = { ...data.tickets[0], items: items.map((item, index) => ({ ...base, status: "Queued" as const, ...item, id: `item-${index}` })) };
++      await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, tickets: [ticket] } })} />);
++      await click([...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent?.includes("Tüm Gün"))!);
++      return [...document.querySelectorAll(".kitchen-allday-row")].map((row) => row.textContent ?? "");
++    }
++
++    it("keeps a note-free item and an item with a note on separate rows, each with its own count and the note visible", async () => {
++      const rows = await allDayRows([{ quantity: 1, modifiers: null, notes: null }, { quantity: 1, modifiers: null, notes: "soğansız" }]);
++      expect(rows.length).toBe(2);
++      expect(rows.filter((row) => row.includes("soğansız")).length).toBe(1);
++      expect(rows.every((row) => row.startsWith("1×"))).toBe(true);
++    });
++
++    it("keeps different options on separate rows and shows them", async () => {
++      const rows = await allDayRows([{ quantity: 2, modifiers: "Ekstra peynir", notes: null }, { quantity: 1, modifiers: null, notes: null }]);
++      expect(rows.length).toBe(2);
++      expect(rows.some((row) => row.startsWith("2×") && row.includes("Ekstra peynir"))).toBe(true);
++    });
++
++    it("treats empty options and note like none, collapses inner spaces, lists the larger group first", async () => {
++      const rows = await allDayRows([
++        { quantity: 1, modifiers: "", notes: "az   tuz" },
++        { quantity: 1, modifiers: null, notes: "az tuz" },
++        { quantity: 1, modifiers: " , ", notes: "   " },
++        { quantity: 4, modifiers: null, notes: null },
++        { quantity: 9, modifiers: "Ekstra peynir", notes: null, status: "Cancelled" },
++      ]);
++      expect(rows.map((row) => row.slice(0, 2))).toEqual(["5×", "2×"]);
++    });
++
++    it("sums identical product, options and note, whatever order the options arrive in", async () => {
++      const rows = await allDayRows([
++        { quantity: 1, modifiers: "Ekstra peynir, Az acılı", notes: "soğansız" },
++        { quantity: 2, modifiers: "Az acılı, Ekstra peynir", notes: " soğansız " },
++      ]);
++      expect(rows.length).toBe(1);
++      expect(rows[0].startsWith("3×")).toBe(true);
++    });
++  });
++
+   it("shows the undo affordance right after a transition, even for a kitchen.advance-only (Mutfak Personeli) session", async () => {
+     const onUndoItem = vi.fn();
+     const fresh: KitchenData = {
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+index b876586f3..5f62acd05 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+@@ -246,18 +246,23 @@ export function KitchenOperationsWorkspace({
+   // a Held item must never inflate this total, once ALKAROS's own status
+   // enum ever grows one - this filter is the one place that exclusion
+   // belongs, so it isn't forgotten when that day comes.
++  // V1-RMD-1190: batch prep must not merge an item with a note with a plain one, so
++  // the group key is product + sorted options + note (option order is not part
++  // of the identity).
+   const allDayGroups = useMemo(() => {
+-    const totals = new Map<string, { productName: string; quantity: number }>();
+-    const order: string[] = [];
++    const groups = new Map<string, { key: string; productName: string; options: string; note: string; quantity: number }>();
+     for (const ticket of activeTickets) {
+       for (const item of ticket.items) {
+         if (item.status === "Cancelled" || item.status === "Served") continue;
+-        const existing = totals.get(item.productId);
++        const options = (item.modifiers ?? "").split(",").map((option) => option.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
++        const note = (item.notes ?? "").trim().replace(/\s+/g, " ");
++        const key = JSON.stringify([item.productId, options, note]);
++        const existing = groups.get(key);
+         if (existing) existing.quantity += item.quantity;
+-        else { totals.set(item.productId, { productName: item.productName, quantity: item.quantity }); order.push(item.productId); }
++        else groups.set(key, { key, productName: item.productName, options, note, quantity: item.quantity });
+       }
+     }
+-    return order.map((productId) => ({ productId, ...totals.get(productId)! })).sort((a, b) => b.quantity - a.quantity);
++    return [...groups.values()].sort((a, b) => b.quantity - a.quantity);
+   }, [activeTickets]);
+ 
+   const openProducts = useMemo(() => {
+@@ -509,7 +514,7 @@ export function KitchenOperationsWorkspace({
+           <PerformanceReportPanel report={report} state={reportState} />
+         ) : viewMode === "allday" ? (
+           allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
+-            {allDayGroups.map((group) => <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></li>)}
++            {allDayGroups.map((group) => <li key={group.key} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__body"><span className="kitchen-allday-row__name">{group.productName}</span>{group.options && <span className="kitchen-allday-row__detail">{group.options}</span>}{group.note && <span className="kitchen-allday-row__detail kitchen-allday-row__detail--note">Not: {group.note}</span>}</span></li>)}
+           </ul>
+         ) : state === "empty" || (orderGroups.length === 0 && readyGroups.length === 0) ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : <>
+           {orderGroups.map(renderGroup)}
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
+index 548cdccf3..f3f60ae15 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
+@@ -32,7 +32,10 @@
+ .kitchen-allday-list { display: grid; gap: .5rem; }
+ .kitchen-allday-row { display: flex; align-items: baseline; gap: .75rem; border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); background: var(--ds-color-surface); padding: .85rem 1.1rem; }
+ .kitchen-allday-row__qty { font-family: var(--ds-font-mono); font-weight: 900; font-size: clamp(1.3rem, 1vw + 1.1rem, 1.7rem); color: var(--ds-color-brand); font-variant-numeric: tabular-nums; }
++.kitchen-allday-row__body { display: grid; gap: .1rem; }
+ .kitchen-allday-row__name { font-weight: 700; font-size: clamp(1rem, .3vw + .95rem, 1.15rem); }
++.kitchen-allday-row__detail { color: var(--ds-color-muted); font-size: .875rem; }
++.kitchen-allday-row__detail--note { color: var(--ds-color-warning); font-weight: 700; }
+ 
+ /* V1-KIT-014/V1-KDS-009: performans raporu — istasyon tablosu + saatlik
+    çubuk grafik, ek bir kütüphane olmadan düz CSS ile. */

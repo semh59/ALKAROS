@@ -246,18 +246,23 @@ export function KitchenOperationsWorkspace({
   // a Held item must never inflate this total, once ALKAROS's own status
   // enum ever grows one - this filter is the one place that exclusion
   // belongs, so it isn't forgotten when that day comes.
+  // V1-RMD-1190: batch prep must not merge an item with a note with a plain one, so
+  // the group key is product + sorted options + note (option order is not part
+  // of the identity).
   const allDayGroups = useMemo(() => {
-    const totals = new Map<string, { productName: string; quantity: number }>();
-    const order: string[] = [];
+    const groups = new Map<string, { key: string; productName: string; options: string; note: string; quantity: number }>();
     for (const ticket of activeTickets) {
       for (const item of ticket.items) {
         if (item.status === "Cancelled" || item.status === "Served") continue;
-        const existing = totals.get(item.productId);
+        const options = (item.modifiers ?? "").split(",").map((option) => option.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b, "tr")).join(", ");
+        const note = (item.notes ?? "").trim().replace(/\s+/g, " ");
+        const key = JSON.stringify([item.productId, options, note]);
+        const existing = groups.get(key);
         if (existing) existing.quantity += item.quantity;
-        else { totals.set(item.productId, { productName: item.productName, quantity: item.quantity }); order.push(item.productId); }
+        else groups.set(key, { key, productName: item.productName, options, note, quantity: item.quantity });
       }
     }
-    return order.map((productId) => ({ productId, ...totals.get(productId)! })).sort((a, b) => b.quantity - a.quantity);
+    return [...groups.values()].sort((a, b) => b.quantity - a.quantity);
   }, [activeTickets]);
 
   const openProducts = useMemo(() => {
@@ -509,7 +514,7 @@ export function KitchenOperationsWorkspace({
           <PerformanceReportPanel report={report} state={reportState} />
         ) : viewMode === "allday" ? (
           allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
-            {allDayGroups.map((group) => <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></li>)}
+            {allDayGroups.map((group) => <li key={group.key} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__body"><span className="kitchen-allday-row__name">{group.productName}</span>{group.options && <span className="kitchen-allday-row__detail">{group.options}</span>}{group.note && <span className="kitchen-allday-row__detail kitchen-allday-row__detail--note">Not: {group.note}</span>}</span></li>)}
           </ul>
         ) : state === "empty" || (orderGroups.length === 0 && readyGroups.length === 0) ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : <>
           {orderGroups.map(renderGroup)}
