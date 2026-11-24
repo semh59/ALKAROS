@@ -13,11 +13,12 @@ public static class PaymentMethodLookup
     public const string Cash = "Cash";
     public const string Card = "Card";
     public const string Eft = "Eft";
+    public const string ExternalCard = "ExternalCard";
 
     /// <summary>
     /// A SQL CASE over the payment id expression <paramref name="paymentId"/>. Transfer is what is left because the
-    /// producers of approved payments are a closed set (the cash, account, card and transfer handlers and the manual
-    /// card confirmation) and the meal card has no handler.
+    /// producers of approved payments are a closed set (the cash, account, card and transfer handlers, the manual
+    /// card confirmation and the external card receipt) and the meal card has no handler.
     /// </summary>
     public static string Sql(string paymentId) =>
         $"""
@@ -31,6 +32,8 @@ public static class PaymentMethodLookup
                          WHERE s.payment_id = {paymentId} AND s.outcome = 'Approved')
               OR EXISTS (SELECT 1 FROM payments.manual_card_confirmations m
                          WHERE m.payment_id = {paymentId} AND m.status = 'Approved') THEN '{Card}'
+            WHEN EXISTS (SELECT 1 FROM payments.external_card_receipts x
+                         WHERE x.payment_id = {paymentId}) THEN '{ExternalCard}'
             ELSE '{Eft}' END
         """;
 

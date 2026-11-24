@@ -223,7 +223,7 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    private static string NormalizeSlip(string? slipNumber)
+    public static string NormalizeSlip(string? slipNumber)
     {
         var slip = slipNumber?.Trim().ToUpperInvariant();
         if (string.IsNullOrEmpty(slip) || !SlipPattern.IsMatch(slip))
@@ -243,4 +243,48 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
 
     [GeneratedRegex("^[A-Z0-9][A-Z0-9\\-/]{3,31}$")]
     private static partial Regex SlipRegex();
+}
+
+/// <summary>
+/// The slip of a card payment taken on a bank POS that is not connected to the system: one row per payment, written in
+/// the caller's transaction so it commits with the payment. The slip is a bounded code, never a card number.
+/// </summary>
+public static class ExternalCardReceipts
+{
+    public static async Task<string?> FindSlipAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid paymentId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT slip_number FROM payments.external_card_receipts WHERE payment_id = @payment;", connection, transaction);
+        command.Parameters.AddWithValue("payment", paymentId);
+        return (string?)await command.ExecuteScalarAsync(cancellationToken);
+    }
+
+    public static async Task<bool> SlipExistsOnBillAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, string slip, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT 1 FROM payments.external_card_receipts WHERE bill_id = @bill AND slip_number = @slip;", connection, transaction);
+        command.Parameters.AddWithValue("bill", billId);
+        command.Parameters.AddWithValue("slip", slip);
+        return await command.ExecuteScalarAsync(cancellationToken) is not null;
+    }
+
+    public static async Task AddAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid paymentId, Guid billId, Guid terminalId, string slip,
+        decimal amount, Guid recordedBy, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            INSERT INTO payments.external_card_receipts (payment_id, bill_id, terminal_id, slip_number, amount, recorded_by)
+            VALUES (@payment, @bill, @terminal, @slip, @amount, @user);
+            """, connection, transaction);
+        command.Parameters.AddWithValue("payment", paymentId);
+        command.Parameters.AddWithValue("bill", billId);
+        command.Parameters.AddWithValue("terminal", terminalId);
+        command.Parameters.AddWithValue("slip", slip);
+        command.Parameters.AddWithValue("amount", amount);
+        command.Parameters.AddWithValue("user", recordedBy);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
 }

@@ -118,6 +118,7 @@ public static class BillingSplitApplication
         services.TryAddSingleton<ICashierQueueAnnouncer, NoOpCashierQueueAnnouncer>();
         services.TryAddSingleton<BillCancellationStore>();
         services.TryAddSingleton<PaymentRefundStore>();
+        services.TryAddTransient<ExternalCardTenderStore>();
         services.TryAddSingleton<RecentSalesStore>();
         services.AddBillTerminalAccess();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();

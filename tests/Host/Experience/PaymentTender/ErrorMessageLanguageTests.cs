@@ -13,6 +13,7 @@ public sealed class ErrorMessageLanguageTests
         "src/Host/Experience/Billing/BillingSplitApplication.cs",
         "src/Host/Composition/Errors/ApiErrorCatalog.cs",
         "src/Host/Experience/Billing/PaymentRefunds.cs",
+        "src/Host/Experience/Billing/ExternalCardTender.cs",
         "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs",
     ];
 

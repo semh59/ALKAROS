@@ -1,0 +1,15 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:47.97]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RejectingARefundThatIsNoLongerRequestedAnswersTheStateConflictEvenWithoutANote [FAIL]
+[xUnit.net 00:01:14.96]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APartialCashRefundLowersTheCashTheTillIsExpectedToHold [FAIL]
+[xUnit.net 00:01:33.79]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequesterDecidesTheirOwnRefundOnlyWhenTheSharedSettingIsOnAndTheRecordSaysSo [FAIL]
+[xUnit.net 00:01:54.70]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundDecisionWaitsForTheBillLockSoNoPaymentOrCancellationOfTheSameBillRunsBetweenItsChecks(manualCompletion: True) [FAIL]
+[xUnit.net 00:02:34.57]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ABillDiscountOrCompAfterAnItemRefundIsRefusedSoNoRefundIsOverpaid(kind: "comp", approved: True) [FAIL]
+[xUnit.net 00:03:23.42]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ATipCannotBeTakenOffBelowWhatIsLeftAfterAPartRefundButCanAtTheRemainder [FAIL]
+[xUnit.net 00:03:42.19]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnItemWorthLessThanWhatAnEarlierRefundWasOverpaidIsRefusedWithTheReasonAndGoesTogetherWithTheRest [FAIL]
+[xUnit.net 00:04:00.84]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingEveryItemOfADiscountedBillInPartsGivesBackExactlyWhatWasPaid [FAIL]
+[xUnit.net 00:07:20.45]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ParallelDecisionsOnOneRefundRequestApplyExactlyOnce [FAIL]
+[xUnit.net 00:08:27.62]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AFractionalLineOfAProductThatAllowsHalvesStillOnlyTakesHalfSteps [FAIL]
+
+Başarısız! - Başarısız:    10, Başarılı:   109, Atlanan:     0, Toplam:   119, Süre: 10 m 23 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit=1

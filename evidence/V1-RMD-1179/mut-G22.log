@@ -1,0 +1,7 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:14.40]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ASlipThatIsMissingMalformedOrLooksLikeACardNumberIsRefusedInTurkishAndNothingIsRecorded(slip: "4111-1111-1111-1111", code: "EXTERNAL_CARD_SLIP_IS_CARD_NUMBER") [FAIL]
+[xUnit.net 00:01:02.99]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ASlipThatIsMissingMalformedOrLooksLikeACardNumberIsRefusedInTurkishAndNothingIsRecorded(slip: "378282246310005", code: "EXTERNAL_CARD_SLIP_IS_CARD_NUMBER") [FAIL]
+[xUnit.net 00:01:09.58]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ASlipThatIsMissingMalformedOrLooksLikeACardNumberIsRefusedInTurkishAndNothingIsRecorded(slip: "4111111111111111", code: "EXTERNAL_CARD_SLIP_IS_CARD_NUMBER") [FAIL]
+
+Başarısız! - Başarısız:     3, Başarılı:     6, Atlanan:     0, Toplam:     9, Süre: 1 m 3 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)

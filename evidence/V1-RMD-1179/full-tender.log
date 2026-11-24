@@ -1,0 +1,14 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:14:16.49]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ACancelATipOrATenderWaitsForTheLockTheOthersHoldAndRunsOnceItIsReleased(lockName: "payment-allocation", action: "tenders") [FAIL]
+[xUnit.net 00:15:57.51]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.WithoutPaymentsTakeTheExternalCardPaymentIsForbidden [FAIL]
+[xUnit.net 00:16:10.79]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ConcurrentEftTendersThatTogetherOverAllocateGiveTheLoserAProperTurkish409NeverARaw500 [FAIL]
+[xUnit.net 00:16:50.90]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ANewBankCardAttemptIsRejectedWhileAPriorOneIsUnresolved [FAIL]
+[xUnit.net 00:16:58.19]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.CustomerAccountTenderIsRejectedAsVersionNotEnabled [FAIL]
+[xUnit.net 00:17:57.21]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.PayingTheLastBillCompletesTheOrderAndFreesATableTheCheckWasStillAttachedTo [FAIL]
+Etkin test çalıştırması iptal edildi. Nedeni: Test ana işlemi kilitlendi : Out of memory.
+
+
+Başarısız! - Başarısız:     6, Başarılı:   128, Atlanan:     0, Toplam:   134, Süre: 17 m 56 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+Test Çalıştırması Durduruldu.
+exit=1

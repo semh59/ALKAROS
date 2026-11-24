@@ -1,0 +1,8 @@
+G2b: KILLED
+G2b: restored
+G4b: KILLED
+G4b: restored
+G19: KILLED
+G19: restored
+G20: KILLED
+G20: restored

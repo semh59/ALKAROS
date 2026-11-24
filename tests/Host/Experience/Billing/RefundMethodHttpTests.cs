@@ -77,6 +77,43 @@ public sealed partial class PaymentRefundHttpTests
     }
 
     [Fact]
+    public async Task AnExternalCardPaymentIsRefundedOnTheBankPosSoItWaitsForTheRefundSlipAndPaysNothingOutOfTheTill()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 100m, _cashierId);
+        var paymentId = await PaymentIdAsync(seeded.BillId);
+        await Execute(
+            """
+            INSERT INTO payments.external_card_receipts (payment_id, bill_id, terminal_id, slip_number, amount, recorded_by)
+            VALUES (@p, @b, gen_random_uuid(), 'POS-4242', 100, @r);
+            """, paymentId, ("b", seeded.BillId), ("r", _cashierId));
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
+        Assert.Equal("ExternalCard", request.Method);
+        await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+
+        using var withoutSlip = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1(null, null)));
+        Assert.Equal(HttpStatusCode.BadRequest, withoutSlip.StatusCode);
+        using var cardNumber = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1("4111111111111111", null)));
+        Assert.Equal(HttpStatusCode.BadRequest, cardNumber.StatusCode);
+        Assert.Equal("REFUND_TEXT_INVALID", await ErrorCode(cardNumber));
+        Assert.Equal("AwaitingManualRefund", await Scalar<string>(
+            "SELECT status FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+        using var withSlip = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1(" iade-77 ", null)));
+
+        Assert.Equal(HttpStatusCode.OK, withSlip.StatusCode);
+        Assert.Equal("Refunded", await Scalar<string>("SELECT status FROM payments.payments WHERE payment_id = @p", paymentId));
+        Assert.Equal("IADE-77", await Scalar<string>(
+            "SELECT slip_number FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+        Assert.Equal(0L, await Scalar<long>("SELECT count(*) FROM cash.cash_transactions WHERE related_payment_id = @p", paymentId));
+    }
+
+    [Fact]
     public async Task AClaimThatWasRejectedAndADeclinedAttemptDoNotMakeATransferACardRefund()
     {
         var seeded = await _database.SeedBillAsync();

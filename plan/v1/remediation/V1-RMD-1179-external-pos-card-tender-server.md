@@ -1,7 +1,7 @@
 # V1-RMD-1179 - Harici POS kartı ödeme türü: sunucu, migration, zorunlu fiş numarası, denetim izi
 
 - Task ID: V1-RMD-1179
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Planned

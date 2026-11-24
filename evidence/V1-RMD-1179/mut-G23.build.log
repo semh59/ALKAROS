@@ -1,0 +1,11 @@
+D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenApplication.Payments.cs(779,51): error CS8359: Filtre ifadesi bir sabit ‘false’ değeri, catch yan tümcesini kaldırmayı deneyin [D:\PROJECT\ALKAROS\src\Host\ALKAROS.Host.csproj]
+D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenApplication.Payments.cs(781,17): error CS0162: Ulaşılamayan kod algılandı [D:\PROJECT\ALKAROS\src\Host\ALKAROS.Host.csproj]
+
+Oluşturma BAŞARISIZ OLDU.
+
+D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenApplication.Payments.cs(779,51): error CS8359: Filtre ifadesi bir sabit ‘false’ değeri, catch yan tümcesini kaldırmayı deneyin [D:\PROJECT\ALKAROS\src\Host\ALKAROS.Host.csproj]
+D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenApplication.Payments.cs(781,17): error CS0162: Ulaşılamayan kod algılandı [D:\PROJECT\ALKAROS\src\Host\ALKAROS.Host.csproj]
+    0 Uyarı
+    2 Hata
+
+Geçen Süre 00:00:22.09

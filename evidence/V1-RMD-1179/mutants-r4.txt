@@ -1,0 +1,2 @@
+G23b: SURVIVED (exit 0)
+G23b: restored

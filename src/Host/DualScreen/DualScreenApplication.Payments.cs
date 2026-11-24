@@ -723,6 +723,61 @@ public static partial class DualScreenApplication
             };
         });
 
+        // A card payment taken on a bank POS that is not connected: only while no card terminal is defined (with one,
+        // the normal card flow applies and the two never mix), and only with the slip number printed by that POS.
+        group.MapPost("/external-card", async (
+            Guid terminalId,
+            Guid billId,
+            ExternalCardTenderRequestV1 request,
+            ExternalCardTenderStore tender,
+            ITokenTerminalCredentialStore cardTerminal,
+            IAuditEventStore auditEvents,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
+            DualScreenStore store,
+            IAuthorizationService authorization,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+
+            if ((await cardTerminal.GetStatusAsync(cancellationToken)).Configured)
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "CARD_TERMINAL_CONFIGURED",
+                            message = "Kart terminali tanımlı; harici POS kartı kullanılamaz. Kartla tahsilat için Kredi/Banka Kartı yöntemini seçin.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+
+            try
+            {
+                var approved = await tender.RecordAsync(billId, terminalId, principal.UserId, request, cancellationToken);
+                var closed = await TryCloseBillAsync(
+                    billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+                return Results.Ok(new SubmitBillTenderResultV1("Approved", approved, null, closed));
+            }
+            catch (ExternalCardTenderException ex)
+            {
+                return Results.Json(new { error = new { code = ex.Code, message = ex.UserMessage } }, statusCode: ex.Status);
+            }
+            catch (OverAllocationException ex)
+            {
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, "ExternalCard", ex.RequestedAmount,
+                    ex.RemainingPayable, request.IdempotencyKey);
+                return Results.Json(
+                    new { error = new { code = "TENDER_OVER_ALLOCATION", message = $"Tutar kalan {FormatLira(ex.RemainingPayable)}'yi aşıyor." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+        });
+
         // The payment page calls this when it opens a bill, so the guest sees what is being paid (the walk-up
         // cashier builds its basket in the browser, so there is no server order to show earlier).
         app.MapPost("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/show-on-display", async (

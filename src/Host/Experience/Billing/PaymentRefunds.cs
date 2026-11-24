@@ -472,11 +472,14 @@ public sealed class PaymentRefundStore
         await LockBillAsync(connection, transaction, request.BillId, cancellationToken);
         if (request.Status != "AwaitingManualRefund")
             throw new RefundStateException(requestId, request.Status);
-        // A card refund is proven by its slip; a transfer has no document the system could check, so it only needs
-        // the person to say it was sent.
-        var slip = request.Method == PaymentMethodLookup.Card
-            ? RequireText(slipNumber, MaxSlipLength, "Slip number", "Fiş numarası")
-            : null;
+        // A card refund (also one for a payment taken on a bank POS, which is refunded on that POS) is proven by
+        // its slip; a transfer has no document the system could check, so it only needs the person to say it was sent.
+        var slip = request.Method switch
+        {
+            PaymentMethodLookup.ExternalCard => NormalizeExternalCardSlip(slipNumber),
+            PaymentMethodLookup.Card => RequireText(slipNumber, MaxSlipLength, "Slip number", "Fiş numarası"),
+            _ => null,
+        };
         var noteText = string.IsNullOrWhiteSpace(note) ? null : RequireText(note, MaxTextLength, "Note", "Not");
 
         var now = DateTimeOffset.UtcNow;
@@ -617,6 +620,19 @@ public sealed class PaymentRefundStore
     {
         if (requestedBy == deciderId && !selfApprovalAllowed)
             throw new RefundSelfDecisionException();
+    }
+
+    // The refund slip of a bank POS payment is a bounded code like the payment slip, so a card number cannot be typed into it.
+    private static string NormalizeExternalCardSlip(string? slipNumber)
+    {
+        try
+        {
+            return ExternalCardTenderStore.NormalizeSlip(slipNumber);
+        }
+        catch (ExternalCardTenderException exception)
+        {
+            throw new RefundInputException("The refund slip is not a valid slip number.", "REFUND_TEXT_INVALID", exception.UserMessage);
+        }
     }
 
     private static string RequireText(string? value, int max, string what, string turkishName)

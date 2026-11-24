@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "234"
+    "max": "235"
   },
   "migrations": [
     {
@@ -2008,6 +2008,14 @@
       "phase": "B",
       "tables": [
         "cash_transactions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "235",
+      "phase": "B",
+      "tables": [
+        "external_card_receipts"
       ],
       "deferredConstraints": []
     }

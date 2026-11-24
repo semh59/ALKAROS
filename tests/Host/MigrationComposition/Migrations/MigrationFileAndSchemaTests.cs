@@ -593,6 +593,51 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheExternalCardReceiptTableComesWithMigration235AndRollingBackRemovesItAndRestoresTheRefundMethodRule()
+    {
+        const string table = "SELECT to_regclass('payments.external_card_receipts') IS NOT NULL;";
+        const string refundRule = "SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conname = 'ck_refund_requests_method';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.True(await ScalarAsync<bool>(source, table));
+        Assert.Contains("ExternalCard", await ScalarAsync<string>(source, refundRule));
+
+        RollBackDownTo("235");
+        Assert.False(await ScalarAsync<bool>(source, table));
+        Assert.DoesNotContain("ExternalCard", await ScalarAsync<string>(source, refundRule));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.True(await ScalarAsync<bool>(source, table));
+    }
+
+    [Fact]
+    public async Task RollingBackMigration235RefusesWhileAnExternalCardReceiptExistsBecauseThePaymentWouldTurnIntoATransfer()
+    {
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        await using (var seed = source.CreateCommand(
+            """
+            SET session_replication_role = replica;
+            INSERT INTO payments.payments
+                (payment_id, bill_id, status, currency_code, requested_amount, tendered_amount, approved_amount, change_amount,
+                 initiated_at, tendered_at, approved_at, created_at, updated_at)
+            VALUES ('aaaaaaaa-0000-0000-0000-0000000000e1', gen_random_uuid(), 'Approved', 'TRY', 10, 10, 10, 0,
+                    now(), now(), now(), now(), now());
+            INSERT INTO payments.external_card_receipts (payment_id, bill_id, terminal_id, slip_number, amount, recorded_by)
+            VALUES ('aaaaaaaa-0000-0000-0000-0000000000e1', gen_random_uuid(), gen_random_uuid(), 'POS-1001', 10, gen_random_uuid());
+            """))
+        {
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        using var output = new StringWriter();
+        var exit = HostComposition.Run(new HostCompositionOptions(OrderPath(), MigrationsPath(), _database.PsqlOptions, "235"), output);
+
+        Assert.NotEqual(HostExitCode.Success, exit);
+        Assert.True(await ScalarAsync<bool>(source, "SELECT to_regclass('payments.external_card_receipts') IS NOT NULL;"));
+    }
+
+    [Fact]
     public async Task TheInvoicedCustomerRetentionClassComesWithANewPolicyAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string rules = "SELECT string_agg(policy_version || ':' || data_class || ':' || retention_years, ',' ORDER BY policy_version, data_class) FROM privacy.retention_rules WHERE data_class IN ('CustomerProfile', 'InvoicedCustomerProfile');";
