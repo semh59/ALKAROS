@@ -73,11 +73,34 @@ public sealed class ClientLimitLockTests
 
         // The drawer note and the manager credentials are private server limits, so the server source must still state the same number.
         var drawerNote = ServerLimit(Path.Combine("Host", "DualScreen", "CashDrawerService.cs"), "MaxNoteLength = (\\d+);");
-        var (username, password) = CredentialLimits(Path.Combine("Host", "DualScreen", "DualScreenApplication.CashSession.cs"), "ManagerUsername", "ManagerPassword");
+        var (username, password) = CredentialLimits();
+        var (names, secrets) = ApproverFields(script);
+        Assert.True(secrets.Length >= 2, "The approval forms of the cash screen could not be found.");
+        Assert.Equal(names.Length, secrets.Length);
+        Assert.All(names, tag => Assert.Equal(username, TagLimit(tag)));
+        Assert.All(secrets, tag => Assert.Equal(password, TagLimit(tag)));
         Assert.Equal(4, limits.Count(limit => limit == drawerNote));
-        Assert.Equal(1, limits.Count(limit => limit == username));
-        Assert.Equal(1, limits.Count(limit => limit == password));
-        Assert.Equal(7 + 4 + 2, limits.Length);
+        Assert.Equal(names.Length, limits.Count(limit => limit == username));
+        Assert.Equal(secrets.Length, limits.Count(limit => limit == password));
+        Assert.Equal(7 + 4 + names.Length + secrets.Length, limits.Length);
+    }
+
+    // The server limit of manager credentials lives in the one shared verifier, so every endpoint that takes them must call it.
+    [Fact]
+    public void EveryServerEndpointThatTakesManagerCredentialsUsesTheSharedVerifier()
+    {
+        var callers = Directory.EnumerateFiles(Path.Combine(Root, "src", "Host"), "*.cs", SearchOption.AllDirectories)
+            .Where(path => !path.EndsWith("InPlaceManagerApproval.cs", StringComparison.Ordinal))
+            .Select(path => (Path: path, Text: File.ReadAllText(path)))
+            .Where(file => Regex.IsMatch(file.Text, @"\.Manager(Username|Password)\b"))
+            .ToArray();
+
+        Assert.True(callers.Length >= 4, "The manager approval endpoints could not be found.");
+        Assert.All(callers, file =>
+        {
+            Assert.Contains("approval.VerifyAsync(", file.Text, StringComparison.Ordinal);
+            Assert.DoesNotMatch(@"Manager(Username|Password)!?\.Length", file.Text);
+        });
     }
 
     [Fact]
@@ -142,10 +165,16 @@ public sealed class ClientLimitLockTests
 
         Assert.Contains(PaymentRefundStore.MaxTextLength, limits);
         Assert.Contains(PaymentRefundStore.MaxSlipLength, limits);
-        var (username, password) = CredentialLimits(Path.Combine("Host", "Experience", "Billing", "BillingSplitApplication.cs"), "Username", "Password");
+        var (username, password) = CredentialLimits();
+        var (names, secrets) = ApproverFields(File.ReadAllText(Path.Combine(Root, screen.Replace('/', Path.DirectorySeparatorChar))));
+        Assert.Equal(names.Length, secrets.Length);
+        if (screen.EndsWith("split-payment.js", StringComparison.Ordinal))
+            Assert.True(secrets.Length >= 3, "The approval forms of the payment screen could not be found.");
+        Assert.All(names, tag => Assert.Equal(username, TagLimit(tag)));
+        Assert.All(secrets, tag => Assert.Equal(password, TagLimit(tag)));
         Assert.All(limits, limit => Assert.True(
             limit == PaymentRefundStore.MaxTextLength || limit == PaymentRefundStore.MaxSlipLength
-                || (source.Contains("password", StringComparison.OrdinalIgnoreCase) && (limit == username || limit == password)),
+                || (secrets.Length > 0 && (limit == username || limit == password)),
             $"{screen} states a length limit of {limit} that no server rule has."));
     }
 
@@ -162,9 +191,29 @@ public sealed class ClientLimitLockTests
         return int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
     }
 
-    private static (int Username, int Password) CredentialLimits(string sourceFile, string usernameField, string passwordField) => (
-        ServerLimit(sourceFile, $"request\\.{usernameField}\\.Length > (\\d+)"),
-        ServerLimit(sourceFile, $"request\\.{passwordField}\\.Length > (\\d+)"));
+    private static (int Username, int Password) CredentialLimits()
+    {
+        var file = Path.Combine("Host", "Experience", "Billing", "InPlaceManagerApproval.cs");
+        return (ServerLimit(file, @"username\.Length > (\d+)"), ServerLimit(file, @"password\.Length > (\d+)"));
+    }
+
+    // Approval boxes are found, not listed. A password box that is neither the sign-in box nor an approval box is unclassified and fails,
+    // an approval form without a username box beside it leaves the counts unequal, and one without a length attribute fails TagLimit.
+    private static (string[] Names, string[] Secrets) ApproverFields(string source)
+    {
+        var inputs = Regex.Matches(source, "<input[^>]*>").Select(match => match.Value).ToArray();
+        var passwords = inputs.Where(tag => tag.Contains("type=\"password\"", StringComparison.Ordinal)).ToArray();
+        var secrets = passwords.Where(tag => Regex.IsMatch(tag, "approver-secret|manager-password")).ToArray();
+        Assert.All(passwords.Except(secrets), tag => Assert.Contains("id=\"password\"", tag, StringComparison.Ordinal));
+        return (inputs.Where(tag => Regex.IsMatch(tag, "approver-name|manager-username")).ToArray(), secrets);
+    }
+
+    private static int TagLimit(string tag)
+    {
+        var match = Regex.Match(tag, "maxlength=\"(\\d+)\"");
+        Assert.True(match.Success, $"{tag} has no length limit.");
+        return int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+    }
 
     private static string FindRoot()
     {

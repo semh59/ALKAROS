@@ -1,0 +1,5 @@
+# V1-RMD-1183 sonuc
+Kok neden: urun regresyonu yok. V1-RMD-1173..1176 yerinde yonetici onayi dogrulamasini InPlaceManagerApproval.cs'e tasidi (kullanici adi 64, parola 256); testin aradigi `request.Username.Length > N` kalibi kalmadi. Istemci maxlength degerleri sunucuyla ayni.
+Duzeltme: kimlik sinirlari InPlaceManagerApproval.cs'ten okunur; onay kutulari (cash-session.js 2 form, split-payment.js 3 form) kesfedilir, her parola/kullanici adi kutusu sunucu sayisina esit olmali, siniflanmamis parola kutusu ve cift sayisi uyumsuzlugu kirar; sunucuda `.ManagerUsername` kullanan her dosya ortak dogrulayiciyi cagirmali ve kendi uzunluk denetimini tasimamali. Harici POS fis kutusu (32) kilidi degismedi. Gevsetme yok.
+Kanit: red.log 3 kirmizi; green.log 12/12; mutations.txt M1-M5 killed (cp+cmp restored); yesil: CashSessionHttp 39, CashDrawerHttp 35, CashMovementApprovalHttp 55, CashCloseSafetyHttp 44, PaymentTenderHttpTests 101 (PG 55432); plan-audit ve consistency-audit temiz.
+Acik risk (qa dusuk): dogrulayici testi dosya bazli (dosyada ikinci uc nokta atlarsa yakalanmaz) ve `.Manager*` adina bagli; sihirli 7/4 not sayilari elle guncellenir (kasitli kilit).

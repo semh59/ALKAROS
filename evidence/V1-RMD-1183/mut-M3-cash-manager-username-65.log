@@ -1,0 +1,16 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.36]     ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheCashScreenNoteLimitIsTheServerNoteLimit [FAIL]
+  Başarısız ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheCashScreenNoteLimitIsTheServerNoteLimit [11 ms]
+  Hata İletisi:
+   Assert.All() Failure: 1 out of 2 items in the collection did not pass.
+[1]: Item:  "<input class=\"cs-input\" type=\"text\" id=\"manag"···
+     Error: Assert.Equal() Failure: Values differ
+            Expected: 64
+            Actual:   65
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheCashScreenNoteLimitIsTheServerNoteLimit() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\ClientLimitLockTests.cs:line 79
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 82 ms - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
