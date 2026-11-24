@@ -1,8 +1,8 @@
 # V1-RMD-1200 - Kasa oturumu sayfasında yönetici kutuları adlandırılır, kutu kenarlığı ve giriş yüksekliği 48 px ölçülür
 
 - Task ID: V1-RMD-1200
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
 
